@@ -6,16 +6,24 @@
 <title>小濠预测</title>
 
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+html,body{
+    width:100%;
+    min-height:100%;
+}
 
 body{
-    font-family:-apple-system,BlinkMacSystemFont,"PingFang SC",
-    "Microsoft YaHei",sans-serif;
+    font-family:-apple-system,BlinkMacSystemFont,
+    "PingFang SC","Microsoft YaHei",sans-serif;
     color:#17233b;
     background:
-      linear-gradient(rgba(235,245,255,.82),rgba(235,245,255,.9)),
-      url("background.jpeg") center/cover fixed;
-    min-height:100vh;
+        linear-gradient(rgba(239,247,255,.84),rgba(239,247,255,.91)),
+        url("background.jpeg") center/cover fixed;
 }
 
 /* 樱花 */
@@ -29,172 +37,193 @@ body{
 
 .petal{
     position:absolute;
-    top:-40px;
-    width:12px;
-    height:18px;
-    background:rgba(255,170,205,.8);
+    top:-30px;
+    width:11px;
+    height:17px;
+    background:rgba(255,166,201,.8);
     border-radius:80% 20% 80% 20%;
     animation:fall linear infinite;
-    filter:blur(.2px);
 }
 
 @keyframes fall{
     0%{
-        transform:translate3d(0,-40px,0) rotate(0deg);
+        transform:translateY(-40px) rotate(0);
         opacity:0;
     }
-    10%{opacity:.9}
+    10%{
+        opacity:.9;
+    }
     50%{
-        transform:translate3d(80px,50vh,0) rotate(180deg);
+        transform:translate(80px,55vh) rotate(180deg);
     }
     100%{
-        transform:translate3d(-80px,110vh,0) rotate(360deg);
+        transform:translate(-80px,110vh) rotate(360deg);
         opacity:0;
     }
 }
 
+/* 主体 */
 .app{
-    max-width:1100px;
+    max-width:900px;
     margin:auto;
-    padding:22px 16px 105px;
+    padding:12px 12px 100px;
 }
 
 /* 顶部 */
 .header{
     text-align:center;
-    padding:15px 0 20px;
+    padding:15px 0 18px;
 }
 
 .logo{
-    font-size:36px;
+    font-size:31px;
     font-weight:900;
-    letter-spacing:3px;
+    letter-spacing:2px;
 }
 
 .logo span{
-    display:inline-block;
-    margin-left:7px;
-    padding:3px 5px;
-    font-size:12px;
-    background:#e84d5b;
-    color:white;
+    font-size:11px;
+    color:#fff;
+    background:#ef5665;
+    padding:3px 6px;
     border-radius:5px;
+    margin-left:5px;
     vertical-align:middle;
 }
 
 .subtitle{
-    margin-top:8px;
+    margin-top:7px;
     color:#65748d;
-    font-size:15px;
+    font-size:14px;
+}
+
+/* 页面 */
+.page{
+    display:none;
+}
+
+.page.active{
+    display:block;
 }
 
 /* 卡片 */
 .card{
-    background:rgba(255,255,255,.91);
-    border:1px solid #d7e3f0;
-    border-radius:18px;
-    margin-bottom:16px;
-    padding:20px;
-    box-shadow:0 8px 25px rgba(50,80,120,.1);
+    background:rgba(255,255,255,.94);
+    border:1px solid #d6e2ee;
+    border-radius:17px;
+    padding:18px;
+    margin-bottom:15px;
+    box-shadow:0 7px 25px rgba(45,76,115,.10);
 }
 
 .title{
-    font-size:22px;
-    font-weight:800;
+    font-size:21px;
+    font-weight:850;
+    margin-bottom:14px;
+}
+
+.desc{
+    color:#718099;
+    font-size:14px;
+    line-height:1.7;
+    margin-top:-6px;
     margin-bottom:15px;
 }
 
-.title small{
-    font-size:13px;
-    color:#718099;
-    font-weight:400;
+/* 实时开奖 */
+.live-card{
+    padding:20px;
 }
 
-/* 最新开奖 */
-.latest-head{
+.live-top{
     display:flex;
     justify-content:space-between;
     align-items:center;
-    margin-bottom:20px;
 }
 
-.badge{
-    background:#e5f4ee;
-    color:#38956c;
-    border:1px solid #b9dfd0;
-    padding:7px 13px;
-    border-radius:10px;
+.status{
+    color:#39956c;
+    background:#e6f4ed;
+    border:1px solid #b8dfcf;
+    padding:6px 12px;
+    border-radius:9px;
+    font-size:13px;
     font-weight:700;
 }
 
 .issue{
-    font-size:25px;
-    font-weight:800;
-    margin-bottom:20px;
+    font-size:24px;
+    font-weight:900;
+    margin-top:20px;
 }
 
 .balls{
     display:flex;
     justify-content:center;
     align-items:center;
-    gap:12px;
-    margin:25px 0;
+    gap:9px;
+    margin:28px 0 22px;
 }
 
 .ball{
-    width:65px;
-    height:65px;
+    width:58px;
+    height:58px;
     border-radius:50%;
     display:flex;
-    justify-content:center;
     align-items:center;
-    color:white;
-    font-size:24px;
-    font-weight:800;
-    background:linear-gradient(145deg,#63a5f5,#2666c5);
-    box-shadow:0 7px 15px rgba(50,100,180,.25);
+    justify-content:center;
+    color:#fff;
+    font-size:22px;
+    font-weight:900;
+    background:linear-gradient(145deg,#61a5f4,#2666c5);
+    box-shadow:0 6px 14px rgba(42,104,194,.25);
 }
 
 .ball:nth-child(3){
-    background:linear-gradient(145deg,#62c796,#27865d);
+    background:linear-gradient(145deg,#65c99b,#29895f);
 }
 
 .ball:nth-child(5){
-    background:linear-gradient(145deg,#f4b267,#cf681c);
+    background:linear-gradient(145deg,#f3b06a,#ca671d);
 }
 
 .ball.sum{
-    background:linear-gradient(145deg,#ef7587,#c8334c);
+    background:linear-gradient(145deg,#ed7587,#c6324b);
 }
 
-.plus,.equal{
-    font-size:25px;
-    font-weight:800;
+.sign{
     color:#65748d;
+    font-size:22px;
+    font-weight:900;
 }
 
 .combo{
-    text-align:center;
-    margin:12px auto 20px;
-    padding:10px 30px;
     width:max-content;
-    border-radius:13px;
+    margin:auto;
+    padding:9px 28px;
+    border-radius:12px;
     background:#e1f0eb;
-    color:#39966c;
-    font-size:25px;
-    font-weight:800;
+    color:#39956c;
+    font-size:22px;
+    font-weight:900;
 }
 
-.next{
+.next-info{
+    margin-top:22px;
     color:#65748d;
-    font-size:16px;
+    font-size:15px;
+    line-height:1.9;
+}
+
+.next-info strong{
+    color:#17233b;
+    font-size:18px;
 }
 
 .countdown{
-    color:#17233b;
-    font-size:22px;
+    color:#1c2b45;
+    font-size:24px;
     font-weight:900;
-    margin-left:10px;
 }
 
 /* 表格 */
@@ -205,81 +234,80 @@ body{
 table{
     width:100%;
     border-collapse:collapse;
-    min-width:650px;
+    min-width:580px;
 }
 
 th{
     background:#edf3f9;
-    color:#526078;
-    font-size:16px;
-    padding:14px 10px;
-    text-align:center;
+    color:#53617a;
+    padding:13px 8px;
+    font-size:15px;
 }
 
 td{
-    padding:15px 10px;
-    border-bottom:1px solid #dbe4ed;
+    padding:14px 8px;
+    border-bottom:1px solid #dce5ee;
     text-align:center;
-    font-size:16px;
+    font-size:15px;
 }
 
-.type{
+.tag{
     display:inline-block;
-    padding:5px 12px;
-    border-radius:10px;
-    background:#edf4fa;
-    border:1px solid #d5e2ee;
+    padding:5px 10px;
+    border-radius:9px;
+    background:#eef5fa;
+    border:1px solid #d5e1ec;
 }
 
 /* 走势图 */
 .tabs{
     display:flex;
-    gap:10px;
+    gap:9px;
     margin-bottom:18px;
-    flex-wrap:wrap;
 }
 
 .tabs button{
-    border:1px solid #d1deec;
     background:#fff;
-    color:#62718a;
-    padding:10px 20px;
+    border:1px solid #d2dfec;
+    color:#65748d;
     border-radius:10px;
-    font-size:15px;
+    padding:9px 17px;
+    font-size:14px;
 }
 
 .tabs button.active{
-    background:#438be0;
     color:#fff;
+    background:#438be0;
     border-color:#438be0;
 }
 
 .chart{
+    height:250px;
     width:100%;
-    height:260px;
-    background:#f8fbfe;
+    background:#f7fbff;
     border-radius:12px;
-    padding:10px;
+    padding:8px;
 }
 
-svg{
+.chart svg{
     width:100%;
     height:100%;
 }
 
 /* 分布 */
-.distribution{
+.grid4{
     display:grid;
     grid-template-columns:repeat(4,1fr);
     gap:10px;
 }
 
-.item{
-    padding:11px;
+.grid-item{
     text-align:center;
-    border-radius:12px;
+    padding:12px 7px;
+    border-radius:11px;
     background:#f1f6fb;
     border:1px solid #d6e3ef;
+    color:#24334b;
     font-weight:700;
 }
 
@@ -290,80 +318,96 @@ svg{
     gap:12px;
 }
 
-.predict-card{
-    border:1px solid #d5e2ee;
-    background:#f7faff;
-    border-radius:14px;
-    padding:16px;
+.predict{
+    padding:17px;
+    background:#f6faff;
+    border:1px solid #d5e3ef;
+    border-radius:13px;
 }
 
-.predict-card h3{
-    margin-bottom:7px;
+.predict-title{
+    font-size:16px;
+    font-weight:800;
 }
 
-.predict-card p{
-    color:#718099;
-    font-size:12px;
+.predict-value{
+    font-size:21px;
+    color:#438be0;
+    font-weight:900;
+    margin-top:8px;
 }
 
-/* 杀组 */
-.kill-title{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
+.predict-note{
+    color:#8793a5;
+    font-size:11px;
+    margin-top:6px;
 }
 
-.entertainment{
-    color:#ef4455;
-    font-size:13px;
-    font-weight:700;
-}
-
+/* 杀组娱乐 */
 .kill-grid{
     display:grid;
     grid-template-columns:repeat(4,1fr);
-    gap:10px;
-    margin-top:15px;
+    gap:9px;
 }
 
-.kill-btn{
-    padding:16px 8px;
-    border-radius:13px;
-    border:1px solid #d9e4ef;
+.kill{
+    border:1px solid #d5e2ed;
     background:#f7faff;
+    border-radius:12px;
+    padding:14px 5px;
+    text-align:center;
     cursor:pointer;
+}
+
+.kill strong{
+    display:block;
+    font-size:16px;
+}
+
+.kill small{
+    color:#ef5361;
+    font-size:10px;
+}
+
+.random{
+    margin-top:13px;
+    padding:13px;
+    border-radius:12px;
+    background:#eef5ff;
+    border:1px solid #d3e2f2;
     text-align:center;
 }
 
-.kill-btn strong{
-    display:block;
-    font-size:17px;
+.random button{
+    border:0;
+    color:white;
+    background:#438be0;
+    padding:8px 17px;
+    border-radius:9px;
+    margin-top:9px;
 }
 
-.kill-btn small{
-    display:block;
-    margin-top:5px;
+.warning{
     color:#ef5361;
     font-size:11px;
+    margin-top:7px;
 }
 
-.kill-result{
-    margin-top:15px;
-    padding:14px;
-    text-align:center;
-    border-radius:13px;
-    background:#eef5ff;
-    border:1px solid #d3e3f5;
+/* 分析 */
+.analysis-row{
+    display:flex;
+    justify-content:space-between;
+    padding:13px 5px;
+    border-bottom:1px solid #e0e7ef;
 }
 
-.random-btn{
-    border:0;
-    background:#438be0;
-    color:white;
-    padding:9px 18px;
-    border-radius:10px;
-    margin-top:10px;
-    font-size:14px;
+.analysis-row:last-child{
+    border-bottom:0;
+}
+
+.number{
+    font-size:18px;
+    font-weight:900;
 }
 
 /* 底部 */
@@ -372,31 +416,32 @@ svg{
     left:0;
     right:0;
     bottom:0;
-    height:78px;
-    background:rgba(255,255,255,.96);
-    border-top:1px solid #dbe5ef;
-    display:flex;
-    justify-content:center;
+    height:76px;
+    background:rgba(255,255,255,.97);
+    border-top:1px solid #dce5ef;
     z-index:1000;
 }
 
 .bottom-inner{
-    width:100%;
     max-width:800px;
+    height:100%;
+    margin:auto;
     display:flex;
     justify-content:space-around;
 }
 
 .nav{
+    flex:1;
     text-align:center;
-    padding-top:10px;
-    color:#687890;
+    color:#6d7b91;
+    padding-top:8px;
+    cursor:pointer;
     font-size:13px;
 }
 
-.nav .icon{
+.nav-icon{
     font-size:23px;
-    margin-bottom:4px;
+    height:30px;
 }
 
 .nav.active{
@@ -407,37 +452,11 @@ svg{
 @media(max-width:600px){
 
     .app{
-        padding:12px 10px 100px;
+        padding-left:10px;
+        padding-right:10px;
     }
 
-    .logo{
-        font-size:30px;
-    }
-
-    .card{
-        padding:15px;
-        border-radius:16px;
-    }
-
-    .ball{
-        width:52px;
-        height:52px;
-        font-size:19px;
-    }
-
-    .balls{
-        gap:6px;
-    }
-
-    .plus,.equal{
-        font-size:18px;
-    }
-
-    .combo{
-        font-size:21px;
-    }
-
-    .distribution{
+    .grid4{
         grid-template-columns:repeat(2,1fr);
     }
 
@@ -447,6 +466,24 @@ svg{
 
     .predict-box{
         grid-template-columns:1fr;
+    }
+
+    .ball{
+        width:52px;
+        height:52px;
+        font-size:20px;
+    }
+
+    .balls{
+        gap:5px;
+    }
+
+    .sign{
+        font-size:18px;
+    }
+
+    .combo{
+        font-size:20px;
     }
 }
 </style>
@@ -458,23 +495,154 @@ svg{
 
 <div class="app">
 
+<!-- ================= 首页 ================= -->
+<section id="home" class="page active">
+
     <div class="header">
         <div class="logo">
-            小濠预测
-            <span>预测</span>
+            小濠预测 <span>预测</span>
         </div>
 
         <div class="subtitle">
-            📊 数据分析 · 走势参考 · 仅供娱乐
+            🇨🇦 加拿大28 · 实时开奖数据中心
         </div>
     </div>
 
+    <!-- 实时开奖 -->
+    <div class="card live-card">
 
-    <!-- 最新10期开奖 -->
+        <div class="live-top">
+            <div class="title" style="margin:0">
+                🕐 实时开奖
+            </div>
+
+            <div class="status" id="status">
+                实时连接
+            </div>
+        </div>
+
+        <div class="issue" id="currentIssue">
+            第 ------ 期
+        </div>
+
+        <div class="balls">
+
+            <div class="ball" id="b1">--</div>
+
+            <div class="sign">+</div>
+
+            <div class="ball" id="b2">--</div>
+
+            <div class="sign">+</div>
+
+            <div class="ball" id="b3">--</div>
+
+            <div class="sign">=</div>
+
+            <div class="ball sum" id="bs">--</div>
+
+        </div>
+
+        <div class="combo" id="currentCombo">
+            --
+        </div>
+
+        <div class="next-info">
+
+            下期开奖：
+            <strong id="nextIssue">
+                第 ------ 期
+            </strong>
+
+            <br>
+
+            距离开奖：
+            <span class="countdown" id="countdown">
+                --:--
+            </span>
+
+        </div>
+
+    </div>
+
+    <!-- 最近开奖 -->
     <div class="card">
 
         <div class="title">
             🔄 最近10期开奖
+        </div>
+
+        <div class="table-wrap">
+
+        <table>
+
+            <thead>
+                <tr>
+                    <th>期号</th>
+                    <th>号码</th>
+                    <th>和值</th>
+                    <th>组合</th>
+                </tr>
+            </thead>
+
+            <tbody id="latestRows">
+                <tr>
+                    <td colspan="4">
+                        正在加载开奖数据…
+                    </td>
+                </tr>
+            </tbody>
+
+        </table>
+
+        </div>
+    </div>
+
+</section>
+
+
+<!-- ================= 开奖 ================= -->
+<section id="draw" class="page">
+
+    <div class="header">
+        <div class="logo">实时开奖</div>
+        <div class="subtitle">
+            🇨🇦 加拿大28 · 最新开奖数据
+        </div>
+    </div>
+
+    <div class="card">
+
+        <div class="title">
+            🕐 当前开奖
+        </div>
+
+        <div class="issue" id="drawIssue">
+            第 ------ 期
+        </div>
+
+        <div class="balls">
+
+            <div class="ball" id="db1">--</div>
+            <div class="sign">+</div>
+            <div class="ball" id="db2">--</div>
+            <div class="sign">+</div>
+            <div class="ball" id="db3">--</div>
+            <div class="sign">=</div>
+            <div class="ball sum" id="dbs">--</div>
+
+        </div>
+
+        <div class="combo" id="drawCombo">
+            --
+        </div>
+
+    </div>
+
+    <div class="card">
+
+        <div class="title">
+            📋 开奖记录
         </div>
 
         <div class="table-wrap">
@@ -485,28 +653,33 @@ svg{
                     <th>期号</th>
                     <th>号码</th>
                     <th>和值</th>
-                    <th>组别</th>
+                    <th>组合</th>
                 </tr>
             </thead>
 
-            <tbody id="latestRows">
-                <tr>
-                    <td colspan="4">正在加载开奖数据…</td>
-                </tr>
-            </tbody>
+            <tbody id="drawRows"></tbody>
+
         </table>
 
         </div>
+
     </div>
 
+</section>
 
-    <!-- 开奖走势 -->
-    <div class="card">
 
-        <div class="title">
-            📈 开奖走势
-            <small>和值、大小、单双、四组合、球位和特殊形态走势。</small>
+<!-- ================= 走势 ================= -->
+<section id="trend" class="page">
+
+    <div class="header">
+        <div class="logo">开奖走势</div>
+
+        <div class="subtitle">
+            和值、大小、单双、四组合走势
         </div>
+    </div>
+
+    <div class="card">
 
         <div class="tabs">
             <button>20期</button>
@@ -523,171 +696,198 @@ svg{
 
             <svg viewBox="0 0 700 250">
 
-                <line x1="50" y1="30" x2="680" y2="30"
-                      stroke="#d5e2ee"/>
+                <line x1="45" y1="30" x2="680" y2="30"
+                      stroke="#d7e2ed"/>
 
-                <line x1="50" y1="85" x2="680" y2="85"
-                      stroke="#d5e2ee"/>
+                <line x1="45" y1="85" x2="680" y2="85"
+                      stroke="#d7e2ed"/>
 
-                <line x1="50" y1="140" x2="680" y2="140"
-                      stroke="#d5e2ee"/>
+                <line x1="45" y1="140" x2="680" y2="140"
+                      stroke="#d7e2ed"/>
 
-                <line x1="50" y1="195" x2="680" y2="195"
-                      stroke="#d5e2ee"/>
+                <line x1="45" y1="195" x2="680" y2="195"
+                      stroke="#d7e2ed"/>
 
                 <polyline
                     points="
-                    50,145
-                    75,70
-                    100,120
-                    125,110
-                    150,95
-                    175,175
-                    200,150
-                    225,125
-                    250,140
-                    275,55
-                    300,115
-                    325,80
-                    350,190
-                    375,85
-                    400,125
-                    425,165
-                    450,120
-                    475,140
-                    500,185
-                    525,95
-                    550,80
-                    575,115
-                    600,150
-                    625,105
+                    45,145
+                    70,70
+                    95,120
+                    120,110
+                    145,95
+                    170,175
+                    195,150
+                    220,125
+                    245,140
+                    270,55
+                    295,115
+                    320,80
+                    345,190
+                    370,85
+                    395,125
+                    420,165
+                    445,120
+                    470,140
+                    495,185
+                    520,95
+                    545,80
+                    570,115
+                    595,150
+                    620,105
                     650,75
                     680,105"
                     fill="none"
                     stroke="#438be0"
                     stroke-width="5"
-                    stroke-linejoin="round"
-                    stroke-linecap="round"/>
+                    stroke-linecap="round"
+                    stroke-linejoin="round"/>
 
             </svg>
 
         </div>
+
     </div>
 
-
-    <!-- 组合分布 -->
     <div class="card">
 
         <div class="title">
-            📈 组合分布
+            📊 组合分布
         </div>
 
-        <div class="distribution">
-
-            <div class="item">小双 9</div>
-            <div class="item">大单 8</div>
-            <div class="item">小单 7</div>
-            <div class="item">大双 6</div>
-
+        <div class="grid4">
+            <div class="grid-item">小双 9</div>
+            <div class="grid-item">大单 8</div>
+            <div class="grid-item">小单 7</div>
+            <div class="grid-item">大双 6</div>
         </div>
 
     </div>
 
-
-    <!-- 形态分布 -->
     <div class="card">
 
         <div class="title">
-            📈 形态分布
+            📊 形态分布
         </div>
 
-        <div class="distribution">
-
-            <div class="item">和值 15</div>
-            <div class="item">跨度 7</div>
-            <div class="item">连号 4</div>
-            <div class="item">重号 3</div>
-
+        <div class="grid4">
+            <div class="grid-item">杂六</div>
+            <div class="grid-item">对子</div>
+            <div class="grid-item">豹子</div>
+            <div class="grid-item">顺子</div>
         </div>
 
     </div>
 
+</section>
 
-    <!-- 预测 -->
+
+<!-- ================= 预测 ================= -->
+<section id="predict" class="page">
+
+    <div class="header">
+
+        <div class="logo">
+            预测
+        </div>
+
+        <div class="subtitle">
+            数据参考 · 娱乐展示
+        </div>
+
+    </div>
+
     <div class="card">
 
         <div class="title">
-            🎯 预测
+            🎯 数据走势参考
         </div>
 
         <div class="predict-box">
 
-            <div class="predict-card">
-                <h3>数据走势参考</h3>
-                <p>仅作为页面娱乐展示</p>
+            <div class="predict">
+
+                <div class="predict-title">
+                    和值走势
+                </div>
+
+                <div class="predict-value">
+                    数据参考
+                </div>
+
+                <div class="predict-note">
+                    仅供娱乐展示
+                </div>
+
             </div>
 
-            <div class="predict-card">
-                <h3>娱乐展示</h3>
-                <p>不代表实际开奖结果</p>
+            <div class="predict">
+
+                <div class="predict-title">
+                    大小单双
+                </div>
+
+                <div class="predict-value">
+                    走势参考
+                </div>
+
+                <div class="predict-note">
+                    不代表实际开奖结果
+                </div>
+
             </div>
 
         </div>
 
     </div>
 
-
-    <!-- 杀组 -->
+    <!-- 杀组娱乐展示 -->
     <div class="card">
 
-        <div class="kill-title">
+        <div class="title">
+            🎲 杀组
+        </div>
 
-            <div class="title" style="margin:0">
-                🛡️ 杀组
-            </div>
-
-            <div class="entertainment">
-                仅供娱乐切勿牟利
-            </div>
-
+        <div class="desc">
+            娱乐随机展示
         </div>
 
         <div class="kill-grid">
 
-            <button class="kill-btn" onclick="showKill('杀大单')">
-                <strong>🔴 杀大单</strong>
-                <small>仅供娱乐</small>
-            </button>
+            <div class="kill" onclick="showKill('杀大单')">
+                <strong>杀大单</strong>
+                <small>娱乐</small>
+            </div>
 
-            <button class="kill-btn" onclick="showKill('杀大双')">
-                <strong>🔵 杀大双</strong>
-                <small>仅供娱乐</small>
-            </button>
+            <div class="kill" onclick="showKill('杀大双')">
+                <strong>杀大双</strong>
+                <small>娱乐</small>
+            </div>
 
-            <button class="kill-btn" onclick="showKill('杀小双')">
-                <strong>🟠 杀小双</strong>
-                <small>仅供娱乐</small>
-            </button>
+            <div class="kill" onclick="showKill('杀小单')">
+                <strong>杀小单</strong>
+                <small>娱乐</small>
+            </div>
 
-            <button class="kill-btn" onclick="showKill('杀小单')">
-                <strong>🟣 杀小单</strong>
-                <small>仅供娱乐</small>
-            </button>
+            <div class="kill" onclick="showKill('杀小双')">
+                <strong>杀小双</strong>
+                <small>娱乐</small>
+            </div>
 
         </div>
 
-        <div class="kill-result">
+        <div class="random">
 
-            <div>
-                当前娱乐展示：
-                <strong id="killResult">—</strong>
-            </div>
+            当前娱乐展示：
 
-            <button class="random-btn" onclick="randomKill()">
+            <strong id="killResult">—</strong>
+
+            <br>
+
+            <button onclick="randomKill()">
                 🎲 随机展示
             </button>
 
-            <div style="font-size:11px;color:#ef5361;margin-top:7px">
+            <div class="warning">
                 仅供娱乐切勿牟利
             </div>
 
@@ -695,78 +895,124 @@ svg{
 
     </div>
 
+</section>
 
-    <!-- 实时开奖 -->
-    <div class="card">
 
-        <div class="title">
-            🕐 实时开奖
+<!-- ================= 分析 ================= -->
+<section id="analysis" class="page">
+
+    <div class="header">
+
+        <div class="logo">
+            数据分析
         </div>
 
-        <div class="issue" id="currentIssue">
-            正在连接开奖数据…
-        </div>
-
-        <div class="balls">
-
-            <div class="ball" id="b1">--</div>
-            <div class="plus">+</div>
-
-            <div class="ball" id="b2">--</div>
-            <div class="plus">+</div>
-
-            <div class="ball" id="b3">--</div>
-            <div class="equal">=</div>
-
-            <div class="ball sum" id="bs">--</div>
-
-        </div>
-
-        <div class="combo" id="currentCombo">
-            --
-        </div>
-
-        <div class="next">
-            下期开奖：
-            <span id="nextIssue">第------期</span>
-
-            <span class="countdown">
-                <span id="countdown">--:--</span>
-            </span>
+        <div class="subtitle">
+            开奖统计 · 遗漏数据 · 组合分布
         </div>
 
     </div>
 
+    <div class="card">
+
+        <div class="title">
+            📊 大小单双统计
+        </div>
+
+        <div class="analysis-row">
+            <span>大</span>
+            <span class="number">— 期</span>
+        </div>
+
+        <div class="analysis-row">
+            <span>小</span>
+            <span class="number">— 期</span>
+        </div>
+
+        <div class="analysis-row">
+            <span>单</span>
+            <span class="number">— 期</span>
+        </div>
+
+        <div class="analysis-row">
+            <span>双</span>
+            <span class="number">— 期</span>
+        </div>
+
+    </div>
+
+    <div class="card">
+
+        <div class="title">
+            🔢 和值分布
+        </div>
+
+        <div class="grid4">
+
+            <div class="grid-item">27<br>—期</div>
+            <div class="grid-item">26<br>—期</div>
+            <div class="grid-item">25<br>—期</div>
+            <div class="grid-item">24<br>—期</div>
+
+            <div class="grid-item">23<br>—期</div>
+            <div class="grid-item">22<br>—期</div>
+            <div class="grid-item">21<br>—期</div>
+            <div class="grid-item">20<br>—期</div>
+
+        </div>
+
+    </div>
+
+    <div class="card">
+
+        <div class="title">
+            ⏳ 遗漏统计
+        </div>
+
+        <div class="grid4">
+
+            <div class="grid-item">0<br>—期</div>
+            <div class="grid-item">1<br>—期</div>
+            <div class="grid-item">2<br>—期</div>
+            <div class="grid-item">3<br>—期</div>
+
+        </div>
+
+    </div>
+
+</section>
+
 </div>
 
 
-<!-- 底部导航 -->
+<!-- ================= 底部导航 ================= -->
+
 <div class="bottom">
 
     <div class="bottom-inner">
 
-        <div class="nav active">
-            <div class="icon">⌂</div>
+        <div class="nav active" onclick="goPage('home',this)">
+            <div class="nav-icon">⌂</div>
             首页
         </div>
 
-        <div class="nav">
-            <div class="icon">◷</div>
+        <div class="nav" onclick="goPage('draw',this)">
+            <div class="nav-icon">◷</div>
             开奖
         </div>
 
-        <div class="nav">
-            <div class="icon">⌁</div>
+        <div class="nav" onclick="goPage('trend',this)">
+            <div class="nav-icon">⌁</div>
             走势
         </div>
 
-        <div class="nav">
-            <div class="icon">◎</div>
+        <div class="nav" onclick="goPage('predict',this)">
+            <div class="nav-icon">◎</div>
             预测
         </div>
 
-        <div class="nav">
-            <div class="icon">▥</div>
+        <div class="nav" onclick="goPage('analysis',this)">
+            <div class="nav-icon">▥</div>
             分析
         </div>
 
@@ -777,8 +1023,10 @@ svg{
 
 <script>
 
-/* 樱花数量 */
-const sakura = document.getElementById("sakura");
+/* ================= 樱花 ================= */
+
+const sakura =
+document.getElementById("sakura");
 
 for(let i=0;i<28;i++){
 
@@ -786,27 +1034,65 @@ for(let i=0;i<28;i++){
 
     p.className="petal";
 
-    p.style.left=Math.random()*100+"%";
-    p.style.animationDuration=(7+Math.random()*9)+"s";
-    p.style.animationDelay=(-Math.random()*12)+"s";
-    p.style.transform=`scale(${.5+Math.random()*.9})`;
+    p.style.left=
+        Math.random()*100+"%";
+
+    p.style.animationDuration=
+        (7+Math.random()*8)+"s";
+
+    p.style.animationDelay=
+        (-Math.random()*12)+"s";
+
+    p.style.opacity=
+        .4+Math.random()*.6;
 
     sakura.appendChild(p);
 }
 
 
-/* 随机娱乐展示 */
-const kills=[
+/* ================= 页面切换 ================= */
+
+function goPage(page,nav){
+
+    document.querySelectorAll(".page")
+        .forEach(p=>{
+            p.classList.remove("active");
+        });
+
+    document.getElementById(page)
+        .classList.add("active");
+
+    document.querySelectorAll(".nav")
+        .forEach(n=>{
+            n.classList.remove("active");
+        });
+
+    nav.classList.add("active");
+
+    window.scrollTo({
+        top:0,
+        behavior:"smooth"
+    });
+}
+
+
+/* ================= 杀组娱乐 ================= */
+
+const killList=[
     "杀大单",
     "杀大双",
-    "杀小双",
-    "杀小单"
+    "杀小单",
+    "杀小双"
 ];
 
 function randomKill(){
 
     const value=
-        kills[Math.floor(Math.random()*kills.length)];
+        killList[
+            Math.floor(
+                Math.random()*killList.length
+            )
+        ];
 
     document.getElementById("killResult")
         .innerText=value;
@@ -819,219 +1105,380 @@ function showKill(value){
 }
 
 
-/* API */
+/* ================= 开奖数据 ================= */
+
 let countdownSeconds=0;
 
 async function loadData(){
 
     try{
 
-        const res=await fetch(
-            "/api/kj.json?nbr=20",
-            {cache:"no-store"}
-        );
+        const response=
+            await fetch(
+                "/api/kj.json?nbr=30",
+                {
+                    cache:"no-store"
+                }
+            );
 
-        const json=await res.json();
+        const json=
+            await response.json();
 
         const data=
             Array.isArray(json)
             ? json
-            : (json.data||[]);
+            : (json.data || []);
 
-        if(!data.length)return;
+        if(!data.length){
+            return;
+        }
 
         const latest=data[0];
 
-        updateLatest(latest);
-        updateTable(data);
+        updateCurrent(latest);
 
-    }catch(e){
+        updateRows(data);
 
-        console.log(e);
+        updateDrawPage(data);
+
+        document.getElementById("status")
+            .innerText="实时连接";
+
+    }catch(error){
+
+        console.log(error);
+
+        document.getElementById("status")
+            .innerText="连接中";
 
     }
 }
 
 
-/* 最新开奖 */
-function updateLatest(x){
+/* ================= 解析号码 ================= */
 
-    const issue=
-        x.period||
-        x.issue||
-        x.qh||
-        "--";
-
-    let nums=[];
+function getNumbers(x){
 
     if(Array.isArray(x.number)){
-        nums=x.number;
-    }else{
-        nums=String(x.number||"")
-            .match(/\d+/g)||[];
+        return x.number.map(Number);
     }
+
+    const text=
+        String(
+            x.number ||
+            x.numbers ||
+            ""
+        );
+
+    return (
+        text.match(/\d+/g)||[]
+    ).map(Number);
+}
+
+
+/* ================= 获取期号 ================= */
+
+function getIssue(x){
+
+    return (
+        x.period ||
+        x.issue ||
+        x.qh ||
+        x.expect ||
+        "--"
+    );
+}
+
+
+/* ================= 当前开奖 ================= */
+
+function updateCurrent(x){
+
+    const issue=
+        getIssue(x);
+
+    const nums=
+        getNumbers(x);
+
+    const combo=
+        x.combination ||
+        x.combo ||
+        x.type ||
+        "--";
+
+    let sum="--";
 
     if(nums.length>=3){
 
+        sum=
+            nums[0]+
+            nums[1]+
+            nums[2];
+
         document.getElementById("b1")
-            .innerText=String(nums[0]).padStart(2,"0");
+            .innerText=
+            String(nums[0])
+            .padStart(2,"0");
 
         document.getElementById("b2")
-            .innerText=String(nums[1]).padStart(2,"0");
+            .innerText=
+            String(nums[1])
+            .padStart(2,"0");
 
         document.getElementById("b3")
-            .innerText=String(nums[2]).padStart(2,"0");
+            .innerText=
+            String(nums[2])
+            .padStart(2,"0");
 
         document.getElementById("bs")
-            .innerText=
-            Number(nums[0])+
-            Number(nums[1])+
-            Number(nums[2]);
+            .innerText=sum;
 
+        document.getElementById("db1")
+            .innerText=
+            String(nums[0])
+            .padStart(2,"0");
+
+        document.getElementById("db2")
+            .innerText=
+            String(nums[1])
+            .padStart(2,"0");
+
+        document.getElementById("db3")
+            .innerText=
+            String(nums[2])
+            .padStart(2,"0");
+
+        document.getElementById("dbs")
+            .innerText=sum;
     }
 
     document.getElementById("currentIssue")
-        .innerText="第 "+issue+" 期";
+        .innerText=
+        "第 "+issue+" 期";
+
+    document.getElementById("drawIssue")
+        .innerText=
+        "第 "+issue+" 期";
 
     document.getElementById("currentCombo")
-        .innerText=
-            x.combination||
-            x.combo||
-            x.type||
-            "--";
+        .innerText=combo;
+
+    document.getElementById("drawCombo")
+        .innerText=combo;
+
+
+    /* 下一期 */
+    const next=
+        Number(issue)+1;
 
     document.getElementById("nextIssue")
         .innerText=
-            "第 "+(Number(issue)+1)+" 期";
+        "第 "+next+" 期";
+
 
     startCountdown(x);
 }
 
 
-/* 表格 */
-function updateTable(data){
+/* ================= 最近开奖 ================= */
+
+function updateRows(data){
 
     let html="";
 
-    data.slice(0,10).forEach(x=>{
+    data.slice(0,10)
+        .forEach(x=>{
 
-        const issue=
-            x.period||
-            x.issue||
-            x.qh||
-            "--";
+            const issue=
+                getIssue(x);
 
-        const number=
-            x.number||
-            "--";
+            const nums=
+                getNumbers(x);
 
-        let nums=[];
+            let sum="--";
 
-        if(Array.isArray(number)){
-            nums=number;
-        }else{
-            nums=String(number)
-                .match(/\d+/g)||[];
-        }
+            if(nums.length>=3){
+                sum=
+                    nums[0]+
+                    nums[1]+
+                    nums[2];
+            }
 
-        let sum="--";
+            const combo=
+                x.combination ||
+                x.combo ||
+                x.type ||
+                "--";
 
-        if(nums.length>=3){
-            sum=
-                Number(nums[0])+
-                Number(nums[1])+
-                Number(nums[2]);
-        }
+            html+=`
+            <tr>
+                <td>${issue}</td>
 
-        const combo=
-            x.combination||
-            x.combo||
-            x.type||
-            "--";
+                <td>
+                    ${nums.join(" + ")}
+                </td>
 
-        html+=`
-        <tr>
-            <td>${issue}</td>
-            <td>${nums.join(" + ")}</td>
-            <td>${sum}</td>
-            <td>
-                <span class="type">${combo}</span>
-            </td>
-        </tr>
-        `;
+                <td>
+                    ${sum}
+                </td>
 
-    });
+                <td>
+                    <span class="tag">
+                        ${combo}
+                    </span>
+                </td>
+            </tr>
+            `;
+
+        });
 
     document.getElementById("latestRows")
         .innerHTML=html;
 }
 
 
-/* 倒计时 */
+/* ================= 开奖页面 ================= */
+
+function updateDrawPage(data){
+
+    let html="";
+
+    data.slice(0,30)
+        .forEach(x=>{
+
+            const issue=
+                getIssue(x);
+
+            const nums=
+                getNumbers(x);
+
+            let sum="--";
+
+            if(nums.length>=3){
+
+                sum=
+                    nums[0]+
+                    nums[1]+
+                    nums[2];
+            }
+
+            const combo=
+                x.combination ||
+                x.combo ||
+                x.type ||
+                "--";
+
+            html+=`
+            <tr>
+
+                <td>${issue}</td>
+
+                <td>
+                    ${nums.join(" + ")}
+                </td>
+
+                <td>${sum}</td>
+
+                <td>
+                    <span class="tag">
+                        ${combo}
+                    </span>
+                </td>
+
+            </tr>
+            `;
+
+        });
+
+    document.getElementById("drawRows")
+        .innerHTML=html;
+}
+
+
+/* ================= 倒计时 ================= */
+
 function startCountdown(x){
 
-    if(x.countdown!==undefined){
+    if(
+        x.countdown !== undefined &&
+        x.countdown !== null
+    ){
 
         countdownSeconds=
             Number(x.countdown)||0;
 
     }else{
 
-        const t=
+        const time=
             new Date(
-                x.time||
-                x.open_time||
-                x.datetime
+                x.time ||
+                x.open_time ||
+                x.datetime ||
+                ""
             ).getTime();
 
-        if(!isNaN(t)){
+        if(!isNaN(time)){
 
             countdownSeconds=
                 Math.max(
                     0,
                     Math.floor(
-                        (t+210000-Date.now())/1000
+                        (
+                            time+
+                            210000-
+                            Date.now()
+                        )/1000
                     )
                 );
 
-        }
+        }else{
 
+            countdownSeconds=0;
+        }
     }
 
     updateCountdown();
 }
 
+
 function updateCountdown(){
 
-    const m=
-        Math.floor(countdownSeconds/60);
+    const min=
+        Math.floor(
+            countdownSeconds/60
+        );
 
-    const s=
+    const sec=
         countdownSeconds%60;
 
     document.getElementById("countdown")
         .innerText=
-        String(m).padStart(2,"0")
+        String(min).padStart(2,"0")
         +":"+
-        String(s).padStart(2,"0");
+        String(sec).padStart(2,"0");
 }
+
 
 setInterval(()=>{
 
     if(countdownSeconds>0){
 
         countdownSeconds--;
-        updateCountdown();
 
+        updateCountdown();
     }
 
 },1000);
 
 
-/* 自动刷新 */
+/* ================= 自动刷新 ================= */
+
 loadData();
 
-setInterval(loadData,5000);
+setInterval(
+    loadData,
+    5000
+);
 
 </script>
 
