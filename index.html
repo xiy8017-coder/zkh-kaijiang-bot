@@ -32,7 +32,7 @@ body{
   overflow-x:hidden;
 }
 
-/* 樱花层 */
+/* 樱花 */
 #sakura{
   position:fixed;
   inset:0;
@@ -57,12 +57,15 @@ body{
     transform:translate3d(0,-40px,0) rotate(0deg);
     opacity:0;
   }
+
   10%{
     opacity:.95;
   }
+
   50%{
     transform:translate3d(70px,50vh,0) rotate(180deg);
   }
+
   100%{
     transform:translate3d(-80px,110vh,0) rotate(360deg);
     opacity:0;
@@ -211,14 +214,6 @@ td{
   font-size:14px;
 }
 
-tr.win{
-  background:rgba(231,247,236,.72);
-}
-
-tr.lose{
-  background:rgba(253,235,235,.72);
-}
-
 .group{
   display:inline-block;
   padding:7px 13px;
@@ -238,11 +233,6 @@ tr.lose{
   font-weight:900;
 }
 
-.no{
-  color:#df3c32;
-  font-weight:900;
-}
-
 .footer{
   text-align:center;
   color:#71809a;
@@ -252,6 +242,7 @@ tr.lose{
 }
 
 @media(max-width:600px){
+
   .wrap{
     width:94%;
     padding-top:12px;
@@ -283,66 +274,119 @@ tr.lose{
 <div class="wrap">
 
   <div class="header">
-    <div class="logo">ZKH</div>
+
+    <div class="logo">
+      ZKH
+    </div>
+
     <h1>小濠国际杀组</h1>
-    <div class="subtitle">🇨🇦 加拿大28 · 实时开奖数据中心</div>
+
+    <div class="subtitle">
+      🇨🇦 加拿大28 · 实时开奖数据中心
+    </div>
+
   </div>
 
-  <!-- 最新开奖 -->
+
+  <!-- 实时开奖 -->
+
   <div class="card latest">
 
-    <div class="latest-title">🎯 实时开奖</div>
+    <div class="latest-title">
+      🎯 实时开奖
+    </div>
 
     <div class="latest-grid">
 
       <div class="info">
         <div class="label">当前期</div>
-        <div class="value" id="issue">加载中...</div>
+        <div class="value" id="issue">
+          加载中...
+        </div>
       </div>
 
       <div class="info">
         <div class="label">当前开奖号码</div>
-        <div class="value" id="number">--</div>
+        <div class="value" id="number">
+          --
+        </div>
       </div>
 
       <div class="info">
         <div class="label">本期组合</div>
-        <div class="value" id="combination">--</div>
+        <div class="value" id="combination">
+          --
+        </div>
       </div>
 
       <div class="info">
         <div class="label">距离下一期开奖</div>
-        <div class="value countdown" id="countdown">--:--</div>
+        <div class="value countdown" id="countdown">
+          --:--
+        </div>
       </div>
 
     </div>
 
   </div>
 
-  <!-- 功能 -->
+
+  <!-- 功能按钮 -->
+
   <div class="card">
 
     <div class="nav">
-      <button class="active" onclick="showPage('latest',this)">最新开奖</button>
-      <button onclick="showPage('trend',this)">近期走势</button>
-      <button onclick="showPage('history',this)">历史开奖</button>
-      <button onclick="showPage('kill',this)">杀组</button>
-      <button onclick="showPage('stats',this)">统计</button>
-      <button onclick="showPage('miss',this)">遗漏</button>
+
+      <button
+        class="active"
+        onclick="showPage('latest',this)">
+        最新开奖
+      </button>
+
+      <button
+        onclick="showPage('trend',this)">
+        近期走势
+      </button>
+
+      <button
+        onclick="showPage('history',this)">
+        历史开奖
+      </button>
+
+      <button
+        onclick="showPage('kill',this)">
+        杀组
+      </button>
+
+      <button
+        onclick="showPage('stats',this)">
+        统计
+      </button>
+
+      <button
+        onclick="showPage('miss',this)">
+        遗漏
+      </button>
+
     </div>
 
   </div>
 
+
   <!-- 杀组 -->
+
   <div class="card" id="killPage">
 
-    <div class="section-title">🔵 杀组</div>
+    <div class="section-title">
+      🔵 杀组
+    </div>
 
     <div class="table-wrap">
 
       <table>
 
         <thead>
+
           <tr>
             <th>期号</th>
             <th>时间</th>
@@ -351,12 +395,17 @@ tr.lose{
             <th>结果</th>
             <th>状态</th>
           </tr>
+
         </thead>
 
         <tbody id="killBody">
+
           <tr>
-            <td colspan="6">正在加载数据...</td>
+            <td colspan="6">
+              正在加载数据...
+            </td>
           </tr>
+
         </tbody>
 
       </table>
@@ -369,14 +418,18 @@ tr.lose{
 
   </div>
 
+
   <div class="card">
+
     <div class="footer">
       本页面展示实时开奖结果及历史统计数据。<br>
       数据仅用于开奖结果查询及历史数据展示。
     </div>
+
   </div>
 
 </div>
+
 
 <script>
 
@@ -395,12 +448,17 @@ function createSakura(){
     p.className="petal";
 
     p.style.left=Math.random()*100+"%";
-    p.style.animationDuration=(7+Math.random()*8)+"s";
-    p.style.animationDelay=(-Math.random()*12)+"s";
+
+    p.style.animationDuration=
+      (7+Math.random()*8)+"s";
+
+    p.style.animationDelay=
+      (-Math.random()*12)+"s";
 
     const size=7+Math.random()*10;
 
     p.style.width=size+"px";
+
     p.style.height=(size*.7)+"px";
 
     box.appendChild(p);
@@ -415,21 +473,29 @@ createSakura();
 ========================= */
 
 let data=[];
+
 let latest=null;
+
 let countdownSeconds=0;
+
 
 async function getData(n=30){
 
   const r=await fetch(
     "/api/kj.json?nbr="+n,
-    {cache:"no-store"}
+    {
+      cache:"no-store"
+    }
   );
 
   if(!r.ok){
+
     throw new Error("API "+r.status);
+
   }
 
   return await r.json();
+
 }
 
 
@@ -440,24 +506,30 @@ async function getData(n=30){
 function getCombination(x){
 
   if(x.combination){
+
     return x.combination;
+
   }
 
   const num=Number(x.number);
 
   if(!Number.isFinite(num)){
+
     return "--";
+
   }
 
   const size=num>=14?"大":"小";
+
   const parity=num%2===0?"双":"单";
 
   return size+parity;
+
 }
 
 
 /* =========================
-   杀组名称
+   杀组
 ========================= */
 
 function getKillGroup(x){
@@ -465,11 +537,15 @@ function getKillGroup(x){
   const c=getCombination(x);
 
   if(c==="大单") return "杀大单";
+
   if(c==="大双") return "杀大双";
+
   if(c==="小单") return "杀小单";
+
   if(c==="小双") return "杀小双";
 
   return "杀"+c;
+
 }
 
 
@@ -482,10 +558,14 @@ function renderLatest(){
   if(!latest) return;
 
   document.getElementById("issue").textContent=
-    latest.issue || latest.nbr || latest.period || "--";
+    latest.issue ||
+    latest.nbr ||
+    latest.period ||
+    "--";
 
   document.getElementById("number").textContent=
-    latest.number || "--";
+    latest.number ||
+    "--";
 
   document.getElementById("combination").textContent=
     getCombination(latest);
@@ -501,6 +581,7 @@ function setupCountdown(){
 
   if(!latest) return;
 
+
   if(latest.countdown!=null){
 
     let c=String(latest.countdown);
@@ -508,17 +589,23 @@ function setupCountdown(){
     const parts=c.split(":");
 
     if(parts.length===2){
+
       countdownSeconds=
         Number(parts[0])*60+
         Number(parts[1]);
+
     }else{
-      countdownSeconds=Number(c)||0;
+
+      countdownSeconds=
+        Number(c)||0;
+
     }
 
   }else if(latest.time){
 
     const t=new Date(
-      String(latest.time).replace(" ","T")
+      String(latest.time)
+      .replace(" ","T")
     ).getTime();
 
     if(!Number.isNaN(t)){
@@ -526,32 +613,50 @@ function setupCountdown(){
       const next=t+210000;
 
       countdownSeconds=
-        Math.max(0,Math.floor((next-Date.now())/1000));
+        Math.max(
+          0,
+          Math.floor(
+            (next-Date.now())/1000
+          )
+        );
+
     }
+
   }
 
   updateCountdown();
+
 }
+
 
 function updateCountdown(){
 
-  const el=document.getElementById("countdown");
+  const el=
+    document.getElementById("countdown");
 
-  let sec=Math.max(0,countdownSeconds);
+  let sec=Math.max(
+    0,
+    countdownSeconds
+  );
 
   const m=Math.floor(sec/60);
+
   const s=sec%60;
 
   el.textContent=
     String(m).padStart(2,"0")+
     ":"+
     String(s).padStart(2,"0");
+
 }
+
 
 setInterval(()=>{
 
   if(countdownSeconds>0){
+
     countdownSeconds--;
+
   }
 
   updateCountdown();
@@ -560,12 +665,14 @@ setInterval(()=>{
 
 
 /* =========================
-   杀组历史表
+   杀组表格
 ========================= */
 
 function renderKill(){
 
-  const body=document.getElementById("killBody");
+  const body=
+    document.getElementById("killBody");
+
 
   if(!data.length){
 
@@ -573,63 +680,119 @@ function renderKill(){
       '<tr><td colspan="6">暂无数据</td></tr>';
 
     return;
+
   }
+
 
   body.innerHTML=data.map((x,i)=>{
 
     const isLatest=i===0;
 
     const issue=
-      x.issue || x.nbr || x.period || "--";
+      x.issue ||
+      x.nbr ||
+      x.period ||
+      "--";
 
     const time=
-      x.time || "--";
+      x.time ||
+      "--";
 
     const number=
-      x.number || "--";
+      x.number ||
+      "--";
 
     const group=
       getKillGroup(x);
 
+
     if(isLatest){
 
       return `
+
         <tr>
+
           <td>${issue}</td>
-          <td><b>${formatCountdown()}</b></td>
-          <td><span class="group">${group}</span></td>
-          <td class="pending">等待开奖</td>
+
+          <td>
+            <b>${formatCountdown()}</b>
+          </td>
+
+          <td>
+            <span class="group">
+              ${group}
+            </span>
+          </td>
+
+          <td class="pending">
+            等待开奖
+          </td>
+
           <td>—</td>
+
           <td>◷</td>
+
         </tr>
+
       `;
 
     }
 
+
     return `
+
       <tr>
+
         <td>${issue}</td>
+
         <td>${time}</td>
-        <td><span class="group">${group}</span></td>
-        <td><b>${number}</b></td>
-        <td class="ok">已开奖</td>
-        <td class="ok">✓</td>
+
+        <td>
+          <span class="group">
+            ${group}
+          </span>
+        </td>
+
+        <td>
+          <b>${number}</b>
+        </td>
+
+        <td class="ok">
+          已开奖
+        </td>
+
+        <td class="ok">
+          ✓
+        </td>
+
       </tr>
+
     `;
 
   }).join("");
 
 }
 
+
+/* =========================
+   倒计时格式
+========================= */
+
 function formatCountdown(){
 
-  const sec=Math.max(0,countdownSeconds);
+  const sec=Math.max(
+    0,
+    countdownSeconds
+  );
 
   const m=Math.floor(sec/60);
+
   const s=sec%60;
 
-  return String(m).padStart(2,"0")+":"+
-         String(s).padStart(2,"0");
+  return String(m).padStart(2,"0")+
+    ":"+
+    String(s).padStart(2,"0");
+
 }
 
 
@@ -653,9 +816,13 @@ async function refresh(){
           []
         );
 
+
     if(!Array.isArray(data)){
+
       data=[];
+
     }
+
 
     latest=data[0];
 
@@ -665,36 +832,73 @@ async function refresh(){
 
     renderKill();
 
+
   }catch(e){
 
     console.log(e);
 
-    document.getElementById("issue").textContent="连接失败";
-    document.getElementById("number").textContent="--";
-    document.getElementById("combination").textContent="--";
+    document.getElementById("issue")
+      .textContent="连接失败";
+
+    document.getElementById("number")
+      .textContent="--";
+
+    document.getElementById("combination")
+      .textContent="--";
+
   }
 
 }
 
+
 refresh();
 
-setInterval(refresh,5000);
+
+/* 每5秒更新 */
+
+setInterval(
+  refresh,
+  5000
+);
 
 
 /* =========================
-   页面按钮
+   按钮
 ========================= */
 
 function showPage(page,btn){
 
-  document.querySelectorAll(".nav button")
-    .forEach(x=>x.classList.remove("active"));
+  document
+    .querySelectorAll(".nav button")
+    .forEach(x=>{
+      x.classList.remove("active");
+    });
+
 
   btn.classList.add("active");
 
+
   if(page==="kill"){
 
-    document.getElementById("killPage")
+    document
+      .getElementById("killPage")
       .scrollIntoView({
         behavior:"smooth",
-       
+        block:"start"
+      });
+
+  }else{
+
+    window.scrollTo({
+      top:0,
+      behavior:"smooth"
+    });
+
+  }
+
+}
+
+</script>
+
+</body>
+</html>
