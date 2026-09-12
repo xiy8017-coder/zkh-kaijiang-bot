@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>小濠国际杀组</title>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif}
+body{
+  color:#fff;
+  background:#17151c url("background.jpeg") center/cover fixed no-repeat;
+}
+body:before{
+  content:"";position:fixed;inset:0;
+  background:linear-gradient(180deg,rgba(0,0,0,.28),rgba(15,12,20,.72));
+  z-index:-1;
+}
+.wrap{max-width:760px;margin:auto;padding:22px 14px 40px}
+header{
+  text-align:center;padding:20px 12px 18px;
+  background:rgba(255,255,255,.12);
+  border:1px solid rgba(255,255,255,.22);
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border-radius:24px;box-shadow:0 10px 35px rgba(0,0,0,.2);
+}
+h1{margin:0;font-size:29px;letter-spacing:2px}
+.sub{margin-top:7px;opacity:.86;font-size:14px}
+.card{
+  margin-top:14px;padding:18px;
+  background:rgba(255,255,255,.15);
+  border:1px solid rgba(255,255,255,.22);
+  backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+  border-radius:22px;
+  box-shadow:0 10px 30px rgba(0,0,0,.18);
+}
+.title{font-size:18px;font-weight:700;margin-bottom:12px}
+.latest{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.item{background:rgba(0,0,0,.18);padding:12px;border-radius:14px}
+.label{font-size:12px;opacity:.72}.value{font-size:17px;margin-top:4px;font-weight:600}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:14px}
+button{
+  border:0;border-radius:18px;padding:17px 10px;
+  font-size:16px;font-weight:700;color:#fff;
+  background:rgba(255,255,255,.18);
+  box-shadow:inset 0 1px rgba(255,255,255,.22);
+  cursor:pointer;
+}
+button:active{transform:scale(.98)}
+#output{white-space:pre-wrap;line-height:1.65;font-size:14px}
+.note{font-size:12px;opacity:.7;text-align:center;margin-top:18px}
+@media(max-width:420px){
+  h1{font-size:25px}.latest{grid-template-columns:1fr}.grid{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>小濠国际杀组</h1>
+    <div class="sub">🇨🇦 加拿大28 · 开奖数据中心</div>
+  </header>
+
+  <section class="card">
+    <div class="title">◎ 最新开奖</div>
+    <div class="latest">
+      <div class="item"><div class="label">期号</div><div class="value" id="period">加载中…</div></div>
+      <div class="item"><div class="label">时间</div><div class="value" id="time">加载中…</div></div>
+      <div class="item"><div class="label">开奖号码</div><div class="value" id="number">加载中…</div></div>
+      <div class="item"><div class="label">组合</div><div class="value" id="combo">加载中…</div></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="title">📊 功能</div>
+    <div class="grid">
+      <button onclick="show('latest')">最新开奖</button>
+      <button onclick="show('trend')">近期走势</button>
+      <button onclick="show('history')">历史开奖</button>
+      <button onclick="show('kill')">杀组</button>
+      <button onclick="show('stats')">统计</button>
+      <button onclick="show('omit')">遗漏</button>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="title">数据结果</div>
+    <div id="output">正在连接开奖数据…</div>
+  </section>
+
+  <div class="note">本页面展示开奖结果及历史统计数据，不提供下一期投注结论。</div>
+</div>
+
+<script>
+const API='https://yu28.top';
+let key=''; // 生产环境请改为后端代理，不要把 API Key 放在公开网页源码里。
+
+async function getData(n=20){
+  // 这里先提供演示界面；真正上线时由 Railway 后端安全代理 API。
+  const r=await fetch(API+'/api/kj.json?nbr='+n);
+  if(!r.ok) throw new Error('API '+r.status);
+  return await r.json();
+}
+function renderLatest(d){
+  const x=(d.data||[])[0]; if(!x) return;
+  period.textContent='第'+(x.nbr||'-')+'期';
+  time.textContent=x.time||'-';
+  number.textContent=x.number||'-';
+  combo.textContent=x.combination||'-';
+}
+async function show(type){
+  const out=document.getElementById('output');
+  out.textContent='正在读取数据…';
+  try{
+    const d=await getData(type==='trend'||type==='stats'||type==='omit'||type==='kill'?50:20);
+    const a=d.data||[];
+    if(type==='latest'){renderLatest(d);out.textContent='最新一期：\\n'+JSON.stringify(a[0]||{},null,2);return}
+    if(type==='trend'){
+      out.textContent='📊 最近20期\\n\\n'+a.slice(0,20).map(x=>
+        '第'+x.nbr+'期  '+x.number+'  '+x.combination).join('\\n'); return;
+    }
+    if(type==='history'){
+      out.textContent='📜 历史开奖\\n\\n'+a.slice(0,20).map(x=>
+        '第'+x.nbr+'期  '+x.number+'  '+x.combination).join('\\n'); return;
+    }
+    if(type==='stats'||type==='kill'){
+      const c={'大单':0,'大双':0,'小单':0,'小双':0};
+      a.forEach(x=>{if(c[x.combination]!=null)c[x.combination]++});
+      out.textContent='📈 历史组合统计\\n\\n'+
+        Object.entries(c).map(([k,v])=>k+'：'+v+'次').join('\\n')+
+        '\\n\\n「杀组」页面仅展示历史组合统计，不输出下一期排除/投注结论。'; return;
+    }
+    if(type==='omit'){
+      const names=['大单','大双','小单','小双'];
+      out.textContent='⌛ 组合历史遗漏\\n\\n'+names.map(n=>{
+        let k=0; for(const x of a){if(x.combination===n)break;k++}
+        return n+'：当前遗漏 '+k+' 期';
+      }).join('\\n'); return;
+    }
+  }catch(e){
+    out.textContent='暂时无法读取数据。正式上线时需要由服务器安全代理开奖 API。';
+  }
+}
+show('latest');
+</script>
+</body>
+</html>
