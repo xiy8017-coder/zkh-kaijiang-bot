@@ -3,802 +3,698 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+
 <title>小濠国际杀组</title>
+
 <style>
-*{box-sizing:border-box}
-html,body{margin:0;min-height:100%;font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif}
+*{
+  box-sizing:border-box;
+  -webkit-tap-highlight-color:transparent;
+}
+
+html,body{
+  margin:0;
+  padding:0;
+  min-height:100%;
+  font-family:-apple-system,BlinkMacSystemFont,"PingFang SC",
+  "Microsoft YaHei",sans-serif;
+  color:#17233b;
+}
+
 body{
-color:#fff;
-background:#17151c url("background.jpeg") center/cover fixed no-repeat;
+  min-height:100vh;
+  background:
+    linear-gradient(
+      rgba(255,255,255,.48),
+      rgba(255,255,255,.48)
+    ),
+    url("background.jpeg") center/cover fixed no-repeat;
+  overflow-x:hidden;
 }
-body:before{
-content:"";position:fixed;inset:0;
-background:linear-gradient(180deg,rgba(0,0,0,.30),rgba(15,12,20,.78));
-z-index:-1;
+
+/* 樱花层 */
+#sakura{
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  overflow:hidden;
+  z-index:5;
 }
-.wrap{max-width:760px;margin:auto;padding:18px 14px 42px}
-header{
-text-align:center;padding:22px 12px 18px;
-background:rgba(20,20,24,.48);
-border:1px solid rgba(255,255,255,.28);
-backdrop-filter:blur(16px);
--webkit-backdrop-filter:blur(16px);
-border-radius:24px;
-box-shadow:0 10px 35px rgba(0,0,0,.25);
+
+.petal{
+  position:absolute;
+  top:-40px;
+  width:13px;
+  height:9px;
+  background:rgba(255,170,195,.88);
+  border-radius:80% 20% 80% 20%;
+  filter:drop-shadow(0 1px 2px rgba(255,100,150,.25));
+  animation:fall linear infinite;
 }
-h1{margin:0;font-size:29px;letter-spacing:2px}
-.sub{margin-top:7px;opacity:.88;font-size:14px}
+
+@keyframes fall{
+  0%{
+    transform:translate3d(0,-40px,0) rotate(0deg);
+    opacity:0;
+  }
+  10%{
+    opacity:.95;
+  }
+  50%{
+    transform:translate3d(70px,50vh,0) rotate(180deg);
+  }
+  100%{
+    transform:translate3d(-80px,110vh,0) rotate(360deg);
+    opacity:0;
+  }
+}
+
+.wrap{
+  position:relative;
+  z-index:2;
+  width:min(1100px,94%);
+  margin:0 auto;
+  padding:25px 0 50px;
+}
+
+.header{
+  text-align:center;
+  padding:18px 15px 22px;
+}
+
+.logo{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:72px;
+  height:72px;
+  border-radius:50%;
+  background:rgba(255,255,255,.82);
+  border:2px solid rgba(255,255,255,.9);
+  box-shadow:0 8px 25px rgba(0,0,0,.12);
+  font-size:25px;
+  font-weight:900;
+  color:#2864bd;
+}
+
+h1{
+  margin:12px 0 6px;
+  font-size:30px;
+  letter-spacing:2px;
+}
+
+.subtitle{
+  color:#60708b;
+  font-size:14px;
+}
+
 .card{
-margin-top:14px;padding:18px;
-background:rgba(25,23,28,.56);
-border:1px solid rgba(255,255,255,.25);
-backdrop-filter:blur(17px);
--webkit-backdrop-filter:blur(17px);
-border-radius:22px;
-box-shadow:0 10px 30px rgba(0,0,0,.22);
+  background:rgba(255,255,255,.76);
+  backdrop-filter:blur(18px);
+  -webkit-backdrop-filter:blur(18px);
+  border:1px solid rgba(255,255,255,.9);
+  border-radius:22px;
+  box-shadow:0 12px 35px rgba(31,55,90,.14);
+  overflow:hidden;
+  margin-bottom:18px;
 }
-.title{font-size:19px;font-weight:800;margin-bottom:13px}
-.latest{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.item{background:rgba(0,0,0,.25);padding:13px;border-radius:15px}
-.label{font-size:12px;opacity:.70}
-.value{font-size:18px;margin-top:5px;font-weight:700}
-.balls{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
-.ball{
-width:42px;height:42px;border-radius:50%;
-display:inline-flex;align-items:center;justify-content:center;
-background:rgba(255,255,255,.94);color:#222;
-font-size:18px;font-weight:800;
+
+.latest{
+  padding:22px;
 }
-.sum{font-size:24px;font-weight:900}
-.combo{
-display:inline-block;padding:7px 15px;border-radius:10px;
-background:rgba(83,184,211,.88);
-font-size:18px;font-weight:800;
+
+.latest-title{
+  font-size:18px;
+  font-weight:800;
+  margin-bottom:15px;
 }
+
+.latest-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:12px;
+}
+
+.info{
+  background:rgba(245,248,253,.75);
+  border-radius:15px;
+  padding:15px;
+}
+
+.label{
+  font-size:12px;
+  color:#71809a;
+  margin-bottom:7px;
+}
+
+.value{
+  font-size:18px;
+  font-weight:800;
+}
+
 .countdown{
-margin-top:12px;padding:14px 10px;border-radius:15px;
-background:rgba(0,0,0,.30);text-align:center;
+  color:#2764bf;
+  font-size:25px;
+  letter-spacing:1px;
 }
-.count-label{font-size:13px;opacity:.72}
-.count{
-margin-top:3px;font-size:34px;font-weight:900;
-letter-spacing:2px;font-variant-numeric:tabular-nums;
+
+.nav{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  padding:18px;
 }
-.status{margin-top:7px;text-align:center;font-size:12px;opacity:.68}
-.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
-button{
-border:1px solid rgba(255,255,255,.25);
-border-radius:18px;padding:17px 10px;
-font-size:16px;font-weight:800;color:#fff;
-background:rgba(255,255,255,.17);
-box-shadow:inset 0 1px rgba(255,255,255,.25);
-cursor:pointer;
+
+.nav button{
+  border:1px solid #d5dfed;
+  background:rgba(255,255,255,.8);
+  color:#26354d;
+  padding:10px 18px;
+  border-radius:12px;
+  font-size:15px;
+  font-weight:700;
 }
-button.active{background:rgba(82,177,207,.78)}
-button:active{transform:scale(.98)}
-#output{line-height:1.65;font-size:14px}
-.table-wrap{overflow-x:auto;border-radius:14px}
-.table{width:100%;border-collapse:collapse;min-width:570px;font-size:13px}
-.table th{background:rgba(82,177,207,.78);padding:10px 5px}
-.table td{
-padding:10px 4px;
-border-bottom:1px dashed rgba(255,255,255,.18);
-text-align:center;
+
+.nav button.active{
+  background:#316bc5;
+  color:#fff;
+  border-color:#316bc5;
 }
-.kill-tag{
-display:inline-block;padding:5px 9px;border-radius:6px;
-background:rgba(82,177,207,.85);
-font-weight:800;
+
+.section-title{
+  padding:20px 20px 5px;
+  font-size:21px;
+  font-weight:900;
 }
-.note{font-size:12px;opacity:.68;text-align:center;margin-top:18px;line-height:1.6}
-#error{
-display:none;padding:10px;border-radius:12px;
-background:rgba(170,40,40,.28);
-font-size:13px;margin-bottom:10px;
+
+.table-wrap{
+  overflow-x:auto;
 }
-@media(max-width:420px){
-h1{font-size:25px}
-.latest{grid-template-columns:1fr}
-.count{font-size:31px}
+
+table{
+  width:100%;
+  min-width:700px;
+  border-collapse:collapse;
+}
+
+th{
+  background:rgba(245,248,252,.88);
+  color:#65748c;
+  font-size:14px;
+  padding:15px 10px;
+}
+
+td{
+  padding:14px 10px;
+  text-align:center;
+  border-top:1px solid rgba(215,224,236,.7);
+  font-size:14px;
+}
+
+tr.win{
+  background:rgba(231,247,236,.72);
+}
+
+tr.lose{
+  background:rgba(253,235,235,.72);
+}
+
+.group{
+  display:inline-block;
+  padding:7px 13px;
+  background:#316bc5;
+  color:#fff;
+  border-radius:9px;
+  font-weight:800;
+}
+
+.pending{
+  color:#65748c;
+  font-weight:700;
+}
+
+.ok{
+  color:#28a052;
+  font-weight:900;
+}
+
+.no{
+  color:#df3c32;
+  font-weight:900;
+}
+
+.footer{
+  text-align:center;
+  color:#71809a;
+  font-size:12px;
+  line-height:1.8;
+  padding:18px;
+}
+
+@media(max-width:600px){
+  .wrap{
+    width:94%;
+    padding-top:12px;
+  }
+
+  h1{
+    font-size:26px;
+  }
+
+  .latest-grid{
+    grid-template-columns:1fr 1fr;
+  }
+
+  .value{
+    font-size:16px;
+  }
+
+  .countdown{
+    font-size:21px;
+  }
 }
 </style>
 </head>
 
 <body>
 
+<div id="sakura"></div>
+
 <div class="wrap">
 
-<header>
-<h1>小濠国际杀组</h1>
-<div class="sub">🇨🇦 加拿大28 · 实时开奖数据中心</div>
-</header>
+  <div class="header">
+    <div class="logo">ZKH</div>
+    <h1>小濠国际杀组</h1>
+    <div class="subtitle">🇨🇦 加拿大28 · 实时开奖数据中心</div>
+  </div>
 
-<section class="card">
+  <!-- 最新开奖 -->
+  <div class="card latest">
 
-<div class="title">◎ 实时开奖</div>
+    <div class="latest-title">🎯 实时开奖</div>
 
-<div class="latest">
+    <div class="latest-grid">
 
-<div class="item">
-<div class="label">当前期</div>
-<div class="value" id="period">加载中…</div>
-</div>
+      <div class="info">
+        <div class="label">当前期</div>
+        <div class="value" id="issue">加载中...</div>
+      </div>
 
-<div class="item">
-<div class="label">当前开奖号码</div>
-<div class="value" id="number">加载中…</div>
-</div>
+      <div class="info">
+        <div class="label">当前开奖号码</div>
+        <div class="value" id="number">--</div>
+      </div>
 
-<div class="item">
-<div class="label">本期组合</div>
-<div class="value" id="combo">加载中…</div>
-</div>
+      <div class="info">
+        <div class="label">本期组合</div>
+        <div class="value" id="combination">--</div>
+      </div>
 
-<div class="item">
-<div class="label">数据状态</div>
-<div class="value" id="state">连接中…</div>
-</div>
+      <div class="info">
+        <div class="label">距离下一期开奖</div>
+        <div class="value countdown" id="countdown">--:--</div>
+      </div>
 
-</div>
+    </div>
 
-<div class="countdown">
+  </div>
 
-<div class="count-label">
-距离下一期开奖
-</div>
+  <!-- 功能 -->
+  <div class="card">
 
-<div class="count" id="countdown">
---:--
-</div>
+    <div class="nav">
+      <button class="active" onclick="showPage('latest',this)">最新开奖</button>
+      <button onclick="showPage('trend',this)">近期走势</button>
+      <button onclick="showPage('history',this)">历史开奖</button>
+      <button onclick="showPage('kill',this)">杀组</button>
+      <button onclick="showPage('stats',this)">统计</button>
+      <button onclick="showPage('miss',this)">遗漏</button>
+    </div>
 
-<div class="status" id="nextInfo">
-自动刷新中
-</div>
+  </div>
 
-</div>
+  <!-- 杀组 -->
+  <div class="card" id="killPage">
 
-</section>
+    <div class="section-title">🔵 杀组</div>
 
+    <div class="table-wrap">
 
-<section class="card">
+      <table>
 
-<div class="title">📊 功能</div>
+        <thead>
+          <tr>
+            <th>期号</th>
+            <th>时间</th>
+            <th>杀组</th>
+            <th>号码</th>
+            <th>结果</th>
+            <th>状态</th>
+          </tr>
+        </thead>
 
-<div class="grid">
+        <tbody id="killBody">
+          <tr>
+            <td colspan="6">正在加载数据...</td>
+          </tr>
+        </tbody>
 
-<button id="b-latest" onclick="show('latest')">
-最新开奖
-</button>
+      </table>
 
-<button id="b-trend" onclick="show('trend')">
-近期走势
-</button>
+    </div>
 
-<button id="b-history" onclick="show('history')">
-历史开奖
-</button>
+    <div class="footer">
+      杀组页面按照历史开奖数据展示对应组别。
+    </div>
 
-<button id="b-kill" onclick="show('kill')">
-杀组
-</button>
+  </div>
 
-<button id="b-stats" onclick="show('stats')">
-统计
-</button>
-
-<button id="b-omit" onclick="show('omit')">
-遗漏
-</button>
-
-</div>
-
-</section>
-
-
-<section class="card">
-
-<div class="title" id="resultTitle">
-数据结果
-</div>
-
-<div id="error"></div>
-
-<div id="output">
-正在连接开奖数据…
-</div>
-
-</section>
-
-
-<div class="note">
-本页面展示实时开奖结果及历史统计数据。<br>
-“杀组”仅作为历史记录展示，不提供下一期投注结论。
-</div>
+  <div class="card">
+    <div class="footer">
+      本页面展示实时开奖结果及历史统计数据。<br>
+      数据仅用于开奖结果查询及历史数据展示。
+    </div>
+  </div>
 
 </div>
-
 
 <script>
 
-let latestData=[];
-let nextDrawMs=null;
-let currentPeriod='';
+/* =========================
+   樱花
+========================= */
+
+function createSakura(){
+
+  const box=document.getElementById("sakura");
+
+  for(let i=0;i<28;i++){
+
+    const p=document.createElement("div");
+
+    p.className="petal";
+
+    p.style.left=Math.random()*100+"%";
+    p.style.animationDuration=(7+Math.random()*8)+"s";
+    p.style.animationDelay=(-Math.random()*12)+"s";
+
+    const size=7+Math.random()*10;
+
+    p.style.width=size+"px";
+    p.style.height=(size*.7)+"px";
+
+    box.appendChild(p);
+  }
+}
+
+createSakura();
 
 
-function esc(v){
+/* =========================
+   API
+========================= */
 
-return String(v ?? '-')
-.replace(/[&<>"']/g,m=>({
+let data=[];
+let latest=null;
+let countdownSeconds=0;
 
-'&':'&amp;',
-'<':'&lt;',
-'>':'&gt;',
-'"':'&quot;',
-"'":'&#39;'
+async function getData(n=30){
 
-}[m]));
+  const r=await fetch(
+    "/api/kj.json?nbr="+n,
+    {cache:"no-store"}
+  );
+
+  if(!r.ok){
+    throw new Error("API "+r.status);
+  }
+
+  return await r.json();
+}
+
+
+/* =========================
+   组合
+========================= */
+
+function getCombination(x){
+
+  if(x.combination){
+    return x.combination;
+  }
+
+  const num=Number(x.number);
+
+  if(!Number.isFinite(num)){
+    return "--";
+  }
+
+  const size=num>=14?"大":"小";
+  const parity=num%2===0?"双":"单";
+
+  return size+parity;
+}
+
+
+/* =========================
+   杀组名称
+========================= */
+
+function getKillGroup(x){
+
+  const c=getCombination(x);
+
+  if(c==="大单") return "杀大单";
+  if(c==="大双") return "杀大双";
+  if(c==="小单") return "杀小单";
+  if(c==="小双") return "杀小双";
+
+  return "杀"+c;
+}
+
+
+/* =========================
+   最新开奖
+========================= */
+
+function renderLatest(){
+
+  if(!latest) return;
+
+  document.getElementById("issue").textContent=
+    latest.issue || latest.nbr || latest.period || "--";
+
+  document.getElementById("number").textContent=
+    latest.number || "--";
+
+  document.getElementById("combination").textContent=
+    getCombination(latest);
 
 }
 
 
-async function getData(n=20){
+/* =========================
+   倒计时
+========================= */
 
-const r=await fetch(
-'/api/kj.json?nbr='+n,
-{cache:'no-store'}
-);
+function setupCountdown(){
 
-if(!r.ok){
+  if(!latest) return;
 
-throw new Error('API '+r.status);
+  if(latest.countdown!=null){
+
+    let c=String(latest.countdown);
+
+    const parts=c.split(":");
+
+    if(parts.length===2){
+      countdownSeconds=
+        Number(parts[0])*60+
+        Number(parts[1]);
+    }else{
+      countdownSeconds=Number(c)||0;
+    }
+
+  }else if(latest.time){
+
+    const t=new Date(
+      String(latest.time).replace(" ","T")
+    ).getTime();
+
+    if(!Number.isNaN(t)){
+
+      const next=t+210000;
+
+      countdownSeconds=
+        Math.max(0,Math.floor((next-Date.now())/1000));
+    }
+  }
+
+  updateCountdown();
+}
+
+function updateCountdown(){
+
+  const el=document.getElementById("countdown");
+
+  let sec=Math.max(0,countdownSeconds);
+
+  const m=Math.floor(sec/60);
+  const s=sec%60;
+
+  el.textContent=
+    String(m).padStart(2,"0")+
+    ":"+
+    String(s).padStart(2,"0");
+}
+
+setInterval(()=>{
+
+  if(countdownSeconds>0){
+    countdownSeconds--;
+  }
+
+  updateCountdown();
+
+},1000);
+
+
+/* =========================
+   杀组历史表
+========================= */
+
+function renderKill(){
+
+  const body=document.getElementById("killBody");
+
+  if(!data.length){
+
+    body.innerHTML=
+      '<tr><td colspan="6">暂无数据</td></tr>';
+
+    return;
+  }
+
+  body.innerHTML=data.map((x,i)=>{
+
+    const isLatest=i===0;
+
+    const issue=
+      x.issue || x.nbr || x.period || "--";
+
+    const time=
+      x.time || "--";
+
+    const number=
+      x.number || "--";
+
+    const group=
+      getKillGroup(x);
+
+    if(isLatest){
+
+      return `
+        <tr>
+          <td>${issue}</td>
+          <td><b>${formatCountdown()}</b></td>
+          <td><span class="group">${group}</span></td>
+          <td class="pending">等待开奖</td>
+          <td>—</td>
+          <td>◷</td>
+        </tr>
+      `;
+
+    }
+
+    return `
+      <tr>
+        <td>${issue}</td>
+        <td>${time}</td>
+        <td><span class="group">${group}</span></td>
+        <td><b>${number}</b></td>
+        <td class="ok">已开奖</td>
+        <td class="ok">✓</td>
+      </tr>
+    `;
+
+  }).join("");
 
 }
 
-return await r.json();
+function formatCountdown(){
 
+  const sec=Math.max(0,countdownSeconds);
+
+  const m=Math.floor(sec/60);
+  const s=sec%60;
+
+  return String(m).padStart(2,"0")+":"+
+         String(s).padStart(2,"0");
 }
 
 
-function parseDate(s){
-
-if(!s)return NaN;
-
-const ms=Date.parse(
-String(s).replace(' ','T')
-);
-
-return Number.isNaN(ms)?NaN:ms;
-
-}
-
-
-function calcNextDraw(x){
-
-const cd=Number(
-x && x.countdown
-);
-
-if(Number.isFinite(cd) && cd>=0){
-
-return Date.now()+cd*1000;
-
-}
-
-const opened=parseDate(
-x && x.time
-);
-
-if(Number.isFinite(opened)){
-
-return opened+210000;
-
-}
-
-return Date.now()+210000;
-
-}
-
-
-function renderLatest(x){
-
-if(!x)return;
-
-currentPeriod=String(
-x.nbr||''
-);
-
-document.getElementById(
-'period'
-).textContent=
-'第'+(x.nbr||'-')+'期';
-
-
-const nums=String(
-x.number||''
-)
-.split('+')
-.map(s=>s.trim())
-.filter(Boolean);
-
-
-const box=
-document.getElementById(
-'number'
-);
-
-
-if(nums.length===3){
-
-const sum=
-String(x.number||'')
-.split('=')
-.pop()||'-';
-
-
-box.innerHTML=
-
-'<div class="balls">'+
-
-nums.map(n=>
-'<span class="ball">'+
-esc(n)+
-'</span>'
-).join(
-'<span class="sum">+</span>'
-)+
-
-'<span class="sum">='+
-esc(sum)+
-'</span>'+
-
-'</div>';
-
-}else{
-
-box.textContent=
-x.number||'-';
-
-}
-
-
-document.getElementById(
-'combo'
-).innerHTML=
-
-'<span class="combo">'+
-esc(x.combination||'-')+
-'</span>';
-
-
-document.getElementById(
-'state'
-).textContent=
-'实时已连接';
-
-
-nextDrawMs=
-calcNextDraw(x);
-
-}
-
-
-function tick(){
-
-const el=
-document.getElementById(
-'countdown'
-);
-
-if(!nextDrawMs){
-
-el.textContent='--:--';
-
-return;
-
-}
-
-
-let sec=Math.max(
-0,
-Math.ceil(
-(nextDrawMs-Date.now())/1000
-)
-);
-
-
-const m=
-Math.floor(sec/60);
-
-const s=
-sec%60;
-
-
-el.textContent=
-
-String(m).padStart(2,'0')+
-':'+
-String(s).padStart(2,'0');
-
-
-document.getElementById(
-'nextInfo'
-).textContent=
-
-sec===0
-?
-'正在等待下一期数据…'
-:
-'距离下一期开奖还剩 '+
-m+
-'分'+
-String(s).padStart(2,'0')+
-'秒';
-
-}
-
-
-function setActive(type){
-
-document
-.querySelectorAll('button')
-.forEach(b=>
-b.classList.remove('active')
-);
-
-
-const b=
-document.getElementById(
-'b-'+type
-);
-
-if(b)b.classList.add('active');
-
-}
-
-
-function renderList(list){
-
-if(!list.length){
-
-return '暂无数据';
-
-}
-
-return list.map(x=>
-
-'第'+
-esc(x.nbr)+
-'期   '+
-esc(x.number)+
-'   '+
-esc(x.combination)+
-'   '+
-esc(x.time||'')
-
-).join('\n');
-
-}
-
-
-async function show(type){
-
-setActive(type);
-
-const out=
-document.getElementById(
-'output'
-);
-
-out.innerHTML=
-'正在读取数据…';
-
-
-try{
-
-const d=
-await getData(
-type==='trend'||
-type==='stats'||
-type==='omit'||
-type==='kill'
-?
-50
-:
-20
-);
-
-
-const a=
-d.data||[];
-
-
-if(a[0]){
-
-renderLatest(a[0]);
-
-}
-
-
-if(type==='latest'){
-
-document.getElementById(
-'resultTitle'
-).textContent=
-'◎ 最新开奖';
-
-
-out.textContent=
-renderList(a.slice(0,10));
-
-return;
-
-}
-
-
-if(type==='trend'){
-
-document.getElementById(
-'resultTitle'
-).textContent=
-'📊 近期走势';
-
-
-out.textContent=
-renderList(a.slice(0,20));
-
-return;
-
-}
-
-
-if(type==='history'){
-
-document.getElementById(
-'resultTitle'
-).textContent=
-'📜 历史开奖';
-
-
-out.textContent=
-renderList(a.slice(0,30));
-
-return;
-
-}
-
-
-if(type==='kill'){
-
-document.getElementById(
-'resultTitle'
-).textContent=
-'🔴 杀组';
-
-
-out.innerHTML=
-
-'<div class="table-wrap">'+
-
-'<table class="table">'+
-
-'<tr>'+
-'<th>期号</th>'+
-'<th>号码</th>'+
-'<th>杀组</th>'+
-'<th>结果</th>'+
-'</tr>'+
-
-a.slice(0,30).map(x=>
-
-'<tr>'+
-
-'<td>'+
-esc(x.nbr)+
-'</td>'+
-
-'<td>'+
-esc(x.number)+
-'</td>'+
-
-'<td>'+
-'<span class="kill-tag">'+
-'杀'+
-esc(x.combination||'-')+
-'</span>'+
-'</td>'+
-
-'<td>已开奖</td>'+
-
-'</tr>'
-
-).join('')+
-
-'</table>'+
-'</div>';
-
-return;
-
-}
-
-
-if(type==='stats'){
-
-const c={
-
-'大单':0,
-'大双':0,
-'小单':0,
-'小双':0
-
-};
-
-
-a.forEach(x=>{
-
-if(c[x.combination]!=null){
-
-c[x.combination]++;
-
-}
-
-});
-
-
-document.getElementById(
-'resultTitle'
-).textContent=
-'📈 组合统计';
-
-
-out.textContent=
-
-Object.entries(c)
-.map(([k,v])=>
-k+'：'+v+'次'
-)
-.join('\n');
-
-
-return;
-
-}
-
-
-if(type==='omit'){
-
-const names=[
-
-'大单',
-'大双',
-'小单',
-'小双'
-
-];
-
-
-document.getElementById(
-'resultTitle'
-).textContent=
-'⌛ 组合遗漏';
-
-
-out.textContent=
-
-names.map(n=>{
-
-let k=0;
-
-for(
-const x of a
-){
-
-if(
-x.combination===n
-)break;
-
-k++;
-
-}
-
-return n+
-'：当前遗漏 '+
-k+
-'期';
-
-}).join('\n');
-
-
-return;
-
-}
-
-}catch(e){
-
-document.getElementById(
-'resultTitle'
-).textContent=
-'数据结果';
-
-
-out.textContent=
-'暂时无法读取数据，请稍后刷新。';
-
-}
-
-}
-
+/* =========================
+   刷新
+========================= */
 
 async function refresh(){
 
-try{
+  try{
 
-const d=
-await getData(20);
+    const result=await getData(30);
 
-latestData=
-d.data||[];
+    data=
+      Array.isArray(result)
+      ? result
+      : (
+          result.data ||
+          result.results ||
+          result.list ||
+          []
+        );
 
+    if(!Array.isArray(data)){
+      data=[];
+    }
 
-if(latestData[0]){
+    latest=data[0];
 
-const newPeriod=
-String(
-latestData[0].nbr||''
-);
+    renderLatest();
 
+    setupCountdown();
 
-renderLatest(
-latestData[0]
-);
+    renderKill();
 
+  }catch(e){
 
-if(
-currentPeriod &&
-newPeriod!==currentPeriod
-){
+    console.log(e);
 
-show('latest');
-
-}
-
-}
-
-
-document.getElementById(
-'error'
-).style.display=
-'none';
-
-
-}catch(e){
-
-document.getElementById(
-'state'
-).textContent=
-'连接失败';
+    document.getElementById("issue").textContent="连接失败";
+    document.getElementById("number").textContent="--";
+    document.getElementById("combination").textContent="--";
+  }
 
 }
-
-}
-
-
-setInterval(
-tick,
-1000
-);
-
-
-setInterval(
-refresh,
-5000
-);
-
 
 refresh();
 
-show('latest');
+setInterval(refresh,5000);
 
-</script>
 
-</body>
-</html>
+/* =========================
+   页面按钮
+========================= */
+
+function showPage(page,btn){
+
+  document.querySelectorAll(".nav button")
+    .forEach(x=>x.classList.remove("active"));
+
+  btn.classList.add("active");
+
+  if(page==="kill"){
+
+    document.getElementById("killPage")
+      .scrollIntoView({
+        behavior:"smooth",
+       
