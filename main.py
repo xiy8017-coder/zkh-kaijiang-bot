@@ -3,7 +3,6 @@ import json
 import asyncio
 from urllib.request import Request, urlopen
 from urllib.parse import urlencode
-from urllib.error import HTTPError, URLError
 
 from telegram import Update, ReplyKeyboardMarkup
 from telegram.ext import (
@@ -22,7 +21,7 @@ API_BASE = "https://yu28.top"
 KEYBOARD = [
     ["最新开奖", "近期走势"],
     ["历史开奖", "开奖提醒"],
-    ["数据统计", "使用帮助"],
+    ["组合统计", "使用帮助"],
 ]
 
 MARKUP = ReplyKeyboardMarkup(
@@ -81,8 +80,8 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "◎ 近期走势：查看最近10期开奖\n"
         "◎ 历史开奖：输入期号查询\n"
         "◎ 开奖提醒：提醒功能开发中\n"
-        "◎ 数据统计：查看当日统计\n\n"
-        "本机器人只提供开奖结果及统计数据。"
+        "◎ 组合统计：统计最近20期历史组合\n\n"
+        "本机器人只提供开奖结果及历史统计数据。"
     )
 
 
@@ -122,8 +121,7 @@ async def latest(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     except Exception:
         await update.message.reply_text(
-            "⚠️ 获取开奖数据失败。\n"
-            "请检查 Railway 中的 YU28_API_KEY 是否已配置。"
+            "⚠️ 获取开奖数据失败，请稍后再试。"
         )
 
 
@@ -151,7 +149,8 @@ async def trend(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 f"{item.get('combination', '-')}"
             )
 
-        lines.append("\n以上为最近10期开奖数据。")
+        lines.append("")
+        lines.append("以上为最近10期开奖数据。")
 
         await update.message.reply_text(
             "\n".join(lines)
@@ -170,7 +169,7 @@ async def history_query(
 ):
     if not period.isdigit():
         await update.message.reply_text(
-            "请输入正确的期号，例如：3463701"
+            "请输入正确的期号，例如：3481125"
         )
         return
 
@@ -211,31 +210,49 @@ async def history_query(
 
 async def statistics(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
-        body = await api_get_async("/api/yk.json")
+        body = await api_get_async(
+            "/api/kj.json",
+            {"nbr": 20}
+        )
 
-        date = body.get("date", "-")
-        data = body.get("data") or {}
+        data = body.get("data") or []
 
-        lines = [
-            "📈 数据统计",
-            "",
-            f"统计日期：{date}",
-            "",
+        if not data:
+            await update.message.reply_text(
+                "暂时没有获取到统计数据。"
+            )
+            return
+
+        counts = {}
+
+        for item in data:
+            combination = item.get("combination", "-")
+            counts[combination] = counts.get(combination, 0) + 1
+
+        order = [
+            "大单",
+            "大双",
+            "小单",
+            "小双"
         ]
 
-        # 优先显示常见统计项目
-        keys = ["大", "小", "单", "双", "大单", "大双", "小单", "小双"]
+        lines = [
+            "📊 最近20期组合统计",
+            ""
+        ]
 
-        found = False
+        for combination in order:
+            lines.append(
+                f"{combination}：{counts.get(combination, 0)}次"
+            )
 
-        for key in keys:
-            if key in data:
-                lines.append(f"{key}：{data[key]}次")
-                found = True
-
-        if not found:
-            for key, value in list(data.items())[:10]:
-                lines.append(f"{key}：{value}")
+        lines.append("")
+        lines.append(
+            f"统计样本：{len(data)}期"
+        )
+        lines.append(
+            "以上仅为历史开奖统计，不代表下一期结果。"
+        )
 
         await update.message.reply_text(
             "\n".join(lines)
@@ -243,7 +260,7 @@ async def statistics(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     except Exception:
         await update.message.reply_text(
-            "⚠️ 获取统计数据失败，请稍后再试。"
+            "⚠️ 获取组合统计失败，请稍后再试。"
         )
 
 
@@ -260,7 +277,6 @@ async def text_handler(
 ):
     text = update.message.text.strip()
 
-    # 正在等待历史期号
     if context.user_data.get("awaiting_period"):
         await history_query(update, context, text)
         return
@@ -273,15 +289,16 @@ async def text_handler(
 
     elif text == "历史开奖":
         context.user_data["awaiting_period"] = True
+
         await update.message.reply_text(
             "📜 请输入你要查询的期号：\n\n"
-            "例如：3463701"
+            "例如：3481125"
         )
 
     elif text == "开奖提醒":
         await reminder(update, context)
 
-    elif text == "数据统计":
+    elif text == "组合统计":
         await statistics(update, context)
 
     elif text == "使用帮助":
