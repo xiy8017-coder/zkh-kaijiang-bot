@@ -15,13 +15,15 @@ from telegram.ext import (
 
 TOKEN = os.environ.get("BOT_TOKEN")
 API_KEY = os.environ.get("YU28_API_KEY")
-
 API_BASE = "https://yu28.top"
+
 
 KEYBOARD = [
     ["最新开奖", "近期走势"],
-    ["历史开奖", "开奖提醒"],
-    ["组合统计", "使用帮助"],
+    ["历史开奖", "遗漏统计"],
+    ["组合统计", "数字统计"],
+    ["数据查询", "开奖提醒"],
+    ["使用帮助"],
 ]
 
 MARKUP = ReplyKeyboardMarkup(
@@ -62,12 +64,14 @@ async def api_get_async(path, params=None):
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    context.user_data["awaiting_period"] = False
+    context.user_data.clear()
 
     await update.message.reply_text(
-        "🎯 欢迎使用 ZKH 开奖助手\n\n"
-        "📊 提供最新开奖信息、历史走势查询\n"
-        "🔔 提供开奖提醒与数据统计\n\n"
+        "🎯 ZKH 开奖助手\n\n"
+        "📊 实时开奖数据\n"
+        "📈 历史走势统计\n"
+        "⌛ 遗漏数据查询\n"
+        "🔢 数字与组合统计\n\n"
         "请选择下面的功能：",
         reply_markup=MARKUP,
     )
@@ -75,13 +79,16 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
-        "📖 使用帮助\n\n"
+        "⚙️ 使用帮助\n\n"
         "◎ 最新开奖：查看最近一期开奖\n"
         "◎ 近期走势：查看最近10期开奖\n"
         "◎ 历史开奖：输入期号查询\n"
-        "◎ 开奖提醒：提醒功能开发中\n"
-        "◎ 组合统计：统计最近20期历史组合\n\n"
-        "本机器人只提供开奖结果及历史统计数据。"
+        "◎ 遗漏统计：查看历史遗漏数据\n"
+        "◎ 组合统计：统计大/小、单/双及四种组合\n"
+        "◎ 数字统计：统计0～27近期出现次数\n"
+        "◎ 数据查询：输入期号查询开奖\n"
+        "◎ 开奖提醒：提醒功能开发中\n\n"
+        "本机器人提供开奖结果及历史统计数据。"
     )
 
 
@@ -140,17 +147,22 @@ async def trend(update: Update, context: ContextTypes.DEFAULT_TYPE):
             )
             return
 
-        lines = ["📊 近期走势\n"]
+        lines = [
+            "📊 最近10期开奖",
+            "",
+            "期号        开奖号码       组合",
+            "━━━━━━━━━━━━━━━━"
+        ]
 
         for item in data:
             lines.append(
-                f"第{item.get('nbr', '-')}期  "
+                f"{item.get('nbr', '-')}  "
                 f"{item.get('number', '-')}  "
                 f"{item.get('combination', '-')}"
             )
 
         lines.append("")
-        lines.append("以上为最近10期开奖数据。")
+        lines.append("以上为历史开奖结果。")
 
         await update.message.reply_text(
             "\n".join(lines)
@@ -162,7 +174,7 @@ async def trend(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
 
 
-async def history_query(
+async def query_period(
     update: Update,
     context: ContextTypes.DEFAULT_TYPE,
     period: str
@@ -208,7 +220,10 @@ async def history_query(
         context.user_data["awaiting_period"] = False
 
 
-async def statistics(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def combination_stats(
+    update: Update,
+    context: ContextTypes.DEFAULT_TYPE
+):
     try:
         body = await api_get_async(
             "/api/kj.json",
@@ -219,40 +234,109 @@ async def statistics(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
         if not data:
             await update.message.reply_text(
-                "暂时没有获取到统计数据。"
+                "暂时没有统计数据。"
             )
             return
 
-        counts = {}
+        big = 0
+        small = 0
+        odd = 0
+        even = 0
+
+        combos = {
+            "大单": 0,
+            "大双": 0,
+            "小单": 0,
+            "小双": 0,
+        }
 
         for item in data:
-            combination = item.get("combination", "-")
-            counts[combination] = counts.get(combination, 0) + 1
+            combo = item.get("combination", "")
 
-        order = [
-            "大单",
-            "大双",
-            "小单",
-            "小双"
-        ]
+            if "大" in combo:
+                big += 1
+
+            if "小" in combo:
+                small += 1
+
+            if "单" in combo:
+                odd += 1
+
+            if "双" in combo:
+                even += 1
+
+            if combo in combos:
+                combos[combo] += 1
+
+        text = (
+            "📊 最近20期组合统计\n\n"
+            f"大：{big}次\n"
+            f"小：{small}次\n"
+            f"单：{odd}次\n"
+            f"双：{even}次\n\n"
+            f"大单：{combos['大单']}次\n"
+            f"大双：{combos['大双']}次\n"
+            f"小单：{combos['小单']}次\n"
+            f"小双：{combos['小双']}次\n\n"
+            f"统计样本：{len(data)}期\n"
+            "以上为历史统计，不代表下一期结果。"
+        )
+
+        await update.message.reply_text(text)
+
+    except Exception:
+        await update.message.reply_text(
+            "⚠️ 获取组合统计失败，请稍后再试。"
+        )
+
+
+async def number_stats(
+    update: Update,
+    context: ContextTypes.DEFAULT_TYPE
+):
+    try:
+        body = await api_get_async(
+            "/api/kj.json",
+            {"nbr": 20}
+        )
+
+        data = body.get("data") or []
+
+        counts = {
+            str(i): 0 for i in range(28)
+        }
+
+        for item in data:
+            number_text = item.get("number", "")
+            parts = number_text.split("=")[0].split("+")
+
+            for part in parts:
+                part = part.strip()
+
+                if part.isdigit():
+                    number = int(part)
+
+                    if 0 <= number <= 27:
+                        counts[str(number)] += 1
 
         lines = [
-            "📊 最近20期组合统计",
-            ""
+            "🔢 最近20期数字统计",
+            "",
         ]
 
-        for combination in order:
-            lines.append(
-                f"{combination}：{counts.get(combination, 0)}次"
-            )
+        for start_num in range(0, 28, 7):
+            row = []
+
+            for number in range(start_num, min(start_num + 7, 28)):
+                row.append(
+                    f"{number}:{counts[str(number)]}"
+                )
+
+            lines.append("   ".join(row))
 
         lines.append("")
-        lines.append(
-            f"统计样本：{len(data)}期"
-        )
-        lines.append(
-            "以上仅为历史开奖统计，不代表下一期结果。"
-        )
+        lines.append("统计范围：最近20期开奖")
+        lines.append("仅为历史数据统计。")
 
         await update.message.reply_text(
             "\n".join(lines)
@@ -260,7 +344,104 @@ async def statistics(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     except Exception:
         await update.message.reply_text(
-            "⚠️ 获取组合统计失败，请稍后再试。"
+            "⚠️ 获取数字统计失败，请稍后再试。"
+        )
+
+
+async def omission_stats(
+    update: Update,
+    context: ContextTypes.DEFAULT_TYPE
+):
+    try:
+        body = await api_get_async(
+            "/api/kj.json",
+            {"nbr": 100}
+        )
+
+        data = body.get("data") or []
+
+        if not data:
+            await update.message.reply_text(
+                "暂时没有遗漏数据。"
+            )
+            return
+
+        # 统计四种组合距离最近一次出现的期数
+        combo_names = [
+            "大单",
+            "大双",
+            "小单",
+            "小双",
+        ]
+
+        omissions = {}
+
+        for combo in combo_names:
+            omission = 0
+
+            for item in data:
+                if item.get("combination") == combo:
+                    break
+                omission += 1
+
+            omissions[combo] = omission
+
+        # 大小单双遗漏
+        big_omission = 0
+        small_omission = 0
+        odd_omission = 0
+        even_omission = 0
+
+        for item in data:
+            combo = item.get("combination", "")
+
+            if "大" in combo:
+                break
+
+            big_omission += 1
+
+        for item in data:
+            combo = item.get("combination", "")
+
+            if "小" in combo:
+                break
+
+            small_omission += 1
+
+        for item in data:
+            combo = item.get("combination", "")
+
+            if "单" in combo:
+                break
+
+            odd_omission += 1
+
+        for item in data:
+            combo = item.get("combination", "")
+
+            if "双" in combo:
+                break
+
+            even_omission += 1
+
+        text = (
+            "⌛ 历史遗漏统计\n\n"
+            f"大：遗漏{big_omission}期\n"
+            f"小：遗漏{small_omission}期\n"
+            f"单：遗漏{odd_omission}期\n"
+            f"双：遗漏{even_omission}期\n\n"
+            f"大单：遗漏{omissions['大单']}期\n"
+            f"大双：遗漏{omissions['大双']}期\n"
+            f"小单：遗漏{omissions['小单']}期\n"
+            f"小双：遗漏{omissions['小双']}期\n\n"
+            "以上为历史遗漏数据，不代表下一期结果。"
+        )
+
+        await update.message.reply_text(text)
+
+    except Exception:
+        await update.message.reply_text(
+            "⚠️ 获取遗漏数据失败，请稍后再试。"
         )
 
 
@@ -278,7 +459,7 @@ async def text_handler(
     text = update.message.text.strip()
 
     if context.user_data.get("awaiting_period"):
-        await history_query(update, context, text)
+        await query_period(update, context, text)
         return
 
     if text == "最新开奖":
@@ -295,11 +476,26 @@ async def text_handler(
             "例如：3481125"
         )
 
-    elif text == "开奖提醒":
-        await reminder(update, context)
+    elif text == "遗漏统计":
+        await omission_stats(update, context)
 
     elif text == "组合统计":
-        await statistics(update, context)
+        await combination_stats(update, context)
+
+    elif text == "数字统计":
+        await number_stats(update, context)
+
+    elif text == "数据查询":
+        context.user_data["awaiting_period"] = True
+
+        await update.message.reply_text(
+            "🔎 数据查询\n\n"
+            "请输入开奖期号：\n"
+            "例如：3481125"
+        )
+
+    elif text == "开奖提醒":
+        await reminder(update, context)
 
     elif text == "使用帮助":
         await help_command(update, context)
