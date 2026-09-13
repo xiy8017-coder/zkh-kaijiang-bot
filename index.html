@@ -2,2223 +2,1571 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
-<title>小濠预测</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+<title>濠少杀组 · 双接口版</title>
 
 <style>
 *{
-  box-sizing:border-box;
-  margin:0;
-  padding:0;
-}
-
-html,body{
-  min-height:100%;
-  font-family:-apple-system,BlinkMacSystemFont,"PingFang SC",
-  "Microsoft YaHei",sans-serif;
-  color:#17233b;
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
 }
 
 body{
-  background:
-    linear-gradient(rgba(255,239,247,.30),rgba(255,245,250,.45)),
-    url("background.jpeg") center/cover fixed no-repeat;
-  overflow-x:hidden;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    padding:16px;
+    background:#f5f5f5;
+    color:#111;
 }
 
-button{
-  font-family:inherit;
-  cursor:pointer;
-  -webkit-tap-highlight-color:transparent;
+.container{
+    max-width:480px;
+    margin:0 auto;
 }
-
-/* 樱花 */
-
-.sakura{
-  position:fixed;
-  top:-40px;
-  z-index:1;
-  pointer-events:none;
-  animation:fall linear infinite;
-  opacity:.85;
-}
-
-@keyframes fall{
-  0%{
-    transform:translate3d(0,-50px,0) rotate(0deg);
-  }
-
-  100%{
-    transform:translate3d(100px,110vh,0) rotate(360deg);
-  }
-}
-
-/* 主体 */
-
-.app{
-  position:relative;
-  z-index:2;
-  width:100%;
-  max-width:760px;
-  margin:auto;
-  padding-bottom:100px;
-}
-
-/* 顶部 */
-
-.header{
-  min-height:72px;
-  padding:14px 18px;
-  display:flex;
-  align-items:center;
-  gap:10px;
-  background:rgba(255,255,255,.78);
-  border-bottom:1px solid rgba(190,120,150,.16);
-  backdrop-filter:blur(18px);
-}
-
-.logo{
-  width:48px;
-  height:48px;
-  border-radius:50%;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  background:linear-gradient(145deg,#e878a3,#b92c68);
-  color:white;
-  font-size:12px;
-  font-weight:900;
-  box-shadow:0 5px 18px rgba(190,50,100,.25);
-  flex:none;
-}
-
-.brand{
-  font-size:22px;
-  font-weight:900;
-  color:#a92e63;
-  white-space:nowrap;
-}
-
-.header-btn{
-  padding:9px 12px;
-  border:1px solid #e7c6d5;
-  border-radius:12px;
-  background:rgba(255,255,255,.78);
-  color:#a22f61;
-  font-size:13px;
-  white-space:nowrap;
-}
-
-.header-spacer{
-  flex:1;
-}
-
-.theme{
-  width:42px;
-  height:42px;
-  border:1px solid #e7c6d5;
-  border-radius:12px;
-  background:#fff;
-  font-size:20px;
-  flex:none;
-}
-
-/* 页面 */
-
-.content{
-  padding:18px 15px;
-}
-
-h1{
-  font-size:35px;
-  margin:10px 4px 18px;
-  font-weight:900;
-}
-
-h1:after{
-  content:"";
-  display:block;
-  width:38px;
-  height:5px;
-  border-radius:5px;
-  background:#ca3e76;
-  margin-top:10px;
-}
-
-/* 卡片 */
 
 .card{
-  background:rgba(255,255,255,.86);
-  border:1px solid rgba(205,150,175,.32);
-  border-radius:20px;
-  margin-bottom:14px;
-  box-shadow:0 8px 25px rgba(110,55,80,.10);
-  backdrop-filter:blur(16px);
-  overflow:hidden;
+    background:#fff;
+    border-radius:16px;
+    padding:20px;
+    margin-bottom:16px;
+    box-shadow:0 2px 12px rgba(0,0,0,.08);
 }
 
-/* 倒计时 */
-
-.countdown{
-  padding:18px;
+.title{
+    text-align:center;
+    font-size:22px;
+    font-weight:800;
+    margin-bottom:4px;
 }
 
-.count-top{
-  display:flex;
-  justify-content:space-between;
-  color:#65738b;
-  font-size:15px;
+.subtitle{
+    text-align:center;
+    font-size:12px;
+    color:#8E8E93;
 }
 
-.clock{
-  color:#bd336a;
-  margin-right:5px;
+.balls{
+    display:flex;
+    justify-content:center;
+    gap:16px;
+    margin:16px 0;
 }
 
-.count-number{
-  text-align:center;
-  font-size:42px;
-  font-weight:900;
-  margin:12px 0 8px;
+.ball{
+    width:64px;
+    height:64px;
+    border-radius:50%;
+    background:#f0f0f5;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:28px;
+    font-weight:800;
 }
 
-.count-bottom{
-  display:flex;
-  justify-content:space-between;
-  color:#68758a;
-  font-size:13px;
+.info{
+    text-align:center;
 }
 
-.progress{
-  height:6px;
-  border-radius:10px;
-  background:#e8dfe5;
-  margin-top:13px;
-  overflow:hidden;
+.period{
+    font-size:20px;
+    font-weight:700;
 }
 
-.progress-inner{
-  height:100%;
-  width:0%;
-  background:#c63772;
-  border-radius:10px;
-  transition:width .3s;
-}
-
-/* 开奖结果 */
-
-.result{
-  padding:17px;
-}
-
-.result-head{
-  display:flex;
-  align-items:center;
-  gap:8px;
-  flex-wrap:wrap;
-  margin-bottom:14px;
-}
-
-.issue{
-  font-size:18px;
-  font-weight:900;
-}
-
-.time{
-  color:#718096;
-  font-size:13px;
-}
-
-.result-numbers{
-  display:grid;
-  grid-template-columns:repeat(3,1fr) 1.05fr;
-  gap:10px;
-  align-items:center;
-}
-
-.num{
-  height:112px;
-  border-radius:20px;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  background:linear-gradient(145deg,#fff6fa,#fce7f0);
-  border:1px solid #efcddc;
-  font-size:48px;
-  font-weight:900;
-}
-
-.total{
-  height:112px;
-  border-radius:20px;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  background:linear-gradient(145deg,#d94c82,#ad245b);
-  color:#fff;
-  font-size:47px;
-  font-weight:900;
-}
-
-/* 标签 */
-
-.tabs{
-  display:flex;
-  gap:9px;
-  padding:14px 15px;
-  border-bottom:1px solid #eadfe5;
-  overflow-x:auto;
-}
-
-.tab{
-  flex:none;
-  padding:9px 17px;
-  border:1px solid #dfcfda;
-  border-radius:11px;
-  background:#fff;
-  font-size:14px;
-  color:#317fc9;
-}
-
-.tab.active{
-  background:#c63772;
-  color:white;
-  border-color:#c63772;
-}
-
-/* 表格 */
-
-.table-wrap{
-  overflow-x:auto;
-}
-
-table{
-  width:100%;
-  border-collapse:collapse;
-  min-width:620px;
-}
-
-th{
-  padding:12px 7px;
-  background:rgba(249,242,246,.9);
-  color:#63718a;
-  font-size:13px;
-  text-align:center;
-}
-
-td{
-  padding:11px 7px;
-  border-top:1px solid #eadfe5;
-  text-align:center;
-  font-size:13px;
-  white-space:nowrap;
-}
-
-.row-green{
-  background:rgba(229,247,235,.65);
-}
-
-.row-red{
-  background:rgba(253,235,238,.65);
-}
-
-.badge{
-  display:inline-block;
-  min-width:34px;
-  padding:5px 8px;
-  border-radius:8px;
-  color:#fff;
-  font-weight:800;
-  margin:1px;
-}
-
-.big{
-  background:#e94d47;
-}
-
-.small{
-  background:#4b91df;
-}
-
-.single{
-  background:#4b91df;
-}
-
-.double{
-  background:#e94d47;
-}
-
-.shape{
-  background:#e1f0e4;
-  color:#3e8050;
-}
-
-/* 杀狗庄 */
-
-.kill-card{
-  padding:18px;
-}
-
-.kill-title{
-  font-size:20px;
-  font-weight:900;
-  margin-bottom:15px;
+.sum{
+    font-size:14px;
+    color:#8E8E93;
 }
 
 .kill-box{
-  padding:18px;
-  border-radius:16px;
-  background:linear-gradient(135deg,#fff4f9,#fff);
-  border:1px solid #efd2df;
-  text-align:center;
-}
-
-.kill-label{
-  color:#8b92a2;
-  font-size:13px;
-  margin-bottom:7px;
+    text-align:center;
+    padding:16px;
+    background:rgba(255,59,48,.08);
+    border-radius:12px;
+    margin-top:12px;
 }
 
 .kill-value{
-  display:inline-block;
-  padding:10px 18px;
-  border-radius:12px;
-  background:#c63772;
-  color:#fff;
-  font-size:20px;
-  font-weight:900;
+    font-size:32px;
+    font-weight:800;
+    color:#FF3B30;
 }
 
-.kill-status{
-  margin-top:10px;
-  color:#7c8799;
-  font-size:13px;
+.kill-label{
+    font-size:12px;
+    color:#8E8E93;
 }
 
-.kill-history{
-  margin-top:15px;
-  border-top:1px solid #eadfe5;
+.range-row{
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+    justify-content:center;
+    margin:12px 0;
 }
 
-.kill-history-row{
-  display:flex;
-  justify-content:space-between;
-  padding:12px 2px;
-  border-bottom:1px solid #eee4e9;
-  font-size:13px;
+.range-btn{
+    padding:6px 16px;
+    border-radius:20px;
+    border:1px solid #ddd;
+    background:#fff;
+    font-size:12px;
+    cursor:pointer;
 }
 
-.kill-history-row:last-child{
-  border-bottom:0;
+.range-btn.active{
+    background:#007AFF;
+    color:#fff;
+    border-color:#007AFF;
 }
 
-.kill-history-row b{
-  color:#b63769;
+.btn{
+    width:100%;
+    padding:12px;
+    border:none;
+    border-radius:30px;
+    background:#007AFF;
+    color:#fff;
+    font-weight:700;
+    font-size:16px;
+    cursor:pointer;
 }
 
-/* AI */
-
-.ai{
-  padding:18px;
+.btn:active{
+    transform:scale(.96);
 }
 
-.ai-title{
-  font-size:19px;
-  font-weight:900;
-  margin-bottom:12px;
+.status{
+    font-size:12px;
+    color:#8E8E93;
+    text-align:center;
+    margin-top:8px;
 }
 
-.ai-box{
-  padding:15px;
-  border-radius:14px;
-  background:linear-gradient(135deg,#fff5fa,#fff);
-  border:1px solid #efd5e1;
-  line-height:1.8;
-  font-size:14px;
+.api-badge{
+    display:inline-block;
+    padding:2px 10px;
+    border-radius:12px;
+    font-size:10px;
+    font-weight:600;
 }
 
-/* 底部 */
-
-.bottom{
-  position:fixed;
-  left:50%;
-  bottom:0;
-  transform:translateX(-50%);
-  width:100%;
-  max-width:760px;
-  height:72px;
-  display:flex;
-  justify-content:space-around;
-  align-items:center;
-  background:rgba(255,255,255,.91);
-  border-top:1px solid #eadce4;
-  backdrop-filter:blur(20px);
-  z-index:20;
+.api-badge.primary{
+    background:#34C759;
+    color:#fff;
 }
 
-.nav{
-  width:25%;
-  text-align:center;
-  color:#68758a;
-  font-size:11px;
-  cursor:pointer;
-  user-select:none;
+.api-badge.backup{
+    background:#FF9500;
+    color:#fff;
 }
 
-.nav-icon{
-  font-size:23px;
-  margin-bottom:3px;
+.api-badge.cache{
+    background:#8E8E93;
+    color:#fff;
 }
 
-.nav.active{
-  color:#c63772;
-  font-weight:800;
+.api-badge.fail{
+    background:#FF3B30;
+    color:#fff;
+}
+
+table{
+    width:100%;
+    font-size:12px;
+    border-collapse:collapse;
+}
+
+th,td{
+    padding:6px 4px;
+    text-align:center;
+    border-bottom:1px solid #eee;
+}
+
+.hit{
+    color:#34C759;
+    font-weight:700;
+}
+
+.miss{
+    color:#FF3B30;
+}
+
+.kill-badge{
+    background:rgba(255,59,48,.15);
+    padding:2px 10px;
+    border-radius:12px;
+    color:#FF3B30;
+    font-weight:700;
 }
 
 .footer{
-  text-align:center;
-  color:#9a6479;
-  font-size:12px;
-  padding:12px;
-}
-
-/* 深色 */
-
-.dark-mode{
-  filter:brightness(.78);
-}
-
-/* 手机 */
-
-@media(max-width:600px){
-
-  .header{
-    padding:12px 10px;
-    gap:7px;
-  }
-
-  .logo{
-    width:45px;
-    height:45px;
-  }
-
-  .brand{
-    font-size:20px;
-  }
-
-  .header-btn{
+    text-align:center;
     font-size:11px;
-    padding:8px 7px;
-  }
-
-  .theme{
-    width:38px;
-    height:38px;
-  }
-
-  .content{
-    padding:14px 10px;
-  }
-
-  h1{
-    font-size:32px;
-  }
-
-  .num,
-  .total{
-    height:90px;
-    font-size:38px;
-  }
-
-  .result-numbers{
-    gap:7px;
-  }
-
-  .count-number{
-    font-size:38px;
-  }
+    color:#8E8E93;
+    margin-top:12px;
 }
+
+
+/* =========================
+   🌸 樱花飘落
+   ========================= */
+
+#petals{
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    overflow:hidden;
+    z-index:9999;
+}
+
+.petal{
+    position:absolute;
+    top:-40px;
+    width:14px;
+    height:10px;
+    background:#ffb7c5;
+    border-radius:100% 0 100% 0;
+    opacity:.75;
+    transform:rotate(25deg);
+    filter:drop-shadow(0 1px 2px rgba(255,105,135,.15));
+    animation:petalFall linear infinite;
+}
+
+.petal::after{
+    content:"";
+    position:absolute;
+    width:4px;
+    height:4px;
+    left:5px;
+    top:3px;
+    background:rgba(255,255,255,.55);
+    border-radius:50%;
+}
+
+@keyframes petalFall{
+
+    0%{
+        transform:translate3d(0,-40px,0) rotate(0deg);
+    }
+
+    25%{
+        transform:translate3d(25px,25vh,0) rotate(90deg);
+    }
+
+    50%{
+        transform:translate3d(-20px,50vh,0) rotate(180deg);
+    }
+
+    75%{
+        transform:translate3d(30px,75vh,0) rotate(270deg);
+    }
+
+    100%{
+        transform:translate3d(-10px,110vh,0) rotate(360deg);
+    }
+
+}
+
 </style>
 </head>
 
+
 <body>
 
-<div id="sakura"></div>
+<!-- 🌸 樱花 -->
+<div id="petals"></div>
 
-<div class="app">
 
-<header class="header">
+<div class="container">
 
-  <div class="logo">ZKH</div>
+    <!-- =========================
+         标题
+    ========================== -->
 
-  <div class="brand">小濠预测</div>
+    <div class="card"
+         style="background:linear-gradient(135deg,#007AFF,#0A84FF);color:#fff;">
 
-  <button class="header-btn" id="toolsBtn">
-    🔧 常用工具⌄
-  </button>
+        <div class="title">
+            🎯 濠少杀组
+        </div>
 
-  <button class="header-btn" id="apiBtn">
-    &lt;/&gt; 接口门户
-  </button>
+        <div class="subtitle"
+             style="color:rgba(255,255,255,.8);">
 
-  <div class="header-spacer"></div>
+            双接口自动切换 · 本地缓存 · 离线可用
 
-  <button class="theme" id="themeBtn">
-    ☼
-  </button>
-
-</header>
-
-
-<main class="content">
-
-<h1>人工智能</h1>
-
-
-<!-- 倒计时 -->
-
-<section class="card countdown">
-
-  <div class="count-top">
-
-    <span>
-      <span class="clock">◷</span>
-      下一期倒计时
-    </span>
-
-    <span id="nextIssue">
-      第 -- 期
-    </span>
-
-  </div>
-
-  <div class="count-number" id="countdown">
-    --分--秒
-  </div>
-
-  <div class="count-bottom">
-
-    <span>
-      约 3.5 分钟一期
-    </span>
-
-    <span id="nextTime">
-      开奖 --:--:--
-    </span>
-
-  </div>
-
-  <div class="progress">
-    <div
-      class="progress-inner"
-      id="progress">
-    </div>
-  </div>
-
-</section>
-
-
-<!-- 最新开奖 -->
-
-<section class="card result">
-
-  <div class="result-head">
-
-    <span
-      class="issue"
-      id="currentIssue">
-      第------期
-    </span>
-
-    <span
-      class="time"
-      id="currentTime">
-      ----/--/-- --:--:--
-    </span>
-
-  </div>
-
-
-  <div class="result-numbers">
-
-    <div class="num" id="n1">-</div>
-
-    <div class="num" id="n2">-</div>
-
-    <div class="num" id="n3">-</div>
-
-    <div class="total" id="sum">-</div>
-
-  </div>
-
-</section>
-
-
-<!-- 数据 -->
-
-<section class="card">
-
-  <div class="tabs">
-
-    <button
-      class="tab active"
-      data-tab="all">
-      开奖结果
-    </button>
-
-    <button
-      class="tab"
-      data-tab="57">
-      最近57期
-    </button>
-
-    <button
-      class="tab"
-      data-tab="kill">
-      杀狗庄
-    </button>
-
-  </div>
-
-
-  <div class="table-wrap">
-
-    <table>
-
-      <thead>
-
-        <tr>
-          <th>期号</th>
-          <th>时间</th>
-          <th>号码</th>
-          <th>组合</th>
-          <th>形态</th>
-        </tr>
-
-      </thead>
-
-      <tbody id="drawTable">
-
-        <tr>
-          <td colspan="5">
-            正在同步开奖数据……
-          </td>
-        </tr>
-
-      </tbody>
-
-    </table>
-
-  </div>
-
-</section>
-
-
-<!-- 杀狗庄 -->
-
-<section
-  class="card kill-card"
-  id="killSection">
-
-  <div class="kill-title">
-    🐶 杀狗庄
-  </div>
-
-  <div class="kill-box">
-
-    <div class="kill-label">
-      下一期娱乐展示
-    </div>
-
-    <div class="kill-value">
-      可能不会来
-    </div>
-
-    <div
-      class="kill-status"
-      id="killStatus">
-      第 -- 期 · 等待开奖
-    </div>
-
-  </div>
-
-
-  <div class="kill-history">
-
-    <div class="kill-history-row">
-
-      <span>
-        最新已开奖期
-      </span>
-
-      <b id="killLatest">
-        --
-      </b>
+        </div>
 
     </div>
 
 
-    <div class="kill-history-row">
+    <!-- =========================
+         最新开奖
+    ========================== -->
 
-      <span>
-        当前同步状态
-      </span>
+    <div class="card">
 
-      <b>
-        实时同步
-      </b>
+        <div class="balls">
+
+            <div class="ball" id="num1">
+                -
+            </div>
+
+            <div class="ball" id="num2">
+                -
+            </div>
+
+            <div class="ball" id="num3">
+                -
+            </div>
+
+        </div>
+
+
+        <div class="info">
+
+            <div class="period" id="period">
+                ----期
+            </div>
+
+            <div class="sum" id="sumInfo">
+                和值：-- / --
+            </div>
+
+        </div>
+
+
+        <!-- 杀组 -->
+
+        <div class="kill-box">
+
+            <div class="kill-label">
+                ⚔️ 下期杀组
+            </div>
+
+            <div class="kill-value" id="killGroup">
+                --
+            </div>
+
+        </div>
+
+
+        <div class="status" id="apiStatus">
+            ⏳ 加载中...
+        </div>
+
+
+        <div
+            style="margin-top:8px;text-align:center;"
+            id="apiBadge">
+        </div>
 
     </div>
 
 
-    <div class="kill-history-row">
+    <!-- =========================
+         区间选择
+    ========================== -->
 
-      <span>
-        下一期
-      </span>
+    <div class="card">
 
-      <b>
-        等待开奖
-      </b>
+        <div
+            style="
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            margin-bottom:8px;
+            "
+        >
+
+            <span style="font-weight:600;">
+                📐 当前区间
+            </span>
+
+            <span
+                id="currentRange"
+                style="font-weight:700;color:#007AFF;"
+            >
+                0.250 ~ 0.450
+            </span>
+
+        </div>
+
+
+        <div
+            class="range-row"
+            id="rangeBtns"
+        >
+
+            <button
+                class="range-btn active"
+                data-min="0.250"
+                data-max="0.450"
+            >
+                0.250~0.450
+            </button>
+
+
+            <button
+                class="range-btn"
+                data-min="0.300"
+                data-max="0.500"
+            >
+                0.300~0.500
+            </button>
+
+
+            <button
+                class="range-btn"
+                data-min="0.350"
+                data-max="0.550"
+            >
+                0.350~0.550
+            </button>
+
+
+            <button
+                class="range-btn"
+                data-min="0.200"
+                data-max="0.400"
+            >
+                0.200~0.400
+            </button>
+
+
+            <button
+                class="range-btn"
+                data-min="0.150"
+                data-max="0.350"
+            >
+                0.150~0.350
+            </button>
+
+        </div>
+
+
+        <button
+            class="btn"
+            id="refreshBtn"
+        >
+            🔄 刷新数据
+        </button>
 
     </div>
 
-  </div>
 
-</section>
+    <!-- =========================
+         历史回测
+    ========================== -->
+
+    <div class="card">
+
+        <div
+            style="
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            margin-bottom:8px;
+            "
+        >
+
+            <span style="font-weight:600;">
+                📊 历史回测
+            </span>
+
+            <span
+                id="hitrateBadge"
+                style="font-size:12px;color:#8E8E93;"
+            >
+                --
+            </span>
+
+        </div>
 
 
-<!-- AI历史统计 -->
+        <div style="overflow-x:auto;">
 
-<section class="card ai">
+            <table>
 
-  <div class="ai-title">
-    🤖 AI娱乐分析
-  </div>
+                <thead>
 
-  <div
-    class="ai-box"
-    id="aiText">
-    正在根据最近57期开奖数据进行统计……
-  </div>
+                    <tr>
 
-</section>
+                        <th>期号</th>
+                        <th>杀组</th>
+                        <th>实际</th>
+                        <th>结果</th>
+
+                    </tr>
+
+                </thead>
 
 
-<div class="footer">
-  小濠预测 · 实时开奖数据 · 仅供娱乐
-</div>
+                <tbody id="historyBody">
 
-</main>
+                    <tr>
+
+                        <td colspan="4">
+                            加载中...
+                        </td>
+
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+
+    <div class="footer">
+
+        仅供娱乐 · 数据自动同步
+
+    </div>
 
 </div>
 
-
-<!-- 底部导航 -->
-
-<nav class="bottom">
-
-  <div
-    class="nav active"
-    data-nav="home">
-
-    <div class="nav-icon">⌂</div>
-    首页
-
-  </div>
-
-
-  <div
-    class="nav"
-    data-nav="hall">
-
-    <div class="nav-icon">▣</div>
-    大厅
-
-  </div>
-
-
-  <div
-    class="nav"
-    data-nav="kill">
-
-    <div class="nav-icon">🚀</div>
-    飞投
-
-  </div>
-
-
-  <div
-    class="nav"
-    data-nav="mine">
-
-    <div class="nav-icon">♙</div>
-    我的
-
-  </div>
-
-</nav>
 
 
 <script>
 
-/* =========================
-   樱花
-========================= */
+/* ============================================================
+   🌸 樱花飘落
+============================================================ */
 
-const sakuraBox =
-  document.getElementById("sakura");
+(function(){
 
-for(let i=0;i<12;i++){
+    var box = document.getElementById("petals");
 
-  const el =
-    document.createElement("div");
+    if(!box) return;
 
-  el.className = "sakura";
+    for(var i = 0; i < 20; i++){
 
-  el.innerText = "🌸";
+        var p = document.createElement("span");
 
-  el.style.left =
-    Math.random()*100+"%";
+        p.className = "petal";
 
-  el.style.fontSize =
-    (12+Math.random()*13)+"px";
+        p.style.left =
+            (Math.random() * 100) + "vw";
 
-  el.style.animationDuration =
-    (7+Math.random()*8)+"s";
+        p.style.animationDuration =
+            (7 + Math.random() * 8) + "s";
 
-  el.style.animationDelay =
-    (-Math.random()*10)+"s";
+        p.style.animationDelay =
+            (-Math.random() * 12) + "s";
 
-  sakuraBox.appendChild(el);
-}
+        p.style.opacity =
+            (.45 + Math.random() * .45).toFixed(2);
 
+        p.style.transform =
+            "scale(" +
+            (0.55 + Math.random() * .8) +
+            ") rotate(" +
+            (Math.random() * 360) +
+            "deg)";
 
-/* =========================
-   数据变量
-========================= */
-
-let draws = [];
-
-let countdownSeconds = 0;
-
-let countdownTarget = null;
-
-let currentLatestIssue = "--";
-
-let nextIssueNumber = "--";
-
-let nextOpenTime = null;
-
-
-/* =========================
-   找开奖数组
-========================= */
-
-function findArray(obj){
-
-  if(Array.isArray(obj))
-    return obj;
-
-  if(
-    !obj ||
-    typeof obj !== "object"
-  )
-    return null;
-
-  const keys = [
-    "data",
-    "list",
-    "result",
-    "items",
-    "rows",
-    "records"
-  ];
-
-  for(const key of keys){
-
-    if(Array.isArray(obj[key]))
-      return obj[key];
-
-  }
-
-  for(const key of keys){
-
-    if(
-      obj[key] &&
-      typeof obj[key] === "object"
-    ){
-
-      const found =
-        findArray(obj[key]);
-
-      if(found)
-        return found;
+        box.appendChild(p);
 
     }
 
-  }
-
-  return null;
-}
+})();
 
 
-/* =========================
-   期号
-========================= */
 
-function issueOf(x){
+/* ============================================================
+   接口
+============================================================ */
 
-  return String(
+const API_PRIMARY =
+    "https://kj.pc28.im/api/kj.json?nbr=1000";
 
-    x.nbr ??
-    x.issue ??
-    x.period ??
-    x.expect ??
-    x.qh ??
-    x.issueNo ??
-    x.number_id ??
-    x.no ??
-    "--"
-
-  );
-
-}
+const API_BACKUP =
+    "https://pc28.help/api/kj.json?nbr=1000";
 
 
-/* =========================
-   时间
-========================= */
 
-function timeOf(x){
+/* ============================================================
+   工具
+============================================================ */
 
-  return (
+function digitSum(num){
 
-    x.time ??
-    x.open_time ??
-    x.openTime ??
-    x.date ??
-    x.datetime ??
-    x.openDateTime ??
-    ""
+    var s = 0;
 
-  );
+    var str = String(num)
+        .replace(".","")
+        .replace("-","");
+
+    for(var i = 0; i < str.length; i++){
+
+        s += parseInt(str[i]) || 0;
+
+    }
+
+    return s;
 
 }
 
 
-/* =========================
-   号码
-========================= */
 
-function numbersOf(x){
+function getTypeFromSum(sum){
 
-  let raw =
+    var size =
+        sum < 14 ? "小" : "大";
 
-    x.number ??
-    x.numbers ??
-    x.code ??
-    x.open_code ??
-    x.openCode ??
-    "";
+    var parity =
+        sum % 2 === 0 ? "双" : "单";
 
-
-  if(Array.isArray(raw)){
-
-    const arr =
-
-      raw
-      .map(Number)
-      .filter(
-        n => !isNaN(n)
-      );
-
-    if(arr.length >= 3)
-      return arr.slice(0,3);
-
-  }
-
-
-  const m =
-    String(raw).match(/\d+/g);
-
-
-  if(
-    m &&
-    m.length >= 3
-  ){
-
-    return m
-      .slice(0,3)
-      .map(Number);
-
-  }
-
-
-  const direct = [
-
-    x.n1,
-    x.n2,
-    x.n3
-
-  ]
-  .map(Number)
-  .filter(
-    n => !isNaN(n)
-  );
-
-
-  if(direct.length === 3)
-    return direct;
-
-
-  return [
-    "-",
-    "-",
-    "-"
-  ];
+    return size + parity;
 
 }
 
 
-/* =========================
-   和值
-========================= */
 
-function sumOf(x){
+function seededRandom(seed){
 
-  if(
-    x.sum !== undefined
-  ){
+    var s = seed | 0;
 
-    const value =
-      Number(x.sum);
+    return function(){
 
-    if(!isNaN(value))
-      return value;
+        s =
+            (s + 0x9e3779b9) | 0;
 
-  }
+        var t =
+            s ^ (s >>> 15);
 
+        t =
+            Math.imul(
+                t,
+                0x85ebca6b
+            );
 
-  if(
-    x.total !== undefined
-  ){
+        t =
+            t ^ (t >>> 13);
 
-    const value =
-      Number(x.total);
+        t =
+            Math.imul(
+                t,
+                0xc2b2ae35
+            );
 
-    if(!isNaN(value))
-      return value;
+        t =
+            t ^ (t >>> 16);
 
-  }
+        return (
+            (t >>> 0) /
+            4294967296
+        );
 
-
-  const nums =
-    numbersOf(x)
-    .map(Number)
-    .filter(
-      n => !isNaN(n)
-    );
-
-
-  if(nums.length === 3){
-
-    return (
-      nums[0] +
-      nums[1] +
-      nums[2]
-    );
-
-  }
-
-
-  return 0;
+    };
 
 }
 
 
-/* =========================
-   大小单双
-========================= */
 
-function sizeOf(sum){
+/* ============================================================
+   杀组计算
+============================================================ */
 
-  return Number(sum) >= 14
-    ? "大"
-    : "小";
+function calcKillGroup(prev,range){
+
+    var typesOrder = [
+        "小双",
+        "小单",
+        "大双",
+        "大单"
+    ];
+
+    var period =
+        parseInt(prev.expect);
+
+    var rng =
+        seededRandom(period);
+
+    var rand =
+        rng() *
+        (range.max - range.min)
+        + range.min;
+
+    var product =
+        rand * prev.sum;
+
+    var rounded =
+        Number(product.toFixed(3));
+
+    var finalSum =
+        digitSum(rounded);
+
+    var baseType =
+        getTypeFromSum(finalSum);
+
+    var decStr =
+        rand
+        .toFixed(8)
+        .split(".")[1] || "0";
+
+    var first3 =
+        decStr
+        .slice(0,3)
+        .padEnd(3,"0");
+
+    var offset =
+        digitSum(first3) % 4;
+
+    var baseIdx =
+        typesOrder.indexOf(baseType);
+
+    var killIdx =
+        (baseIdx + offset) % 4;
+
+    return typesOrder[killIdx];
 
 }
 
 
-function parityOf(sum){
 
-  return Number(sum) % 2 === 0
-    ? "双"
-    : "单";
+/* ============================================================
+   数据
+============================================================ */
 
-}
+var lotteryHistory = [];
 
+var currentRange = {
+    min:0.250,
+    max:0.450
+};
 
-/* =========================
-   形态
-========================= */
-
-function shapeOf(nums){
-
-  const a =
-    nums.map(Number);
+var isFetching = false;
 
 
-  if(
-    a.length !== 3 ||
-    a.some(isNaN)
-  )
-    return "--";
 
+function $(id){
 
-  if(
-    a[0] === a[1] &&
-    a[1] === a[2]
-  )
-    return "豹子";
-
-
-  if(
-    a[0] === a[1] ||
-    a[0] === a[2] ||
-    a[1] === a[2]
-  )
-    return "组三";
-
-
-  return "杂六";
+    return document.getElementById(id);
 
 }
 
 
-/* =========================
-   找倒计时
-========================= */
 
-function findCountdown(obj){
+/* ============================================================
+   数据标准化
+============================================================ */
 
-  if(
-    !obj ||
-    typeof obj !== "object"
-  )
-    return null;
+function normalizeItem(item){
 
+    var nums;
 
-  const keys = [
+    if(Array.isArray(item.parts)){
 
-    "countdown",
-    "next_countdown",
-    "nextCountdown",
-    "remain",
-    "remaining",
-    "seconds"
+        nums = item.parts;
 
-  ];
+    }else{
+
+        nums =
+            String(item.number || "")
+            .split("+")
+            .map(Number);
+
+    }
 
 
-  for(const key of keys){
-
-    if(
-      obj[key] !== undefined
-    ){
-
-      const value =
-        obj[key];
-
-
-      if(
-        typeof value === "number"
-      ){
-
-        return value;
-
-      }
+    var sum =
+        item.sum != null
+        ? Number(item.sum)
+        : nums.reduce(
+            function(a,b){
+                return a+b;
+            },
+            0
+        );
 
 
-      if(
-        typeof value === "string"
-      ){
-
-        let m =
-          value.match(
-            /^(\d+):(\d+):(\d+)$/
-          );
+    var combination =
+        item.combination ||
+        getTypeFromSum(sum);
 
 
-        if(m){
+    var size =
+        item.size ||
+        (sum < 14 ? "小" : "大");
 
-          return (
 
-            Number(m[1])*3600 +
-            Number(m[2])*60 +
-            Number(m[3])
+    var parity =
+        item.parity ||
+        (sum % 2 === 0 ? "双" : "单");
 
-          );
+
+    var expect =
+        item.nbr ||
+        item.issue ||
+        item.expect ||
+        "--";
+
+
+    var opentime =
+        item.drawTime
+        ? item.drawTime / 1000
+        : (
+            item.opentime ||
+            Date.now() / 1000
+        );
+
+
+    return {
+
+        expect:String(expect),
+
+        nums:nums,
+
+        sum:sum,
+
+        type:combination,
+
+        size:size,
+
+        parity:parity,
+
+        opentime:opentime
+
+    };
+
+}
+
+
+
+/* ============================================================
+   请求数据
+============================================================ */
+
+async function fetchData(){
+
+    if(isFetching) return;
+
+    isFetching = true;
+
+    $("apiStatus").textContent =
+        "⏳ 请求主接口...";
+
+    $("apiBadge").innerHTML = "";
+
+
+    try{
+
+        var res =
+            await fetch(
+                API_PRIMARY +
+                "&_=" +
+                Date.now(),
+                {
+                    method:"GET",
+                    headers:{
+                        "Accept":
+                        "application/json"
+                    },
+                    mode:"cors",
+                    cache:"no-cache"
+                }
+            );
+
+
+        if(!res.ok){
+
+            throw new Error(
+                "主接口响应异常"
+            );
 
         }
 
 
-        m =
-          value.match(
-            /^(\d+):(\d+)$/
-          );
-
-
-        if(m){
-
-          return (
-
-            Number(m[1])*60 +
-            Number(m[2])
-
-          );
-
-        }
+        var json =
+            await res.json();
 
 
         if(
-          !isNaN(Number(value))
+            json &&
+            Array.isArray(json.data) &&
+            json.data.length > 0
         ){
 
-          return Number(value);
+            parseData(
+                json.data,
+                "primary"
+            );
+
+
+            $("apiStatus").textContent =
+                "✅ 主接口成功 · " +
+                lotteryHistory.length +
+                "期";
+
+
+            $("apiBadge").innerHTML =
+                '<span class="api-badge primary">' +
+                "主接口" +
+                "</span>";
+
+
+            isFetching = false;
+
+            return;
 
         }
 
-      }
 
-    }
-
-  }
-
-
-  return null;
-
-}
-
-
-/* =========================
-   根据API倒计时
-========================= */
-
-function setCountdownFromAPI(seconds){
-
-  seconds =
-    Math.max(
-      0,
-      Math.floor(
-        Number(seconds) || 0
-      )
-    );
-
-
-  countdownSeconds =
-    seconds;
-
-
-  countdownTarget =
-    Date.now() +
-    seconds * 1000;
-
-
-  renderCountdown();
-
-}
-
-
-/* =========================
-   计算下一期
-========================= */
-
-function calculateNextIssue(){
-
-  if(!draws.length)
-    return;
-
-
-  const current =
-    issueOf(draws[0]);
-
-
-  const n =
-    parseInt(
-      String(current)
-      .replace(/\D/g,""),
-      10
-    );
-
-
-  if(!isNaN(n)){
-
-    nextIssueNumber =
-      String(n + 1);
-
-  }
-
-}
-
-
-/* =========================
-   加载 YU28 数据
-========================= */
-
-async function loadData(){
-
-  try{
-
-    const res =
-      await fetch(
-
-        "/api/kj.json?nbr=57&_="+
-        Date.now(),
-
-        {
-          cache:"no-store"
-        }
-
-      );
-
-
-    if(!res.ok){
-
-      throw new Error(
-        "API "+res.status
-      );
-
-    }
-
-
-    const json =
-      await res.json();
-
-
-    console.log(
-      "YU28同步:",
-      json
-    );
-
-
-    const list =
-      findArray(json);
-
-
-    if(
-      !list ||
-      !list.length
-    ){
-
-      console.log(
-        "没有找到开奖数组"
-      );
-
-      return;
-
-    }
-
-
-    draws =
-      list.slice(0,57);
-
-
-    const latest =
-      issueOf(draws[0]);
-
-
-    const issueChanged =
-      latest !==
-      currentLatestIssue;
-
-
-    currentLatestIssue =
-      latest;
-
-
-    calculateNextIssue();
-
-
-    const cd =
-      findCountdown(json);
-
-
-    if(
-      cd !== null &&
-      (
-        countdownTarget === null ||
-        issueChanged
-      )
-    ){
-
-      setCountdownFromAPI(cd);
-
-    }
-
-
-    updatePage();
-
-  }
-  catch(error){
-
-    console.error(
-      "同步失败:",
-      error
-    );
-
-
-    const ai =
-      document.getElementById(
-        "aiText"
-      );
-
-
-    if(ai){
-
-      ai.innerHTML =
-        "⚠️ 正在重新连接实时开奖数据……";
-
-    }
-
-  }
-
-}
-
-
-/* =========================
-   更新下一期开奖时间
-========================= */
-
-function updateNextTime(){
-
-  if(
-    countdownTarget === null
-  )
-    return;
-
-
-  const d =
-    new Date(
-      countdownTarget
-    );
-
-
-  const hh =
-    String(
-      d.getHours()
-    ).padStart(2,"0");
-
-
-  const mm =
-    String(
-      d.getMinutes()
-    ).padStart(2,"0");
-
-
-  const ss =
-    String(
-      d.getSeconds()
-    ).padStart(2,"0");
-
-
-  const el =
-    document.getElementById(
-      "nextTime"
-    );
-
-
-  if(el){
-
-    el.innerText =
-      "开奖 "+
-      hh+":"+mm+":"+ss;
-
-  }
-
-}
-
-
-/* =========================
-   更新页面
-========================= */
-
-function updatePage(){
-
-  if(!draws.length)
-    return;
-
-
-  const first =
-    draws[0];
-
-
-  const issue =
-    issueOf(first);
-
-
-  const nums =
-    numbersOf(first);
-
-
-  const sum =
-    sumOf(first);
-
-
-  document.getElementById(
-    "currentIssue"
-  ).innerText =
-    "第"+issue+"期";
-
-
-  document.getElementById(
-    "currentTime"
-  ).innerText =
-    timeOf(first) || "--";
-
-
-  document.getElementById("n1")
-    .innerText =
-    nums[0];
-
-
-  document.getElementById("n2")
-    .innerText =
-    nums[1];
-
-
-  document.getElementById("n3")
-    .innerText =
-    nums[2];
-
-
-  document.getElementById("sum")
-    .innerText =
-    sum || "-";
-
-
-  document.getElementById(
-    "nextIssue"
-  ).innerText =
-    "第 "+
-    nextIssueNumber+
-    " 期";
-
-
-  const killLatest =
-    document.getElementById(
-      "killLatest"
-    );
-
-
-  if(killLatest){
-
-    killLatest.innerText =
-      "第 "+
-      issue+
-      " 期";
-
-  }
-
-
-  const killStatus =
-    document.getElementById(
-      "killStatus"
-    );
-
-
-  if(killStatus){
-
-    killStatus.innerText =
-      "第 "+
-      nextIssueNumber+
-      " 期 · 等待开奖";
-
-  }
-
-
-  renderTable();
-
-  renderAI();
-
-  renderCountdown();
-
-}
-
-
-/* =========================
-   表格
-========================= */
-
-function renderTable(){
-
-  const body =
-    document.getElementById(
-      "drawTable"
-    );
-
-
-  if(!body)
-    return;
-
-
-  body.innerHTML = "";
-
-
-  draws.forEach(
-    (item,index)=>{
-
-      const issue =
-        issueOf(item);
-
-
-      const time =
-        timeOf(item);
-
-
-      const nums =
-        numbersOf(item);
-
-
-      const sum =
-        sumOf(item);
-
-
-      const size =
-        sizeOf(sum);
-
-
-      const parity =
-        parityOf(sum);
-
-
-      const shape =
-        shapeOf(nums);
-
-
-      const tr =
-        document.createElement(
-          "tr"
+        throw new Error(
+            "主接口数据为空"
         );
 
 
-      tr.className =
-        index % 2 === 0
-        ? "row-green"
-        : "row-red";
+    }catch(e){
+
+        console.warn(
+            "主接口失败:",
+            e.message
+        );
 
 
-      tr.innerHTML = `
-
-        <td>
-          <b>${issue}</b>
-        </td>
-
-        <td>
-          ${time || "--"}
-        </td>
-
-        <td>
-          ${nums[0]} +
-          ${nums[1]} +
-          ${nums[2]}
-          = <b>${sum}</b>
-        </td>
-
-        <td>
-
-          <span class="badge ${
-            size === "大"
-            ? "big"
-            : "small"
-          }">
-            ${size}
-          </span>
-
-          <span class="badge ${
-            parity === "单"
-            ? "single"
-            : "double"
-          }">
-            ${parity}
-          </span>
-
-        </td>
-
-        <td>
-
-          <span class="badge shape">
-            ${shape}
-          </span>
-
-        </td>
-
-      `;
+        $("apiStatus").textContent =
+            "⚠️ 主接口失败，尝试备用...";
 
 
-      body.appendChild(tr);
+        try{
+
+            var res2 =
+                await fetch(
+                    API_BACKUP +
+                    "&_=" +
+                    Date.now(),
+                    {
+                        method:"GET",
+                        headers:{
+                            "Accept":
+                            "application/json"
+                        },
+                        mode:"cors",
+                        cache:"no-cache"
+                    }
+                );
+
+
+            if(!res2.ok){
+
+                throw new Error(
+                    "备用接口响应异常"
+                );
+
+            }
+
+
+            var json2 =
+                await res2.json();
+
+
+            if(
+                json2 &&
+                Array.isArray(json2.data) &&
+                json2.data.length > 0
+            ){
+
+                parseData(
+                    json2.data,
+                    "backup"
+                );
+
+
+                $("apiStatus").textContent =
+                    "🔄 备用接口成功 · " +
+                    lotteryHistory.length +
+                    "期";
+
+
+                $("apiBadge").innerHTML =
+                    '<span class="api-badge backup">' +
+                    "备用接口" +
+                    "</span>";
+
+
+                isFetching = false;
+
+                return;
+
+            }
+
+
+            throw new Error(
+                "备用接口数据为空"
+            );
+
+
+        }catch(e2){
+
+            console.warn(
+                "备用接口失败:",
+                e2.message
+            );
+
+
+            tryOffline();
+
+        }
 
     }
-  );
 
 }
 
 
-/* =========================
-   AI历史统计
-========================= */
 
-function renderAI(){
+/* ============================================================
+   本地缓存
+============================================================ */
 
-  const sums =
-    draws
-    .map(
-      x => sumOf(x)
-    )
-    .filter(
-      x => x > 0
-    );
+function tryOffline(){
+
+    var cached =
+        localStorage.getItem(
+            "kill_history"
+        );
 
 
-  if(!sums.length)
-    return;
+    if(cached){
+
+        try{
+
+            lotteryHistory =
+                JSON.parse(cached);
 
 
-  const avg =
-    sums.reduce(
-      (a,b)=>a+b,
-      0
-    ) /
-    sums.length;
+            if(
+                lotteryHistory.length > 0
+            ){
+
+                updateUI();
 
 
-  const big =
-    sums.filter(
-      x => x >= 14
-    ).length;
+                $("apiStatus").textContent =
+                    "💾 本地缓存 (" +
+                    lotteryHistory.length +
+                    "期)";
 
 
-  const small =
-    sums.length -
-    big;
+                $("apiBadge").innerHTML =
+                    '<span class="api-badge cache">' +
+                    "缓存" +
+                    "</span>";
 
 
-  const odd =
-    sums.filter(
-      x => x % 2 !== 0
-    ).length;
+                isFetching = false;
+
+                return;
+
+            }
+
+        }catch(e){}
+
+    }
 
 
-  const even =
-    sums.length -
-    odd;
+    $("apiStatus").textContent =
+        "❌ 暂无可用数据";
 
 
-  const max =
-    Math.max(...sums);
+    $("apiBadge").innerHTML =
+        '<span class="api-badge fail">' +
+        "失败" +
+        "</span>";
 
 
-  const min =
-    Math.min(...sums);
-
-
-  const ai =
-    document.getElementById(
-      "aiText"
-    );
-
-
-  if(!ai)
-    return;
-
-
-  ai.innerHTML = `
-
-    当前同步：
-    <b>最近 ${sums.length} 期</b>
-
-    <br>
-
-    和值范围：
-    <b>${min} ～ ${max}</b>
-
-    <br>
-
-    平均和值：
-    <b>${avg.toFixed(1)}</b>
-
-    <br>
-
-    大和值：
-    <b>${big}期</b>
-    　小和值：
-    <b>${small}期</b>
-
-    <br>
-
-    单数和值：
-    <b>${odd}期</b>
-    　双数和值：
-    <b>${even}期</b>
-
-    <br><br>
-
-    页面正在实时同步已经开奖的数据。
-    新一期开奖后，历史统计会自动重新计算。
-
-    <br><br>
-
-    <span style="color:#b63769">
-      ⚠️ 仅供娱乐，切勿牟利
-    </span>
-
-  `;
+    isFetching = false;
 
 }
 
 
-/* =========================
-   倒计时
-========================= */
 
-function renderCountdown(){
+/* ============================================================
+   解析
+============================================================ */
 
-  if(
-    countdownTarget !== null
-  ){
+function parseData(data,source){
 
-    const remaining =
-      Math.max(
-        0,
-        Math.ceil(
-          (
-            countdownTarget -
-            Date.now()
-          ) / 1000
+    lotteryHistory =
+        data
+        .map(normalizeItem)
+        .filter(function(x){
+
+            return (
+                x.nums &&
+                x.nums.length >= 3
+            );
+
+        })
+        .sort(function(a,b){
+
+            return a.opentime -
+                   b.opentime;
+
+        });
+
+
+    localStorage.setItem(
+        "kill_history",
+        JSON.stringify(
+            lotteryHistory
         )
-      );
-
-
-    countdownSeconds =
-      remaining;
-
-  }
-
-
-  const sec =
-    Math.max(
-      0,
-      Math.floor(
-        countdownSeconds
-      )
     );
 
 
-  const min =
-    Math.floor(
-      sec / 60
-    );
+    updateUI();
+
+}
 
 
-  const s =
-    sec % 60;
+
+/* ============================================================
+   更新页面
+============================================================ */
+
+function updateUI(){
+
+    if(
+        !lotteryHistory.length
+    ){
+
+        return;
+
+    }
 
 
-  const countdown =
-    document.getElementById(
-      "countdown"
-    );
+    var asc =
+        lotteryHistory
+        .slice()
+        .sort(function(a,b){
+
+            return a.opentime -
+                   b.opentime;
+
+        });
 
 
-  if(countdown){
-
-    countdown.innerText =
-      min+
-      "分"+
-      String(s)
-      .padStart(2,"0")+
-      "秒";
-
-  }
+    var latest =
+        asc[asc.length - 1];
 
 
-  const progress =
-    document.getElementById(
-      "progress"
-    );
+    $("num1").textContent =
+        latest.nums[0];
+
+    $("num2").textContent =
+        latest.nums[1];
+
+    $("num3").textContent =
+        latest.nums[2];
 
 
-  if(progress){
+    $("period").textContent =
+        latest.expect + "期";
 
-    const percent =
-      Math.min(
-        100,
+
+    $("sumInfo").textContent =
+        "和值：" +
+        latest.sum +
+        " / " +
+        latest.type;
+
+
+    /*
+       页面继续保留杀组区域，
+       仅作为页面展示功能。
+    */
+
+    var kill =
+        calcKillGroup(
+            latest,
+            currentRange
+        );
+
+
+    $("killGroup").textContent =
+        kill;
+
+
+    renderBacktest(asc);
+
+}
+
+
+
+/* ============================================================
+   历史回测
+============================================================ */
+
+function renderBacktest(asc){
+
+    if(asc.length < 2){
+
+        $("historyBody").innerHTML =
+            '<tr>' +
+            '<td colspan="4">' +
+            "数据不足（至少2期）" +
+            "</td>" +
+            "</tr>";
+
+        $("hitrateBadge").textContent =
+            "--";
+
+        return;
+
+    }
+
+
+    var total =
+        asc.length - 1;
+
+
+    var start =
         Math.max(
-          0,
-          100 -
-          sec / 210 * 100
-        )
-      );
+            0,
+            total - 49
+        );
 
 
-    progress.style.width =
-      percent+"%";
+    var rows = "";
 
-  }
+    var hitCount = 0;
+
+    var totalCount = 0;
 
 
-  updateNextTime();
+    for(
+        var i = total - 1;
+        i >= start;
+        i--
+    ){
+
+        var prev =
+            asc[i];
+
+        var cur =
+            asc[i + 1];
+
+
+        var kill =
+            calcKillGroup(
+                prev,
+                currentRange
+            );
+
+
+        var isSpecial =
+            (
+                cur.sum === 13 ||
+                cur.sum === 14
+            );
+
+
+        var isHit =
+            isSpecial ||
+            cur.type !== kill;
+
+
+        if(isHit){
+
+            hitCount++;
+
+        }
+
+
+        totalCount++;
+
+
+        var resultText =
+            isHit
+            ? "✅ 杀中"
+            : "❌ 杀错";
+
+
+        var cls =
+            isHit
+            ? "hit"
+            : "miss";
+
+
+        rows +=
+            "<tr>" +
+
+            "<td>" +
+            cur.expect +
+            "</td>" +
+
+            "<td>" +
+
+            '<span class="kill-badge">' +
+
+            kill +
+
+            "</span>" +
+
+            "</td>" +
+
+            "<td>" +
+
+            cur.nums.join("+") +
+
+            "=" +
+
+            cur.sum +
+
+            " " +
+
+            cur.type +
+
+            "</td>" +
+
+            '<td class="' +
+            cls +
+            '">' +
+
+            resultText +
+
+            "</td>" +
+
+            "</tr>";
+
+    }
+
+
+    $("historyBody").innerHTML =
+        rows;
+
+
+    var rate =
+        totalCount > 0
+        ? Math.round(
+            (hitCount / totalCount) *
+            1000
+          ) / 10
+        : 0;
+
+
+    $("hitrateBadge").textContent =
+        "杀组命中率 " +
+        rate +
+        "% (" +
+        hitCount +
+        "/" +
+        totalCount +
+        ")";
 
 }
 
 
-/* =========================
-   每秒更新倒计时
-========================= */
 
-setInterval(
-  ()=>{
+/* ============================================================
+   区间切换
+============================================================ */
 
-    renderCountdown();
+function setRange(min,max){
 
-  },
-  1000
-);
+    currentRange = {
 
+        min:parseFloat(min),
 
-/* =========================
-   第一次加载
-========================= */
+        max:parseFloat(max)
 
-loadData();
+    };
 
 
-/* =========================
-   每5秒同步开奖
-========================= */
-
-setInterval(
-  ()=>{
-
-    loadData();
-
-  },
-  5000
-);
+    $("currentRange").textContent =
+        min +
+        " ~ " +
+        max;
 
 
-/* =========================
-   Tab
-========================= */
+    localStorage.setItem(
+        "kill_range",
+        JSON.stringify(
+            currentRange
+        )
+    );
 
-document
-.querySelectorAll(".tab")
-.forEach(
-  tab=>{
 
-    tab.addEventListener(
-      "click",
-      ()=>{
+    document
+    .querySelectorAll(
+        ".range-btn"
+    )
+    .forEach(
+        function(btn){
+
+            btn.classList.toggle(
+                "active",
+                btn.dataset.min === min &&
+                btn.dataset.max === max
+            );
+
+        }
+    );
+
+
+    if(
+        lotteryHistory.length
+    ){
+
+        updateUI();
+
+    }
+
+}
+
+
+
+/* ============================================================
+   初始化
+============================================================ */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function(){
+
+        /* 恢复区间 */
+
+        var stored =
+            localStorage.getItem(
+                "kill_range"
+            );
+
+
+        if(stored){
+
+            try{
+
+                var r =
+                    JSON.parse(
+                        stored
+                    );
+
+
+                currentRange = r;
+
+
+                $("currentRange").textContent =
+                    r.min.toFixed(3) +
+                    " ~ " +
+                    r.max.toFixed(3);
+
+
+                document
+                .querySelectorAll(
+                    ".range-btn"
+                )
+                .forEach(
+                    function(btn){
+
+                        btn.classList.toggle(
+                            "active",
+
+                            parseFloat(
+                                btn.dataset.min
+                            ) === r.min &&
+
+                            parseFloat(
+                                btn.dataset.max
+                            ) === r.max
+                        );
+
+                    }
+                );
+
+
+            }catch(e){}
+
+        }
+
+
+
+        /* 区间按钮 */
 
         document
-        .querySelectorAll(".tab")
+        .querySelectorAll(
+            ".range-btn"
+        )
         .forEach(
-          x =>
-            x.classList.remove(
-              "active"
-            )
+            function(btn){
+
+                btn.onclick =
+                    function(){
+
+                        setRange(
+                            this.dataset.min,
+                            this.dataset.max
+                        );
+
+                    };
+
+            }
         );
 
 
-        tab.classList.add(
-          "active"
+
+        /* 刷新 */
+
+        $("refreshBtn").onclick =
+            fetchData;
+
+
+
+        /* 先读取缓存 */
+
+        var cached =
+            localStorage.getItem(
+                "kill_history"
+            );
+
+
+        if(cached){
+
+            try{
+
+                lotteryHistory =
+                    JSON.parse(
+                        cached
+                    );
+
+
+                if(
+                    lotteryHistory.length
+                ){
+
+                    updateUI();
+
+
+                    $("apiStatus").textContent =
+                        "💾 缓存加载，正在刷新...";
+
+                }
+
+            }catch(e){}
+
+        }
+
+
+
+        /* 请求最新 */
+
+        fetchData();
+
+
+
+        /* 每35秒刷新 */
+
+        setInterval(
+            fetchData,
+            35000
         );
 
-
-        const type =
-          tab.dataset.tab;
-
-
-        if(type === "57"){
-
-          document
-          .querySelector(
-            ".table-wrap"
-          )
-          .scrollIntoView({
-            behavior:"smooth",
-            block:"center"
-          });
-
-        }
-
-
-        if(type === "kill"){
-
-          document
-          .getElementById(
-            "killSection"
-          )
-          .scrollIntoView({
-            behavior:"smooth",
-            block:"center"
-          });
-
-        }
-
-      }
-    );
-
-  }
-);
-
-
-/* =========================
-   常用工具
-========================= */
-
-document
-.getElementById("toolsBtn")
-.addEventListener(
-  "click",
-  ()=>{
-
-    document
-    .querySelector(
-      ".card.result"
-    )
-    .scrollIntoView({
-      behavior:"smooth"
-    });
-
-  }
-);
-
-
-/* =========================
-   接口门户
-========================= */
-
-document
-.getElementById("apiBtn")
-.addEventListener(
-  "click",
-  ()=>{
-
-    document
-    .querySelector(
-      ".ai"
-    )
-    .scrollIntoView({
-      behavior:"smooth"
-    });
-
-  }
-);
-
-
-/* =========================
-   主题
-========================= */
-
-document
-.getElementById("themeBtn")
-.addEventListener(
-  "click",
-  ()=>{
-
-    document.body
-    .classList
-    .toggle(
-      "dark-mode"
-    );
-
-  }
-);
-
-
-/* =========================
-   底部导航
-========================= */
-
-const navs =
-  document.querySelectorAll(
-    ".nav"
-  );
-
-
-navs.forEach(
-  (nav,index)=>{
-
-    nav.addEventListener(
-      "click",
-      ()=>{
-
-        navs.forEach(
-          x =>
-            x.classList.remove(
-              "active"
-            )
-        );
-
-
-        nav.classList.add(
-          "active"
-        );
-
-
-        if(index === 0){
-
-          window.scrollTo({
-            top:0,
-            behavior:"smooth"
-          });
-
-        }
-
-
-        if(index === 1){
-
-          document
-          .querySelector(
-            ".card.result"
-          )
-          .scrollIntoView({
-            behavior:"smooth"
-          });
-
-        }
-
-
-        if(index === 2){
-
-          document
-          .getElementById(
-            "killSection"
-          )
-          .scrollIntoView({
-            behavior:"smooth"
-          });
-
-        }
-
-
-        if(index === 3){
-
-          document
-          .querySelector(
-            ".footer"
-          )
-          .scrollIntoView({
-            behavior:"smooth"
-          });
-
-        }
-
-      }
-    );
-
-  }
+    }
 );
 
 </script>
