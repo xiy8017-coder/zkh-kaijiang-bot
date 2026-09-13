@@ -47,7 +47,6 @@ button{
   0%{
     transform:translate3d(0,-50px,0) rotate(0deg);
   }
-
   100%{
     transform:translate3d(100px,110vh,0) rotate(360deg);
   }
@@ -866,28 +865,28 @@ td{
    樱花
 ========================= */
 
-const sakuraBox=
+const sakuraBox =
   document.getElementById("sakura");
 
 for(let i=0;i<12;i++){
 
-  const el=
+  const el =
     document.createElement("div");
 
-  el.className="sakura";
+  el.className = "sakura";
 
-  el.innerText="🌸";
+  el.innerText = "🌸";
 
-  el.style.left=
+  el.style.left =
     Math.random()*100+"%";
 
-  el.style.fontSize=
+  el.style.fontSize =
     (12+Math.random()*13)+"px";
 
-  el.style.animationDuration=
+  el.style.animationDuration =
     (7+Math.random()*8)+"s";
 
-  el.style.animationDelay=
+  el.style.animationDelay =
     (-Math.random()*10)+"s";
 
   sakuraBox.appendChild(el);
@@ -895,16 +894,16 @@ for(let i=0;i<12;i++){
 
 
 /* =========================
-   数据
+   数据变量
 ========================= */
 
-let draws=[];
+let draws = [];
 
-let countdownSeconds=0;
+let countdownSeconds = 0;
 
-let nextIssueNumber="--";
+let nextIssueNumber = "--";
 
-let nextOpenTime=null;
+let nextOpenTime = null;
 
 
 /* =========================
@@ -916,11 +915,10 @@ function findArray(obj){
   if(Array.isArray(obj))
     return obj;
 
-  if(!obj ||
-     typeof obj!=="object")
+  if(!obj || typeof obj!=="object")
     return null;
 
-  const keys=[
+  const keys = [
     "data",
     "list",
     "result",
@@ -943,7 +941,7 @@ function findArray(obj){
       typeof obj[key]==="object"
     ){
 
-      const found=
+      const found =
         findArray(obj[key]);
 
       if(found)
@@ -954,17 +952,21 @@ function findArray(obj){
   }
 
   return null;
-
 }
 
 
 /* =========================
    期号
+   YU28 官方字段：nbr
 ========================= */
 
 function issueOf(x){
 
+  if(!x || typeof x!=="object")
+    return "--";
+
   return String(
+    x.nbr ??
     x.issue ??
     x.period ??
     x.expect ??
@@ -974,7 +976,6 @@ function issueOf(x){
     x.no ??
     "--"
   );
-
 }
 
 
@@ -983,6 +984,9 @@ function issueOf(x){
 ========================= */
 
 function timeOf(x){
+
+  if(!x || typeof x!=="object")
+    return "";
 
   return (
     x.time ??
@@ -993,17 +997,21 @@ function timeOf(x){
     x.openDateTime ??
     ""
   );
-
 }
 
 
 /* =========================
    号码
+   YU28 官方字段：
+   number = 4+8+2=14
 ========================= */
 
 function numbersOf(x){
 
-  let raw=
+  if(!x || typeof x!=="object")
+    return ["-","-","-"];
+
+  let raw =
     x.number ??
     x.numbers ??
     x.code ??
@@ -1011,30 +1019,28 @@ function numbersOf(x){
     x.openCode ??
     "";
 
-
   if(Array.isArray(raw)){
 
-    const arr=
+    const arr =
       raw
       .map(Number)
       .filter(n=>!isNaN(n));
 
     if(arr.length>=3)
       return arr.slice(0,3);
-
   }
 
-
-  const m=
+  const m =
     String(raw).match(/\d+/g);
 
-  if(m && m.length>=3)
+  if(m && m.length>=3){
+
     return m
       .slice(0,3)
       .map(Number);
+  }
 
-
-  const direct=[
+  const direct = [
     x.n1,
     x.n2,
     x.n3
@@ -1042,13 +1048,10 @@ function numbersOf(x){
   .map(Number)
   .filter(n=>!isNaN(n));
 
-
   if(direct.length===3)
     return direct;
 
-
   return ["-","-","-"];
-
 }
 
 
@@ -1058,25 +1061,45 @@ function numbersOf(x){
 
 function sumOf(x){
 
-  if(x.sum!==undefined)
+  if(!x || typeof x!=="object")
+    return 0;
+
+  if(
+    x.sum!==undefined &&
+    !isNaN(Number(x.sum))
+  )
     return Number(x.sum);
 
-  if(x.total!==undefined)
+  if(
+    x.total!==undefined &&
+    !isNaN(Number(x.total))
+  )
     return Number(x.total);
 
+  const raw =
+    x.number ?? "";
 
-  const nums=
+  const m =
+    String(raw).match(/\d+/g);
+
+  if(m && m.length>=4){
+
+    const officialSum =
+      Number(m[3]);
+
+    if(!isNaN(officialSum))
+      return officialSum;
+  }
+
+  const nums =
     numbersOf(x)
     .map(Number)
     .filter(n=>!isNaN(n));
 
-
   if(nums.length===3)
     return nums[0]+nums[1]+nums[2];
 
-
   return 0;
-
 }
 
 
@@ -1089,7 +1112,6 @@ function sizeOf(sum){
   return Number(sum)>=14
     ? "大"
     : "小";
-
 }
 
 
@@ -1098,15 +1120,12 @@ function parityOf(sum){
   return Number(sum)%2===0
     ? "双"
     : "单";
-
 }
 
 
 function comboOf(sum){
 
-  return sizeOf(sum)+
-         parityOf(sum);
-
+  return sizeOf(sum)+parityOf(sum);
 }
 
 
@@ -1116,9 +1135,8 @@ function comboOf(sum){
 
 function shapeOf(nums){
 
-  const a=
+  const a =
     nums.map(Number);
-
 
   if(
     a.length!==3 ||
@@ -1126,13 +1144,11 @@ function shapeOf(nums){
   )
     return "--";
 
-
   if(
     a[0]===a[1] &&
     a[1]===a[2]
   )
     return "豹子";
-
 
   if(
     a[0]===a[1] ||
@@ -1141,26 +1157,22 @@ function shapeOf(nums){
   )
     return "组三";
 
-
   return "杂六";
-
 }
 
 
 /* =========================
-   找倒计时
+   倒计时
+   YU28 官方：
+   countdown = MM:SS
 ========================= */
 
 function findCountdown(obj){
 
-  if(
-    !obj ||
-    typeof obj!=="object"
-  )
+  if(!obj || typeof obj!=="object")
     return null;
 
-
-  const keys=[
+  const keys = [
     "countdown",
     "next_countdown",
     "nextCountdown",
@@ -1169,187 +1181,129 @@ function findCountdown(obj){
     "seconds"
   ];
 
-
   for(const key of keys){
 
     if(obj[key]!==undefined){
 
-      const value=obj[key];
-
+      const value = obj[key];
 
       if(typeof value==="number")
         return value;
 
-
       if(typeof value==="string"){
 
-        let m=
+        let m =
           value.match(
             /^(\d+):(\d+):(\d+)$/
           );
 
-
         if(m){
 
-          return Number(m[1])*3600+
-                 Number(m[2])*60+
-                 Number(m[3]);
-
+          return (
+            Number(m[1])*3600 +
+            Number(m[2])*60 +
+            Number(m[3])
+          );
         }
 
-
-        m=
+        m =
           value.match(
             /^(\d+):(\d+)$/
           );
 
-
         if(m){
 
-          return Number(m[1])*60+
-                 Number(m[2]);
-
+          return (
+            Number(m[1])*60 +
+            Number(m[2])
+          );
         }
-
 
         if(!isNaN(Number(value)))
           return Number(value);
-
       }
-
     }
-
   }
-
-
-  for(const key of Object.keys(obj)){
-
-    if(
-      obj[key] &&
-      typeof obj[key]==="object"
-    ){
-
-      const result=
-        findCountdown(obj[key]);
-
-      if(result!==null)
-        return result;
-
-    }
-
-  }
-
 
   return null;
-
 }
 
 
 /* =========================
-   找下一期期号
+   下一期期号
 ========================= */
 
-function findNextIssue(obj){
+function calculateNextIssue(){
 
-  if(
-    !obj ||
-    typeof obj!=="object"
-  )
-    return null;
+  if(!draws.length)
+    return "--";
 
+  const current =
+    issueOf(draws[0]);
 
-  const keys=[
-    "nextIssue",
-    "next_issue",
-    "nextPeriod",
-    "next_period",
-    "nextExpect",
-    "next_expect"
-  ];
+  const n =
+    parseInt(
+      String(current).replace(/\D/g,""),
+      10
+    );
 
+  if(!isNaN(n))
+    return String(n+1);
 
-  for(const key of keys){
-
-    if(obj[key]!==undefined)
-      return obj[key];
-
-  }
-
-
-  for(const key of Object.keys(obj)){
-
-    if(
-      obj[key] &&
-      typeof obj[key]==="object"
-    ){
-
-      const result=
-        findNextIssue(obj[key]);
-
-      if(result!==null)
-        return result;
-
-    }
-
-  }
-
-
-  return null;
-
+  return "--";
 }
 
 
 /* =========================
-   找下一期开奖时间
+   计算下一期开奖时间
 ========================= */
 
-function findNextTime(obj){
+function calculateNextTime(){
 
-  if(
-    !obj ||
-    typeof obj!=="object"
-  )
+  if(!draws.length)
     return null;
 
+  const currentTime =
+    timeOf(draws[0]);
 
-  const keys=[
-    "nextTime",
-    "next_time",
-    "nextOpenTime",
-    "next_open_time",
-    "openTime",
-    "open_time"
-  ];
+  if(!currentTime)
+    return null;
 
+  const m =
+    String(currentTime).match(
+      /(\d{4})-(\d{2})-(\d{2})\s+(\d{1,2}):(\d{2})(?::(\d{2}))?/
+    );
 
-  for(const key of keys){
+  if(!m)
+    return null;
 
-    if(obj[key])
-      return obj[key];
+  const base =
+    new Date(
+      Number(m[1]),
+      Number(m[2])-1,
+      Number(m[3]),
+      Number(m[4]),
+      Number(m[5]),
+      Number(m[6] || 0)
+    );
 
-  }
+  if(isNaN(base.getTime()))
+    return null;
 
+  base.setSeconds(
+    base.getSeconds()+countdownSeconds
+  );
 
-  for(const key of Object.keys(obj)){
+  const hh =
+    String(base.getHours()).padStart(2,"0");
 
-    if(
-      obj[key] &&
-      typeof obj[key]==="object"
-    ){
+  const mm =
+    String(base.getMinutes()).padStart(2,"0");
 
-      const result=
-        findNextTime(obj[key]);
+  const ss =
+    String(base.getSeconds()).padStart(2,"0");
 
-      if(result)
-        return result;
-
-    }
-
-  }
-
-
-  return null;
-
+  return hh+":"+mm+":"+ss;
 }
 
 
@@ -1362,15 +1316,13 @@ function formatTime(t){
   if(!t)
     return "--:--:--";
 
+  const s =
+    String(t);
 
-  const s=String(t);
-
-
-  const m=
+  const m =
     s.match(
       /(\d{1,2}):(\d{2})(?::(\d{2}))?/
     );
-
 
   if(m){
 
@@ -1381,12 +1333,9 @@ function formatTime(t){
       ":"+
       (m[3] || "00")
     );
-
   }
 
-
   return s;
-
 }
 
 
@@ -1398,7 +1347,7 @@ async function loadData(){
 
   try{
 
-    const res=
+    const res =
       await fetch(
         "/api/kj.json?nbr=57&_="+Date.now(),
         {
@@ -1406,103 +1355,64 @@ async function loadData(){
         }
       );
 
+    if(!res.ok){
 
-    if(!res.ok)
       throw new Error(
         "API "+res.status
       );
+    }
 
-
-    const json=
+    const json =
       await res.json();
-
 
     console.log(
       "YU28同步:",
       json
     );
 
-
-    const list=
+    const list =
       findArray(json);
-
 
     if(
       !list ||
       !list.length
     ){
 
-      console.log(
-        "没有找到开奖数组"
+      throw new Error(
+        "没有找到开奖数据"
       );
-
-      return;
-
     }
 
-
-    draws=
+    draws =
       list.slice(0,57);
-
 
     /* 倒计时 */
 
-    const cd=
+    const cd =
       findCountdown(json);
-
 
     if(cd!==null){
 
-      countdownSeconds=
+      countdownSeconds =
         Math.max(
           0,
           Math.floor(
             Number(cd)
           )
         );
-
     }
-
 
     /* 下一期 */
 
-    const ni=
-      findNextIssue(json);
-
-
-    if(ni!==null){
-
-      nextIssueNumber=
-        String(ni);
-
-    }else{
-
-      const current=
-        issueOf(draws[0]);
-
-
-      const n=
-        parseInt(
-          current.replace(/\D/g,""),
-          10
-        );
-
-
-      if(!isNaN(n))
-        nextIssueNumber=
-          String(n+1);
-
-    }
-
+    nextIssueNumber =
+      calculateNextIssue();
 
     /* 下一期开奖时间 */
 
-    nextOpenTime=
-      findNextTime(json);
-
+    nextOpenTime =
+      calculateNextTime();
 
     updatePage();
-
 
   }catch(error){
 
@@ -1511,14 +1421,11 @@ async function loadData(){
       error
     );
 
-
     document.getElementById(
       "aiText"
-    ).innerHTML=
+    ).innerHTML =
       "⚠️ 正在重新连接实时开奖数据……";
-
   }
-
 }
 
 
@@ -1531,91 +1438,93 @@ function updatePage(){
   if(!draws.length)
     return;
 
-
-  const first=
+  const first =
     draws[0];
 
-
-  const issue=
+  const issue =
     issueOf(first);
 
-
-  const nums=
+  const nums =
     numbersOf(first);
 
-
-  const sum=
+  const sum =
     sumOf(first);
 
+  /* 当前期 */
 
   document.getElementById(
     "currentIssue"
-  ).innerText=
+  ).innerText =
     "第"+issue+"期";
-
 
   document.getElementById(
     "currentTime"
-  ).innerText=
+  ).innerText =
     timeOf(first) || "--";
 
+  document.getElementById(
+    "n1"
+  ).innerText =
+    nums[0];
 
-  document.getElementById("n1")
-    .innerText=nums[0];
+  document.getElementById(
+    "n2"
+  ).innerText =
+    nums[1];
 
-  document.getElementById("n2")
-    .innerText=nums[1];
+  document.getElementById(
+    "n3"
+  ).innerText =
+    nums[2];
 
-  document.getElementById("n3")
-    .innerText=nums[2];
+  document.getElementById(
+    "sum"
+  ).innerText =
+    sum > 0 ? sum : "-";
 
-  document.getElementById("sum")
-    .innerText=
-      sum || "-";
-
+  /* 下一期 */
 
   document.getElementById(
     "nextIssue"
-  ).innerText=
+  ).innerText =
     "第 "+nextIssueNumber+" 期";
 
-
-  document.getElementById(
-    "historyIssue"
-  )?.innerText=
-    "第 "+issue+" 期";
-
+  /* 杀组 */
 
   document.getElementById(
     "killLatest"
-  ).innerText=
+  ).innerText =
     "第 "+issue+" 期";
-
 
   document.getElementById(
     "killStatus"
-  ).innerText=
+  ).innerText =
     "第 "+nextIssueNumber+
     " 期 · 等待开奖";
 
+  /* 下一期开奖时间 */
 
   if(nextOpenTime){
 
     document.getElementById(
       "nextTime"
-    ).innerText=
+    ).innerText =
       "开奖 "+
       formatTime(nextOpenTime);
 
-  }
+  }else{
 
+    document.getElementById(
+      "nextTime"
+    ).innerText =
+      "等待开奖";
+  }
 
   renderTable();
 
   renderAI();
 
   renderCountdown();
-
 }
 
 
@@ -1625,51 +1534,46 @@ function updatePage(){
 
 function renderTable(){
 
-  const body=
+  const body =
     document.getElementById(
       "drawTable"
     );
 
-
-  body.innerHTML="";
-
+  body.innerHTML = "";
 
   draws.forEach(
     (item,index)=>{
 
-      const issue=
+      const issue =
         issueOf(item);
 
-      const time=
+      const time =
         timeOf(item);
 
-      const nums=
+      const nums =
         numbersOf(item);
 
-      const sum=
+      const sum =
         sumOf(item);
 
-      const size=
+      const size =
         sizeOf(sum);
 
-      const parity=
+      const parity =
         parityOf(sum);
 
-      const shape=
+      const shape =
         shapeOf(nums);
 
-
-      const tr=
+      const tr =
         document.createElement("tr");
 
-
-      tr.className=
+      tr.className =
         index%2===0
         ? "row-green"
         : "row-red";
 
-
-      tr.innerHTML=`
+      tr.innerHTML = `
 
         <td>
           <b>${issue}</b>
@@ -1714,12 +1618,10 @@ function renderTable(){
 
       `;
 
-
       body.appendChild(tr);
 
     }
   );
-
 }
 
 
@@ -1729,54 +1631,45 @@ function renderTable(){
 
 function renderAI(){
 
-  const sums=
+  const sums =
     draws
     .map(x=>sumOf(x))
     .filter(x=>x>0);
 
-
   if(!sums.length)
     return;
 
-
-  const avg=
+  const avg =
     sums.reduce(
       (a,b)=>a+b,
       0
     )/sums.length;
 
-
-  const big=
+  const big =
     sums.filter(
       x=>x>=14
     ).length;
 
-
-  const small=
+  const small =
     sums.length-big;
 
-
-  const odd=
+  const odd =
     sums.filter(
       x=>x%2!==0
     ).length;
 
-
-  const even=
+  const even =
     sums.length-odd;
 
-
-  const max=
+  const max =
     Math.max(...sums);
 
-
-  const min=
+  const min =
     Math.min(...sums);
-
 
   document.getElementById(
     "aiText"
-  ).innerHTML=`
+  ).innerHTML = `
 
     当前同步：
     <b>最近 ${sums.length} 期</b>
@@ -1795,14 +1688,14 @@ function renderAI(){
 
     大和值：
     <b>${big}期</b>
-   　小和值：
+    　小和值：
     <b>${small}期</b>
 
     <br>
 
     单数和值：
     <b>${odd}期</b>
-   　双数和值：
+    　双数和值：
     <b>${even}期</b>
 
     <br><br>
@@ -1817,17 +1710,16 @@ function renderAI(){
     </span>
 
   `;
-
 }
 
 
 /* =========================
-   倒计时
+   倒计时显示
 ========================= */
 
 function renderCountdown(){
 
-  const sec=
+  const sec =
     Math.max(
       0,
       Math.floor(
@@ -1835,31 +1727,26 @@ function renderCountdown(){
       )
     );
 
-
-  const min=
+  const min =
     Math.floor(sec/60);
 
-
-  const s=
+  const s =
     sec%60;
-
 
   document.getElementById(
     "countdown"
-  ).innerText=
+  ).innerText =
     min+
     "分"+
     String(s).padStart(2,"0")+
     "秒";
 
-
-  const progress=
+  const progress =
     document.getElementById(
       "progress"
     );
 
-
-  const percent=
+  const percent =
     Math.min(
       100,
       Math.max(
@@ -1869,10 +1756,8 @@ function renderCountdown(){
       )
     );
 
-
-  progress.style.width=
+  progress.style.width =
     percent+"%";
-
 }
 
 
@@ -1882,12 +1767,24 @@ function renderCountdown(){
 
 setInterval(
   ()=>{
-    
+
     if(countdownSeconds>0){
 
       countdownSeconds--;
 
       renderCountdown();
+
+      nextOpenTime =
+        calculateNextTime();
+
+      if(nextOpenTime){
+
+        document.getElementById(
+          "nextTime"
+        ).innerText =
+          "开奖 "+
+          formatTime(nextOpenTime);
+      }
 
     }
 
@@ -1928,15 +1825,12 @@ document
         )
       );
 
-
       tab.classList.add(
         "active"
       );
 
-
-      const type=
+      const type =
         tab.dataset.tab;
-
 
       if(type==="57"){
 
@@ -1948,9 +1842,7 @@ document
           behavior:"smooth",
           block:"center"
         });
-
       }
-
 
       if(type==="kill"){
 
@@ -1962,7 +1854,6 @@ document
           behavior:"smooth",
           block:"center"
         });
-
       }
 
     }
@@ -2033,11 +1924,10 @@ document
    底部导航
 ========================= */
 
-const navs=
+const navs =
   document.querySelectorAll(
     ".nav"
   );
-
 
 navs.forEach(
   (nav,index)=>{
@@ -2052,11 +1942,9 @@ navs.forEach(
           )
         );
 
-
         nav.classList.add(
           "active"
         );
-
 
         if(index===0){
 
@@ -2066,7 +1954,6 @@ navs.forEach(
           });
 
         }
-
 
         if(index===1){
 
@@ -2080,7 +1967,6 @@ navs.forEach(
 
         }
 
-
         if(index===2){
 
           document
@@ -2092,7 +1978,6 @@ navs.forEach(
           });
 
         }
-
 
         if(index===3){
 
