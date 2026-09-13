@@ -7,11 +7,15 @@
 <title>濠少杀组 · 双接口版</title>
 
 <style>
-
 *{
     margin:0;
     padding:0;
     box-sizing:border-box;
+}
+
+html,body{
+    width:100%;
+    min-height:100%;
 }
 
 body{
@@ -21,7 +25,12 @@ body{
     color:#111;
 }
 
-.container{
+button{
+    font-family:inherit;
+}
+
+.container,
+.pred-container{
     max-width:480px;
     margin:0 auto;
 }
@@ -132,13 +141,27 @@ body{
     font-weight:700;
     font-size:16px;
     cursor:pointer;
-    display:block;
-    text-align:center;
-    text-decoration:none;
 }
 
-.btn:active{
-    transform:scale(.96);
+.predict-btn{
+    width:100%;
+    padding:14px;
+    border:none;
+    border-radius:30px;
+    background:linear-gradient(135deg,#e83e9f,#ff6fbd);
+    color:#fff;
+    font-size:17px;
+    font-weight:800;
+    box-shadow:0 5px 15px rgba(232,62,159,.25);
+    cursor:pointer;
+    margin-top:10px;
+}
+
+.btn:active,
+.predict-btn:active,
+.pred-back:active,
+.pred-action:active{
+    transform:scale(.97);
 }
 
 .status{
@@ -214,33 +237,305 @@ th,td{
 
 
 /* =========================================================
-   🐯 白虎按钮
+   禧少杀组页面
 ========================================================= */
 
-.baihu-btn{
-    width:100%;
-    padding:14px;
-    border:none;
-    border-radius:30px;
-    background:linear-gradient(135deg,#e83e9f,#ff6fbd);
-    color:#fff;
-    font-size:17px;
-    font-weight:800;
-    box-shadow:0 5px 15px rgba(232,62,159,.25);
-    cursor:pointer;
-    margin-top:4px;
-    display:block;
-    text-align:center;
-    text-decoration:none;
+#predictionPage{
+    display:none;
+    position:fixed;
+    inset:0;
+    z-index:10000;
+    overflow-y:auto;
+    background:
+        radial-gradient(circle at 10% 10%,rgba(255,255,255,.9),transparent 30%),
+        linear-gradient(180deg,#fff7fb,#fff1f8 55%,#fff7fb);
+    padding:18px 16px 35px;
 }
 
-.baihu-btn:active{
-    transform:scale(.97);
+.pred-header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:4px 2px 18px;
+}
+
+.pred-brand{
+    display:flex;
+    align-items:center;
+    gap:12px;
+}
+
+.pred-logo{
+    width:54px;
+    height:54px;
+    border-radius:18px;
+    background:linear-gradient(135deg,#e6389a,#f16ab6);
+    color:#fff;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:29px;
+    box-shadow:0 6px 15px rgba(230,56,154,.22);
+}
+
+.pred-name{
+    font-size:21px;
+    font-weight:900;
+    color:#202633;
+}
+
+.pred-sub{
+    margin-top:3px;
+    color:#d84291;
+    font-size:13px;
+}
+
+.pred-actions{
+    display:flex;
+    gap:8px;
+}
+
+.pred-action{
+    width:45px;
+    height:45px;
+    border-radius:50%;
+    border:1px solid #f5c7df;
+    background:#fff1f8;
+    color:#df3c96;
+    font-size:23px;
+    cursor:pointer;
+}
+
+.pred-current{
+    background:#fff;
+    border:1px solid #f4c8df;
+    border-radius:24px;
+    padding:18px;
+    margin-bottom:24px;
+    box-shadow:0 8px 25px rgba(220,60,145,.08);
+}
+
+.pred-current-top{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    color:#d13b8c;
+    font-weight:700;
+    font-size:14px;
+}
+
+.pred-numbers{
+    display:flex;
+    justify-content:center;
+    gap:16px;
+    margin:17px 0 12px;
+}
+
+.pred-number{
+    width:62px;
+    height:62px;
+    border-radius:50%;
+    background:linear-gradient(135deg,#fff,#ffeaf5);
+    border:1px solid #f5c8df;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    font-size:27px;
+    font-weight:900;
+    color:#202633;
+}
+
+.pred-result{
+    text-align:center;
+    font-size:14px;
+    color:#8e8e93;
+}
+
+.pred-section-title{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin:22px 0 13px;
+    color:#202633;
+}
+
+.pred-section-title-left{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-size:22px;
+    font-weight:900;
+}
+
+.pred-section-title-left::before{
+    content:"";
+    width:7px;
+    height:27px;
+    border-radius:8px;
+    background:#e6389a;
+}
+
+.pred-section-note{
+    color:#d73e91;
+    font-size:13px;
+    font-weight:700;
+}
+
+.double-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:14px;
+}
+
+.double-card{
+    min-height:220px;
+    border-radius:24px;
+    padding:26px 20px;
+    border:1px solid #f2b8d7;
+    background:linear-gradient(145deg,#ffe0f0,#fff0f8);
+    box-shadow:0 8px 20px rgba(230,56,154,.08);
+}
+
+.double-card.second{
+    background:#fff7fb;
+}
+
+.double-label{
+    color:#d7358d;
+    font-size:15px;
+    font-weight:800;
+}
+
+.double-value{
+    margin-top:35px;
+    text-align:center;
+    color:#202633;
+    font-size:47px;
+    font-weight:900;
+}
+
+.double-desc{
+    margin-top:28px;
+    color:#d7358d;
+    font-size:14px;
+    font-weight:700;
+}
+
+.reference-card{
+    margin-top:15px;
+    padding:19px;
+    border-radius:22px;
+    background:#fff8f5;
+    border:1px solid #f4c9bd;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.reference-left{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    color:#d84a40;
+    font-size:17px;
+    font-weight:800;
+}
+
+.reference-tag{
+    background:#e6389a;
+    color:#fff;
+    border-radius:20px;
+    padding:6px 12px;
+    font-size:11px;
+}
+
+.reference-value{
+    font-size:29px;
+    font-weight:900;
+    color:#e33c3c;
+}
+
+.algorithm-card{
+    margin-top:15px;
+    border-radius:22px;
+    border:1px solid #f1c5dd;
+    background:#fff9fc;
+    padding:18px;
+}
+
+.algorithm-head{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    color:#b72f76;
+    font-size:16px;
+    font-weight:800;
+    cursor:pointer;
+}
+
+.algorithm-content{
+    display:none;
+    margin-top:15px;
+    padding-top:14px;
+    border-top:1px solid #f5d7e7;
+    color:#777;
+    line-height:1.8;
+    font-size:13px;
+}
+
+.four-title{
+    margin-top:27px;
+}
+
+.four-numbers{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:12px;
+    margin-top:16px;
+}
+
+.four-number{
+    height:70px;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:#fff;
+    font-size:23px;
+    font-weight:900;
+    box-shadow:0 7px 15px rgba(0,0,0,.12);
+}
+
+.four-number.pink{
+    background:linear-gradient(135deg,#df2987,#ec56a5);
+}
+
+.four-number.green{
+    background:linear-gradient(135deg,#12ad82,#24c394);
+}
+
+.pred-back{
+    width:100%;
+    margin-top:28px;
+    padding:14px;
+    border:1px solid #efb7d4;
+    border-radius:30px;
+    background:#fff;
+    color:#d7378e;
+    font-size:16px;
+    font-weight:800;
+}
+
+.pred-disclaimer{
+    text-align:center;
+    margin-top:20px;
+    color:#aaa;
+    font-size:11px;
 }
 
 
 /* =========================================================
-   🌸 樱花飘落
+   樱花
 ========================================================= */
 
 #petals{
@@ -276,39 +571,207 @@ th,td{
 }
 
 @keyframes petalFall{
-
     0%{
         transform:translate3d(0,-40px,0) rotate(0deg);
     }
-
     25%{
         transform:translate3d(25px,25vh,0) rotate(90deg);
     }
-
     50%{
         transform:translate3d(-20px,50vh,0) rotate(180deg);
     }
-
     75%{
         transform:translate3d(30px,75vh,0) rotate(270deg);
     }
-
     100%{
         transform:translate3d(-10px,110vh,0) rotate(360deg);
     }
-
 }
-
 </style>
 </head>
 
-
 <body>
 
-
-<!-- 🌸 樱花 -->
-
 <div id="petals"></div>
+
+
+<!-- =========================================================
+     禧少杀组页面
+========================================================= -->
+
+<div id="predictionPage">
+
+    <div class="pred-container">
+
+        <div class="pred-header">
+
+            <div class="pred-brand">
+
+                <div class="pred-logo">📈</div>
+
+                <div>
+                    <div class="pred-name">禧少杀组</div>
+                    <div class="pred-sub">封禁三门 · 独家杀组</div>
+                </div>
+
+            </div>
+
+            <div class="pred-actions">
+
+                <button class="pred-action" id="predRefresh">⟳</button>
+
+                <button class="pred-action" id="predCloseTop">×</button>
+
+            </div>
+
+        </div>
+
+
+        <!-- 当前开奖 -->
+
+        <div class="pred-current">
+
+            <div class="pred-current-top">
+
+                <span>当前开奖</span>
+
+                <span id="predPeriod">----期</span>
+
+            </div>
+
+            <div class="pred-numbers">
+
+                <div class="pred-number" id="predNum1">-</div>
+                <div class="pred-number" id="predNum2">-</div>
+                <div class="pred-number" id="predNum3">-</div>
+
+            </div>
+
+            <div class="pred-result" id="predResult">
+                和值 -- · 形态 --
+            </div>
+
+        </div>
+
+
+        <!-- 下期双组 -->
+
+        <div class="pred-section-title">
+
+            <div class="pred-section-title-left">
+                下期双组推荐
+            </div>
+
+            <div class="pred-section-note">
+                封禁三门+独家杀组
+            </div>
+
+        </div>
+
+        <div class="double-grid">
+
+            <div class="double-card">
+
+                <div class="double-label">首选</div>
+
+                <div class="double-value">--</div>
+
+                <div class="double-desc">核心展示</div>
+
+            </div>
+
+            <div class="double-card second">
+
+                <div class="double-label">次选</div>
+
+                <div class="double-value">--</div>
+
+                <div class="double-desc">规则展示</div>
+
+            </div>
+
+        </div>
+
+
+        <!-- 杀组参考 -->
+
+        <div class="reference-card">
+
+            <div class="reference-left">
+
+                <span>🚫 杀组参考</span>
+
+                <span class="reference-tag">
+                    独家杀组公式
+                </span>
+
+            </div>
+
+            <div class="reference-value">--</div>
+
+        </div>
+
+
+        <!-- 算法详情 -->
+
+        <div class="algorithm-card">
+
+            <div class="algorithm-head" id="algorithmHead">
+
+                <span>♧ 独家算法计算详情</span>
+
+                <span id="algorithmArrow">﹀</span>
+
+            </div>
+
+            <div class="algorithm-content" id="algorithmContent">
+
+                当前页面仅展示算法页面结构及历史数据。
+
+                <br>
+
+                不自动生成下一期投注结论。
+
+                <br>
+
+                数据仅供娱乐参考。
+
+            </div>
+
+        </div>
+
+
+        <!-- 四码 -->
+
+        <div class="pred-section-title four-title">
+
+            <div class="pred-section-title-left">
+                特码参考 · 四码
+            </div>
+
+        </div>
+
+        <div class="four-numbers">
+
+            <div class="four-number pink">--</div>
+            <div class="four-number green">--</div>
+            <div class="four-number pink">--</div>
+            <div class="four-number green">--</div>
+
+        </div>
+
+        <div class="pred-disclaimer">
+            仅供娱乐 · 数据展示页面
+        </div>
+
+        <button class="pred-back" id="predBack">
+            ← 返回濠少杀组
+        </button>
+
+    </div>
+
+</div>
+
 
 
 <!-- =========================================================
@@ -318,11 +781,6 @@ th,td{
 <div id="mainPage">
 
 <div class="container">
-
-
-    <!-- =====================================================
-         标题
-    ====================================================== -->
 
     <div class="card"
          style="background:linear-gradient(135deg,#007AFF,#0A84FF);color:#fff;">
@@ -341,28 +799,17 @@ th,td{
     </div>
 
 
-    <!-- =====================================================
-         最新开奖
-    ====================================================== -->
+    <!-- 最新开奖 -->
 
     <div class="card">
 
         <div class="balls">
 
-            <div class="ball" id="num1">
-                -
-            </div>
-
-            <div class="ball" id="num2">
-                -
-            </div>
-
-            <div class="ball" id="num3">
-                -
-            </div>
+            <div class="ball" id="num1">-</div>
+            <div class="ball" id="num2">-</div>
+            <div class="ball" id="num3">-</div>
 
         </div>
-
 
         <div class="info">
 
@@ -376,8 +823,6 @@ th,td{
 
         </div>
 
-
-        <!-- 杀组 -->
 
         <div class="kill-box">
 
@@ -396,144 +841,102 @@ th,td{
             ⏳ 加载中...
         </div>
 
-
-        <div
-            style="margin-top:8px;text-align:center;"
-            id="apiBadge">
+        <div style="margin-top:8px;text-align:center;"
+             id="apiBadge">
         </div>
 
     </div>
 
 
-    <!-- =====================================================
-         区间选择
-    ====================================================== -->
+    <!-- 区间 -->
 
     <div class="card">
 
-        <div
-            style="
+        <div style="
             display:flex;
             justify-content:space-between;
             align-items:center;
             margin-bottom:8px;
-            "
-        >
+        ">
 
             <span style="font-weight:600;">
                 📐 当前区间
             </span>
 
-            <span
-                id="currentRange"
-                style="font-weight:700;color:#007AFF;"
-            >
+            <span id="currentRange"
+                  style="font-weight:700;color:#007AFF;">
                 0.250 ~ 0.450
             </span>
 
         </div>
 
 
-        <div
-            class="range-row"
-            id="rangeBtns"
-        >
+        <div class="range-row" id="rangeBtns">
 
-            <button
-                class="range-btn active"
-                data-min="0.250"
-                data-max="0.450"
-            >
+            <button class="range-btn active"
+                    data-min="0.250"
+                    data-max="0.450">
                 0.250~0.450
             </button>
 
-
-            <button
-                class="range-btn"
-                data-min="0.300"
-                data-max="0.500"
-            >
+            <button class="range-btn"
+                    data-min="0.300"
+                    data-max="0.500">
                 0.300~0.500
             </button>
 
-
-            <button
-                class="range-btn"
-                data-min="0.350"
-                data-max="0.550"
-            >
+            <button class="range-btn"
+                    data-min="0.350"
+                    data-max="0.550">
                 0.350~0.550
             </button>
 
-
-            <button
-                class="range-btn"
-                data-min="0.200"
-                data-max="0.400"
-            >
+            <button class="range-btn"
+                    data-min="0.200"
+                    data-max="0.400">
                 0.200~0.400
             </button>
 
-
-            <button
-                class="range-btn"
-                data-min="0.150"
-                data-max="0.350"
-            >
+            <button class="range-btn"
+                    data-min="0.150"
+                    data-max="0.350">
                 0.150~0.350
             </button>
 
         </div>
 
 
-        <!-- 刷新 -->
-
-        <button
-            class="btn"
-            id="refreshBtn"
-        >
+        <button class="btn" id="refreshBtn">
             🔄 刷新数据
         </button>
 
 
-        <!-- =================================================
-             🐯 白虎
-             直接打开 baihu.html
-        ================================================== -->
+        <!-- 白虎按钮 -->
 
-        <a
-            class="baihu-btn"
-            href="baihu.html"
-        >
+        <button class="predict-btn" id="openPrediction">
             🐯 白虎
-        </a>
+        </button>
 
     </div>
 
 
-    <!-- =====================================================
-         历史回测
-    ====================================================== -->
+    <!-- 历史回测 -->
 
     <div class="card">
 
-        <div
-            style="
+        <div style="
             display:flex;
             justify-content:space-between;
             align-items:center;
             margin-bottom:8px;
-            "
-        >
+        ">
 
             <span style="font-weight:600;">
                 📊 历史回测
             </span>
 
-            <span
-                id="hitrateBadge"
-                style="font-size:12px;color:#8E8E93;"
-            >
+            <span id="hitrateBadge"
+                  style="font-size:12px;color:#8E8E93;">
                 --
             </span>
 
@@ -547,25 +950,20 @@ th,td{
                 <thead>
 
                     <tr>
-
                         <th>期号</th>
                         <th>杀组</th>
                         <th>实际</th>
                         <th>结果</th>
-
                     </tr>
 
                 </thead>
 
-
                 <tbody id="historyBody">
 
                     <tr>
-
                         <td colspan="4">
                             加载中...
                         </td>
-
                     </tr>
 
                 </tbody>
@@ -578,9 +976,7 @@ th,td{
 
 
     <div class="footer">
-
         仅供娱乐 · 数据自动同步
-
     </div>
 
 </div>
@@ -591,59 +987,32 @@ th,td{
 
 <script>
 
-
-/* ============================================================
-   🌸 樱花飘落
-============================================================ */
+/* =========================================================
+   樱花
+========================================================= */
 
 (function(){
 
-    var box =
-        document.getElementById("petals");
+    var box=document.getElementById("petals");
 
-    if(!box) return;
+    if(!box)return;
 
-    for(
-        var i = 0;
-        i < 20;
-        i++
-    ){
+    for(var i=0;i<20;i++){
 
-        var p =
-            document.createElement("span");
+        var p=document.createElement("span");
 
-        p.className =
-            "petal";
+        p.className="petal";
 
-        p.style.left =
-            (Math.random() * 100) +
-            "vw";
+        p.style.left=(Math.random()*100)+"vw";
 
-        p.style.animationDuration =
-            (7 + Math.random() * 8) +
-            "s";
+        p.style.animationDuration=
+            (7+Math.random()*8)+"s";
 
-        p.style.animationDelay =
-            (-Math.random() * 12) +
-            "s";
+        p.style.animationDelay=
+            (-Math.random()*12)+"s";
 
-        p.style.opacity =
-            (
-                .45 +
-                Math.random() * .45
-            ).toFixed(2);
-
-        p.style.transform =
-            "scale(" +
-            (
-                .55 +
-                Math.random() * .8
-            ) +
-            ") rotate(" +
-            (
-                Math.random() * 360
-            ) +
-            "deg)";
+        p.style.opacity=
+            (.45+Math.random()*.45).toFixed(2);
 
         box.appendChild(p);
 
@@ -652,10 +1021,9 @@ th,td{
 })();
 
 
-
-/* ============================================================
+/* =========================================================
    接口
-============================================================ */
+========================================================= */
 
 const API_PRIMARY =
     "https://kj.pc28.im/api/kj.json?nbr=1000";
@@ -664,302 +1032,256 @@ const API_BACKUP =
     "https://pc28.help/api/kj.json?nbr=1000";
 
 
-
-/* ============================================================
+/* =========================================================
    工具
-============================================================ */
+========================================================= */
+
+function $(id){
+    return document.getElementById(id);
+}
+
 
 function digitSum(num){
 
-    var s = 0;
+    var s=0;
 
-    var str =
-        String(num)
+    var str=String(num)
         .replace(".","")
         .replace("-","");
 
-    for(
-        var i = 0;
-        i < str.length;
-        i++
-    ){
+    for(var i=0;i<str.length;i++){
 
-        s +=
-            parseInt(str[i]) || 0;
+        s+=parseInt(str[i])||0;
 
     }
 
     return s;
-
 }
-
 
 
 function getTypeFromSum(sum){
 
-    var size =
-        sum < 14
-        ? "小"
-        : "大";
+    var size=sum<14?"小":"大";
 
-    var parity =
-        sum % 2 === 0
-        ? "双"
-        : "单";
+    var parity=
+        sum%2===0?"双":"单";
 
-    return size + parity;
-
+    return size+parity;
 }
-
 
 
 function seededRandom(seed){
 
-    var s =
-        seed | 0;
+    var s=seed|0;
 
     return function(){
 
-        s =
-            (s + 0x9e3779b9) | 0;
+        s=(s+0x9e3779b9)|0;
 
-        var t =
-            s ^ (s >>> 15);
+        var t=s^(s>>>15);
 
-        t =
-            Math.imul(
-                t,
-                0x85ebca6b
-            );
+        t=Math.imul(t,0x85ebca6b);
 
-        t =
-            t ^ (t >>> 13);
+        t=t^(t>>>13);
 
-        t =
-            Math.imul(
-                t,
-                0xc2b2ae35
-            );
+        t=Math.imul(t,0xc2b2ae35);
 
-        t =
-            t ^ (t >>> 16);
+        t=t^(t>>>16);
 
-        return (
-            (t >>> 0) /
-            4294967296
-        );
+        return (t>>>0)/4294967296;
 
     };
 
 }
 
 
-
-/* ============================================================
+/* =========================================================
    杀组计算
-============================================================ */
+========================================================= */
 
-function calcKillGroup(
-    prev,
-    range
-){
+function calcKillGroup(prev,range){
 
-    var typesOrder = [
-
+    var typesOrder=[
         "小双",
         "小单",
         "大双",
         "大单"
-
     ];
 
+    var period=parseInt(prev.expect);
 
-    var period =
-        parseInt(prev.expect);
+    if(!Number.isFinite(period)){
+        period=0;
+    }
 
+    var rng=seededRandom(period);
 
-    var rng =
-        seededRandom(period);
+    var rand=
+        rng()*(range.max-range.min)+range.min;
 
+    var product=rand*prev.sum;
 
-    var rand =
-        rng() *
-        (
-            range.max -
-            range.min
-        ) +
-        range.min;
+    var rounded=
+        Number(product.toFixed(3));
 
+    var finalSum=digitSum(rounded);
 
-    var product =
-        rand *
-        prev.sum;
+    var baseType=
+        getTypeFromSum(finalSum);
 
+    var decStr=
+        rand.toFixed(8).split(".")[1]||"0";
 
-    var rounded =
-        Number(
-            product.toFixed(3)
-        );
+    var first3=
+        decStr.slice(0,3).padEnd(3,"0");
 
+    var offset=digitSum(first3)%4;
 
-    var finalSum =
-        digitSum(rounded);
+    var baseIdx=
+        typesOrder.indexOf(baseType);
 
+    if(baseIdx<0)baseIdx=0;
 
-    var baseType =
-        getTypeFromSum(
-            finalSum
-        );
-
-
-    var decStr =
-        rand
-        .toFixed(8)
-        .split(".")[1] || "0";
-
-
-    var first3 =
-        decStr
-        .slice(0,3)
-        .padEnd(3,"0");
-
-
-    var offset =
-        digitSum(first3) % 4;
-
-
-    var baseIdx =
-        typesOrder.indexOf(
-            baseType
-        );
-
-
-    var killIdx =
-        (
-            baseIdx +
-            offset
-        ) % 4;
-
+    var killIdx=
+        (baseIdx+offset)%4;
 
     return typesOrder[killIdx];
 
 }
 
 
-
-/* ============================================================
+/* =========================================================
    数据
-============================================================ */
+========================================================= */
 
-var lotteryHistory = [];
+var lotteryHistory=[];
 
-
-var currentRange = {
-
+var currentRange={
     min:0.250,
-
     max:0.450
-
 };
 
-
-var isFetching = false;
-
+var isFetching=false;
 
 
-function $(id){
-
-    return document.getElementById(id);
-
-}
-
-
-
-/* ============================================================
+/* =========================================================
    数据标准化
-============================================================ */
+========================================================= */
 
 function normalizeItem(item){
 
-    var nums;
+    item=item||{};
 
+    var nums=[];
 
-    if(
-        Array.isArray(item.parts)
-    ){
+    if(Array.isArray(item.parts)){
 
-        nums =
-            item.parts;
+        nums=item.parts.map(Number);
 
     }else{
 
-        nums =
-            String(
-                item.number || ""
-            )
-            .split("+")
-            .map(Number);
+        var raw=String(item.number||"");
+
+        var match=raw.match(/\d+/g);
+
+        if(match && match.length>=3){
+
+            nums=match.slice(0,3).map(Number);
+
+        }else{
+
+            nums=raw
+                .split("+")
+                .map(Number)
+                .filter(function(x){
+                    return Number.isFinite(x);
+                });
+
+        }
 
     }
 
 
-    var sum =
-        item.sum != null
-        ? Number(item.sum)
-        : nums.reduce(
+    var sum;
+
+    if(item.sum!=null){
+
+        sum=Number(item.sum);
+
+    }else{
+
+        sum=nums.slice(0,3).reduce(
             function(a,b){
-
-                return a + b;
-
+                return a+b;
             },
             0
         );
 
+    }
 
-    var combination =
-        item.combination ||
+
+    var combination=
+        item.combination||
         getTypeFromSum(sum);
 
 
-    var size =
-        item.size ||
-        (
-            sum < 14
-            ? "小"
-            : "大"
-        );
+    var size=
+        item.size||
+        (sum<14?"小":"大");
 
 
-    var parity =
-        item.parity ||
-        (
-            sum % 2 === 0
-            ? "双"
-            : "单"
-        );
+    var parity=
+        item.parity||
+        (sum%2===0?"双":"单");
 
 
-    var expect =
-        item.nbr ||
-        item.issue ||
-        item.expect ||
+    var expect=
+        item.nbr||
+        item.issue||
+        item.expect||
+        item.period||
         "--";
 
 
-    var opentime =
-        item.drawTime
-        ? item.drawTime / 1000
-        : (
-            item.opentime ||
-            Date.now() / 1000
-        );
+    var opentime=0;
+
+    if(item.drawTime){
+
+        opentime=Number(item.drawTime);
+
+        if(opentime>100000000000){
+            opentime/=1000;
+        }
+
+    }else if(item.opentime){
+
+        opentime=Number(item.opentime);
+
+    }else if(item.time){
+
+        var parsed=
+            new Date(String(item.time).replace(" ","T"));
+
+        if(!isNaN(parsed.getTime())){
+
+            opentime=parsed.getTime()/1000;
+
+        }
+
+    }
+
+    if(!opentime){
+
+        opentime=Date.now()/1000;
+
+    }
 
 
     return {
 
         expect:String(expect),
 
-        nums:nums,
+        nums:nums.slice(0,3),
 
         sum:sum,
 
@@ -976,199 +1298,130 @@ function normalizeItem(item){
 }
 
 
-
-/* ============================================================
+/* =========================================================
    请求数据
-============================================================ */
+========================================================= */
 
 async function fetchData(){
 
-    if(isFetching)
-        return;
+    if(isFetching)return;
 
+    isFetching=true;
 
-    isFetching = true;
-
-
-    $("apiStatus").textContent =
+    $("apiStatus").textContent=
         "⏳ 请求主接口...";
 
-
-    $("apiBadge").innerHTML =
-        "";
+    $("apiBadge").innerHTML="";
 
 
     try{
 
-        var res =
-            await fetch(
-
-                API_PRIMARY +
-                "&_=" +
-                Date.now(),
-
-                {
-
-                    method:"GET",
-
-                    headers:{
-                        "Accept":
-                        "application/json"
-                    },
-
-                    mode:"cors",
-
-                    cache:"no-cache"
-
-                }
-
-            );
+        var res=await fetch(
+            API_PRIMARY+"&_="+Date.now(),
+            {
+                method:"GET",
+                headers:{
+                    "Accept":"application/json"
+                },
+                mode:"cors",
+                cache:"no-store"
+            }
+        );
 
 
         if(!res.ok){
-
-            throw new Error(
-                "主接口响应异常"
-            );
-
+            throw new Error("主接口响应异常");
         }
 
 
-        var json =
-            await res.json();
+        var json=await res.json();
 
 
         if(
             json &&
             Array.isArray(json.data) &&
-            json.data.length > 0
+            json.data.length>0
         ){
 
-            parseData(
-                json.data,
-                "primary"
-            );
+            parseData(json.data,"primary");
 
-
-            $("apiStatus").textContent =
-                "✅ 主接口成功 · " +
-                lotteryHistory.length +
+            $("apiStatus").textContent=
+                "✅ 主接口成功 · "+
+                lotteryHistory.length+
                 "期";
 
+            $("apiBadge").innerHTML=
+                '<span class="api-badge primary">主接口</span>';
 
-            $("apiBadge").innerHTML =
-                '<span class="api-badge primary">' +
-                "主接口" +
-                "</span>";
-
-
-            isFetching = false;
+            isFetching=false;
 
             return;
 
         }
 
-
-        throw new Error(
-            "主接口数据为空"
-        );
+        throw new Error("主接口数据为空");
 
 
     }catch(e){
 
-        console.warn(
-            "主接口失败:",
-            e.message
-        );
+        console.warn("主接口失败:",e);
 
 
-        $("apiStatus").textContent =
+        $("apiStatus").textContent=
             "⚠️ 主接口失败，尝试备用...";
 
 
         try{
 
-            var res2 =
-                await fetch(
-
-                    API_BACKUP +
-                    "&_=" +
-                    Date.now(),
-
-                    {
-
-                        method:"GET",
-
-                        headers:{
-                            "Accept":
-                            "application/json"
-                        },
-
-                        mode:"cors",
-
-                        cache:"no-cache"
-
-                    }
-
-                );
+            var res2=await fetch(
+                API_BACKUP+"&_="+Date.now(),
+                {
+                    method:"GET",
+                    headers:{
+                        "Accept":"application/json"
+                    },
+                    mode:"cors",
+                    cache:"no-store"
+                }
+            );
 
 
             if(!res2.ok){
-
-                throw new Error(
-                    "备用接口响应异常"
-                );
-
+                throw new Error("备用接口响应异常");
             }
 
 
-            var json2 =
-                await res2.json();
+            var json2=await res2.json();
 
 
             if(
                 json2 &&
                 Array.isArray(json2.data) &&
-                json2.data.length > 0
+                json2.data.length>0
             ){
 
-                parseData(
-                    json2.data,
-                    "backup"
-                );
+                parseData(json2.data,"backup");
 
-
-                $("apiStatus").textContent =
-                    "🔄 备用接口成功 · " +
-                    lotteryHistory.length +
+                $("apiStatus").textContent=
+                    "🔄 备用接口成功 · "+
+                    lotteryHistory.length+
                     "期";
 
+                $("apiBadge").innerHTML=
+                    '<span class="api-badge backup">备用接口</span>';
 
-                $("apiBadge").innerHTML =
-                    '<span class="api-badge backup">' +
-                    "备用接口" +
-                    "</span>";
-
-
-                isFetching = false;
+                isFetching=false;
 
                 return;
 
             }
 
-
-            throw new Error(
-                "备用接口数据为空"
-            );
+            throw new Error("备用接口数据为空");
 
 
         }catch(e2){
 
-            console.warn(
-                "备用接口失败:",
-                e2.message
-            );
-
+            console.warn("备用接口失败:",e2);
 
             tryOffline();
 
@@ -1179,47 +1432,35 @@ async function fetchData(){
 }
 
 
-
-/* ============================================================
+/* =========================================================
    本地缓存
-============================================================ */
+========================================================= */
 
 function tryOffline(){
 
-    var cached =
-        localStorage.getItem(
-            "kill_history"
-        );
+    var cached=
+        localStorage.getItem("kill_history");
 
 
     if(cached){
 
         try{
 
-            lotteryHistory =
-                JSON.parse(cached);
+            lotteryHistory=JSON.parse(cached);
 
-
-            if(
-                lotteryHistory.length > 0
-            ){
+            if(lotteryHistory.length){
 
                 updateUI();
 
-
-                $("apiStatus").textContent =
-                    "💾 本地缓存 (" +
-                    lotteryHistory.length +
+                $("apiStatus").textContent=
+                    "💾 本地缓存 ("+
+                    lotteryHistory.length+
                     "期)";
 
+                $("apiBadge").innerHTML=
+                    '<span class="api-badge cache">缓存</span>';
 
-                $("apiBadge").innerHTML =
-                    '<span class="api-badge cache">' +
-                    "缓存" +
-                    "</span>";
-
-
-                isFetching = false;
+                isFetching=false;
 
                 return;
 
@@ -1230,69 +1471,44 @@ function tryOffline(){
     }
 
 
-    $("apiStatus").textContent =
+    $("apiStatus").textContent=
         "❌ 暂无可用数据";
 
+    $("apiBadge").innerHTML=
+        '<span class="api-badge fail">失败</span>';
 
-    $("apiBadge").innerHTML =
-        '<span class="api-badge fail">' +
-        "失败" +
-        "</span>";
-
-
-    isFetching = false;
+    isFetching=false;
 
 }
 
 
-
-/* ============================================================
+/* =========================================================
    解析
-============================================================ */
+========================================================= */
 
-function parseData(
-    data,
-    source
-){
+function parseData(data,source){
 
-    lotteryHistory =
+    lotteryHistory=
         data
+        .map(normalizeItem)
+        .filter(function(x){
 
-        .map(
-            normalizeItem
-        )
+            return(
+                x.nums &&
+                x.nums.length>=3
+            );
 
-        .filter(
-            function(x){
+        })
+        .sort(function(a,b){
 
-                return (
-                    x.nums &&
-                    x.nums.length >= 3
-                );
+            return a.opentime-b.opentime;
 
-            }
-        )
-
-        .sort(
-            function(a,b){
-
-                return (
-                    a.opentime -
-                    b.opentime
-                );
-
-            }
-        );
+        });
 
 
     localStorage.setItem(
-
         "kill_history",
-
-        JSON.stringify(
-            lotteryHistory
-        )
-
+        JSON.stringify(lotteryHistory)
     );
 
 
@@ -1301,458 +1517,391 @@ function parseData(
 }
 
 
-
-/* ============================================================
-   更新页面
-============================================================ */
+/* =========================================================
+   更新
+========================================================= */
 
 function updateUI(){
 
-    if(
-        !lotteryHistory.length
-    ){
-
-        return;
-
-    }
+    if(!lotteryHistory.length)return;
 
 
-    var asc =
+    var asc=
         lotteryHistory
         .slice()
-        .sort(
-            function(a,b){
+        .sort(function(a,b){
 
-                return (
-                    a.opentime -
-                    b.opentime
-                );
+            return a.opentime-b.opentime;
 
-            }
-        );
+        });
 
 
-    var latest =
-        asc[
-            asc.length - 1
-        ];
+    var latest=
+        asc[asc.length-1];
 
 
-    $("num1").textContent =
-        latest.nums[0];
+    $("num1").textContent=latest.nums[0];
+    $("num2").textContent=latest.nums[1];
+    $("num3").textContent=latest.nums[2];
 
 
-    $("num2").textContent =
-        latest.nums[1];
+    $("period").textContent=
+        latest.expect+"期";
 
 
-    $("num3").textContent =
-        latest.nums[2];
+    $("sumInfo").textContent=
+        "和值："+latest.sum+
+        " / "+latest.type;
 
 
-    $("period").textContent =
-        latest.expect +
-        "期";
-
-
-    $("sumInfo").textContent =
-        "和值：" +
-        latest.sum +
-        " / " +
-        latest.type;
-
-
-    var kill =
+    $("killGroup").textContent=
         calcKillGroup(
             latest,
             currentRange
         );
 
 
-    $("killGroup").textContent =
-        kill;
+    renderBacktest(asc);
 
 
-    renderBacktest(
-        asc
-    );
+    /* 同步到禧少杀组页面 */
+
+    $("predPeriod").textContent=
+        latest.expect+"期";
+
+    $("predNum1").textContent=
+        latest.nums[0];
+
+    $("predNum2").textContent=
+        latest.nums[1];
+
+    $("predNum3").textContent=
+        latest.nums[2];
+
+    $("predResult").textContent=
+        "和值 "+latest.sum+
+        " · 形态 "+latest.type;
 
 }
 
 
-
-/* ============================================================
+/* =========================================================
    历史回测
-============================================================ */
+========================================================= */
 
 function renderBacktest(asc){
 
-    if(
-        asc.length < 2
-    ){
+    if(asc.length<2){
 
-        $("historyBody").innerHTML =
-            '<tr>' +
-            '<td colspan="4">' +
-            "数据不足（至少2期）" +
-            "</td>" +
-            "</tr>";
+        $("historyBody").innerHTML=
+            '<tr><td colspan="4">数据不足（至少2期）</td></tr>';
 
-
-        $("hitrateBadge").textContent =
-            "--";
-
+        $("hitrateBadge").textContent="--";
 
         return;
 
     }
 
 
-    var total =
-        asc.length - 1;
+    var total=asc.length-1;
+
+    var start=Math.max(0,total-49);
+
+    var rows="";
+
+    var hitCount=0;
+
+    var totalCount=0;
 
 
-    var start =
-        Math.max(
-            0,
-            total - 49
-        );
+    for(var i=total-1;i>=start;i--){
 
+        var prev=asc[i];
 
-    var rows = "";
+        var cur=asc[i+1];
 
-
-    var hitCount = 0;
-
-    var totalCount = 0;
-
-
-    for(
-        var i = total - 1;
-        i >= start;
-        i--
-    ){
-
-        var prev =
-            asc[i];
-
-
-        var cur =
-            asc[i + 1];
-
-
-        var kill =
+        var kill=
             calcKillGroup(
                 prev,
                 currentRange
             );
 
 
-        var isSpecial =
-            (
-                cur.sum === 13 ||
-                cur.sum === 14
-            );
+        var isSpecial=
+            cur.sum===13||
+            cur.sum===14;
 
 
-        var isHit =
-            isSpecial ||
-            cur.type !== kill;
+        var isHit=
+            isSpecial||
+            cur.type!==kill;
 
 
-        if(isHit){
-
-            hitCount++;
-
-        }
-
+        if(isHit)hitCount++;
 
         totalCount++;
 
 
-        var resultText =
-            isHit
-            ? "✅ 杀中"
-            : "❌ 杀错";
+        var resultText=
+            isHit?"✅ 杀中":"❌ 杀错";
+
+        var cls=
+            isHit?"hit":"miss";
 
 
-        var cls =
-            isHit
-            ? "hit"
-            : "miss";
-
-
-        rows +=
-
-            "<tr>" +
-
-            "<td>" +
-            cur.expect +
-            "</td>" +
-
-            "<td>" +
-
-            '<span class="kill-badge">' +
-
-            kill +
-
-            "</span>" +
-
-            "</td>" +
-
-            "<td>" +
-
-            cur.nums.join("+") +
-
-            "=" +
-
-            cur.sum +
-
-            " " +
-
-            cur.type +
-
-            "</td>" +
-
-            '<td class="' +
-            cls +
-            '">' +
-
-            resultText +
-
-            "</td>" +
-
+        rows+=
+            "<tr>"+
+            "<td>"+cur.expect+"</td>"+
+            "<td><span class='kill-badge'>"+
+            kill+
+            "</span></td>"+
+            "<td>"+
+            cur.nums.join("+")+
+            "="+cur.sum+
+            " "+cur.type+
+            "</td>"+
+            "<td class='"+cls+"'>"+
+            resultText+
+            "</td>"+
             "</tr>";
 
     }
 
 
-    $("historyBody").innerHTML =
-        rows;
+    $("historyBody").innerHTML=rows;
 
 
-    var rate =
-        totalCount > 0
-        ? Math.round(
-            (
-                hitCount /
-                totalCount
-            ) *
-            1000
-          ) / 10
-        : 0;
+    var rate=
+        totalCount>0
+        ?Math.round(
+            hitCount/totalCount*1000
+        )/10
+        :0;
 
 
-    $("hitrateBadge").textContent =
-        "杀组命中率 " +
-        rate +
-        "% (" +
-        hitCount +
-        "/" +
-        totalCount +
+    $("hitrateBadge").textContent=
+        "杀组命中率 "+
+        rate+
+        "% ("+
+        hitCount+
+        "/"+
+        totalCount+
         ")";
 
 }
 
 
+/* =========================================================
+   区间
+========================================================= */
 
-/* ============================================================
-   区间切换
-============================================================ */
+function setRange(min,max){
 
-function setRange(
-    min,
-    max
-){
-
-    currentRange = {
-
+    currentRange={
         min:parseFloat(min),
-
         max:parseFloat(max)
-
     };
 
 
-    $("currentRange").textContent =
-        min +
-        " ~ " +
-        max;
+    $("currentRange").textContent=
+        min+" ~ "+max;
 
 
     localStorage.setItem(
-
         "kill_range",
-
-        JSON.stringify(
-            currentRange
-        )
-
+        JSON.stringify(currentRange)
     );
 
 
     document
-    .querySelectorAll(
-        ".range-btn"
-    )
-    .forEach(
-        function(btn){
+    .querySelectorAll(".range-btn")
+    .forEach(function(btn){
 
-            btn.classList.toggle(
+        btn.classList.toggle(
+            "active",
+            btn.dataset.min===String(min)&&
+            btn.dataset.max===String(max)
+        );
 
-                "active",
-
-                btn.dataset.min === min &&
-                btn.dataset.max === max
-
-            );
-
-        }
-    );
+    });
 
 
-    if(
-        lotteryHistory.length
-    ){
-
+    if(lotteryHistory.length){
         updateUI();
-
     }
 
 }
 
 
+/* =========================================================
+   打开禧少杀组
+========================================================= */
 
-/* ============================================================
+function openPredictionPage(){
+
+    $("mainPage").style.display="none";
+
+    $("predictionPage").style.display="block";
+
+    window.scrollTo(0,0);
+
+}
+
+
+/* =========================================================
+   返回
+========================================================= */
+
+function closePredictionPage(){
+
+    $("predictionPage").style.display="none";
+
+    $("mainPage").style.display="block";
+
+    window.scrollTo(0,0);
+
+}
+
+
+/* =========================================================
    初始化
-============================================================ */
+========================================================= */
 
 document.addEventListener(
-
     "DOMContentLoaded",
-
     function(){
+
+        /* 白虎按钮 */
+
+        $("openPrediction").onclick=
+            openPredictionPage;
+
+
+        /* 返回 */
+
+        $("predBack").onclick=
+            closePredictionPage;
+
+        $("predCloseTop").onclick=
+            closePredictionPage;
+
+
+        /* 禧少杀组刷新 */
+
+        $("predRefresh").onclick=
+            function(){
+                fetchData();
+            };
+
+
+        /* 算法详情 */
+
+        $("algorithmHead").onclick=
+            function(){
+
+                var content=
+                    $("algorithmContent");
+
+                var arrow=
+                    $("algorithmArrow");
+
+
+                if(content.style.display==="block"){
+
+                    content.style.display="none";
+
+                    arrow.textContent="﹀";
+
+                }else{
+
+                    content.style.display="block";
+
+                    arrow.textContent="︿";
+
+                }
+
+            };
 
 
         /* 恢复区间 */
 
-        var stored =
-            localStorage.getItem(
-                "kill_range"
-            );
+        var stored=
+            localStorage.getItem("kill_range");
 
 
         if(stored){
 
             try{
 
-                var r =
-                    JSON.parse(
-                        stored
-                    );
+                var r=JSON.parse(stored);
 
+                currentRange=r;
 
-                currentRange =
-                    r;
-
-
-                $("currentRange").textContent =
-                    r.min.toFixed(3) +
-                    " ~ " +
-                    r.max.toFixed(3);
+                $("currentRange").textContent=
+                    Number(r.min).toFixed(3)+
+                    " ~ "+
+                    Number(r.max).toFixed(3);
 
 
                 document
-                .querySelectorAll(
-                    ".range-btn"
-                )
-                .forEach(
-                    function(btn){
+                .querySelectorAll(".range-btn")
+                .forEach(function(btn){
 
-                        btn.classList.toggle(
+                    btn.classList.toggle(
+                        "active",
+                        parseFloat(btn.dataset.min)===Number(r.min)&&
+                        parseFloat(btn.dataset.max)===Number(r.max)
+                    );
 
-                            "active",
-
-                            parseFloat(
-                                btn.dataset.min
-                            ) === r.min &&
-
-                            parseFloat(
-                                btn.dataset.max
-                            ) === r.max
-
-                        );
-
-                    }
-                );
-
+                });
 
             }catch(e){}
 
         }
 
 
-
         /* 区间按钮 */
 
         document
-        .querySelectorAll(
-            ".range-btn"
-        )
-        .forEach(
-            function(btn){
+        .querySelectorAll(".range-btn")
+        .forEach(function(btn){
 
-                btn.onclick =
-                    function(){
+            btn.onclick=function(){
 
-                        setRange(
+                setRange(
+                    this.dataset.min,
+                    this.dataset.max
+                );
 
-                            this.dataset.min,
+            };
 
-                            this.dataset.max
-
-                        );
-
-                    };
-
-            }
-        );
-
+        });
 
 
         /* 刷新 */
 
-        $("refreshBtn").onclick =
+        $("refreshBtn").onclick=
             fetchData;
 
 
+        /* 读取缓存 */
 
-        /* 先读取缓存 */
-
-        var cached =
-            localStorage.getItem(
-                "kill_history"
-            );
+        var cached=
+            localStorage.getItem("kill_history");
 
 
         if(cached){
 
             try{
 
-                lotteryHistory =
-                    JSON.parse(
-                        cached
-                    );
+                lotteryHistory=
+                    JSON.parse(cached);
 
-
-                if(
-                    lotteryHistory.length
-                ){
+                if(lotteryHistory.length){
 
                     updateUI();
 
-
-                    $("apiStatus").textContent =
+                    $("apiStatus").textContent=
                         "💾 缓存加载，正在刷新...";
 
                 }
@@ -1762,14 +1911,12 @@ document.addEventListener(
         }
 
 
-
         /* 请求最新 */
 
         fetchData();
 
 
-
-        /* 每35秒刷新 */
+        /* 自动刷新 */
 
         setInterval(
             fetchData,
@@ -1777,7 +1924,6 @@ document.addEventListener(
         );
 
     }
-
 );
 
 </script>
