@@ -209,9 +209,361 @@ th,td{
 }
 
 
-/* =========================
+/* =========================================================
+   🔮 预测按钮
+========================================================= */
+
+.predict-btn{
+    width:100%;
+    padding:14px;
+    border:none;
+    border-radius:30px;
+    background:linear-gradient(135deg,#e83e9f,#ff6fbd);
+    color:#fff;
+    font-size:17px;
+    font-weight:800;
+    box-shadow:0 5px 15px rgba(232,62,159,.25);
+    cursor:pointer;
+    margin-top:4px;
+}
+
+.predict-btn:active{
+    transform:scale(.97);
+}
+
+
+/* =========================================================
+   🔮 预测页面
+========================================================= */
+
+#predictionPage{
+    display:none;
+    position:fixed;
+    inset:0;
+    z-index:10000;
+    overflow-y:auto;
+    background:
+        radial-gradient(circle at 10% 10%,rgba(255,255,255,.9),transparent 30%),
+        linear-gradient(180deg,#fff7fb,#fff1f8 55%,#fff7fb);
+    padding:18px 16px 35px;
+}
+
+.pred-container{
+    max-width:480px;
+    margin:0 auto;
+}
+
+
+/* 顶部 */
+
+.pred-header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:4px 2px 18px;
+}
+
+.pred-brand{
+    display:flex;
+    align-items:center;
+    gap:12px;
+}
+
+.pred-logo{
+    width:54px;
+    height:54px;
+    border-radius:18px;
+    background:linear-gradient(135deg,#e6389a,#f16ab6);
+    color:#fff;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:29px;
+    box-shadow:0 6px 15px rgba(230,56,154,.22);
+}
+
+.pred-name{
+    font-size:21px;
+    font-weight:900;
+    color:#202633;
+}
+
+.pred-sub{
+    margin-top:3px;
+    color:#d84291;
+    font-size:13px;
+}
+
+.pred-actions{
+    display:flex;
+    gap:8px;
+}
+
+.pred-action{
+    width:45px;
+    height:45px;
+    border-radius:50%;
+    border:1px solid #f5c7df;
+    background:#fff1f8;
+    color:#df3c96;
+    font-size:23px;
+    cursor:pointer;
+}
+
+
+/* 当前开奖 */
+
+.pred-current{
+    background:#fff;
+    border:1px solid #f4c8df;
+    border-radius:24px;
+    padding:18px;
+    margin-bottom:24px;
+    box-shadow:0 8px 25px rgba(220,60,145,.08);
+}
+
+.pred-current-top{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    color:#d13b8c;
+    font-weight:700;
+    font-size:14px;
+}
+
+.pred-numbers{
+    display:flex;
+    justify-content:center;
+    gap:16px;
+    margin:17px 0 12px;
+}
+
+.pred-number{
+    width:62px;
+    height:62px;
+    border-radius:50%;
+    background:linear-gradient(135deg,#fff,#ffeaf5);
+    border:1px solid #f5c8df;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    font-size:27px;
+    font-weight:900;
+    color:#202633;
+}
+
+.pred-result{
+    text-align:center;
+    font-size:14px;
+    color:#8e8e93;
+}
+
+
+/* 标题 */
+
+.pred-section-title{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin:22px 0 13px;
+    color:#202633;
+}
+
+.pred-section-title-left{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-size:22px;
+    font-weight:900;
+}
+
+.pred-section-title-left::before{
+    content:"";
+    width:7px;
+    height:27px;
+    border-radius:8px;
+    background:#e6389a;
+}
+
+.pred-section-note{
+    color:#d73e91;
+    font-size:13px;
+    font-weight:700;
+}
+
+
+/* 双组 */
+
+.double-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:14px;
+}
+
+.double-card{
+    min-height:220px;
+    border-radius:24px;
+    padding:26px 20px;
+    border:1px solid #f2b8d7;
+    background:linear-gradient(145deg,#ffe0f0,#fff0f8);
+    box-shadow:0 8px 20px rgba(230,56,154,.08);
+}
+
+.double-card.second{
+    background:#fff7fb;
+}
+
+.double-label{
+    color:#d7358d;
+    font-size:15px;
+    font-weight:800;
+}
+
+.double-value{
+    margin-top:35px;
+    text-align:center;
+    color:#202633;
+    font-size:47px;
+    font-weight:900;
+}
+
+.double-desc{
+    margin-top:28px;
+    color:#d7358d;
+    font-size:14px;
+    font-weight:700;
+}
+
+
+/* 杀组参考 */
+
+.reference-card{
+    margin-top:15px;
+    padding:19px;
+    border-radius:22px;
+    background:#fff8f5;
+    border:1px solid #f4c9bd;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.reference-left{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    color:#d84a40;
+    font-size:17px;
+    font-weight:800;
+}
+
+.reference-tag{
+    background:#e6389a;
+    color:#fff;
+    border-radius:20px;
+    padding:6px 12px;
+    font-size:11px;
+}
+
+.reference-value{
+    font-size:29px;
+    font-weight:900;
+    color:#e33c3c;
+}
+
+
+/* 算法详情 */
+
+.algorithm-card{
+    margin-top:15px;
+    border-radius:22px;
+    border:1px solid #f1c5dd;
+    background:#fff9fc;
+    padding:18px;
+}
+
+.algorithm-head{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    color:#b72f76;
+    font-size:16px;
+    font-weight:800;
+}
+
+.algorithm-content{
+    display:none;
+    margin-top:15px;
+    padding-top:14px;
+    border-top:1px solid #f5d7e7;
+    color:#777;
+    line-height:1.8;
+    font-size:13px;
+}
+
+
+/* 四码 */
+
+.four-title{
+    margin-top:27px;
+}
+
+.four-numbers{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:12px;
+    margin-top:16px;
+}
+
+.four-number{
+    height:70px;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:#fff;
+    font-size:23px;
+    font-weight:900;
+    box-shadow:0 7px 15px rgba(0,0,0,.12);
+}
+
+.four-number.pink{
+    background:linear-gradient(135deg,#df2987,#ec56a5);
+}
+
+.four-number.green{
+    background:linear-gradient(135deg,#12ad82,#24c394);
+}
+
+
+/* 预测返回 */
+
+.pred-back{
+    width:100%;
+    margin-top:28px;
+    padding:14px;
+    border:1px solid #efb7d4;
+    border-radius:30px;
+    background:#fff;
+    color:#d7378e;
+    font-size:16px;
+    font-weight:800;
+}
+
+
+/* 免责声明 */
+
+.pred-disclaimer{
+    text-align:center;
+    margin-top:20px;
+    color:#aaa;
+    font-size:11px;
+}
+
+
+/* =========================================================
    🌸 樱花飘落
-   ========================= */
+========================================================= */
 
 #petals{
     position:fixed;
@@ -279,11 +631,280 @@ th,td{
 <div id="petals"></div>
 
 
+<!-- =========================================================
+     🔮 预测页面
+========================================================= -->
+
+<div id="predictionPage">
+
+    <div class="pred-container">
+
+        <div class="pred-header">
+
+            <div class="pred-brand">
+
+                <div class="pred-logo">
+                    📈
+                </div>
+
+                <div>
+
+                    <div class="pred-name">
+                        禧少杀组
+                    </div>
+
+                    <div class="pred-sub">
+                        封禁三门 · 独家杀组
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="pred-actions">
+
+                <button
+                    class="pred-action"
+                    id="predRefresh">
+                    ⟳
+                </button>
+
+                <button
+                    class="pred-action"
+                    id="predCloseTop">
+                    ×
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <!-- 当前开奖 -->
+
+        <div class="pred-current">
+
+            <div class="pred-current-top">
+
+                <span>
+                    当前开奖
+                </span>
+
+                <span id="predPeriod">
+                    ----期
+                </span>
+
+            </div>
+
+
+            <div class="pred-numbers">
+
+                <div class="pred-number"
+                     id="predNum1">
+                    -
+                </div>
+
+                <div class="pred-number"
+                     id="predNum2">
+                    -
+                </div>
+
+                <div class="pred-number"
+                     id="predNum3">
+                    -
+                </div>
+
+            </div>
+
+
+            <div class="pred-result"
+                 id="predResult">
+
+                和值 -- · 形态 --
+
+            </div>
+
+        </div>
+
+
+
+        <!-- 下期双组 -->
+
+        <div class="pred-section-title">
+
+            <div class="pred-section-title-left">
+                下期双组推荐
+            </div>
+
+            <div class="pred-section-note">
+                封禁三门+独家杀组
+            </div>
+
+        </div>
+
+
+        <div class="double-grid">
+
+            <div class="double-card">
+
+                <div class="double-label">
+                    首选
+                </div>
+
+                <div class="double-value">
+                    --
+                </div>
+
+                <div class="double-desc">
+                    核心展示
+                </div>
+
+            </div>
+
+
+            <div class="double-card second">
+
+                <div class="double-label">
+                    次选
+                </div>
+
+                <div class="double-value">
+                    --
+                </div>
+
+                <div class="double-desc">
+                    规则展示
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- 杀组参考 -->
+
+        <div class="reference-card">
+
+            <div class="reference-left">
+
+                <span>
+                    🚫 杀组参考
+                </span>
+
+                <span class="reference-tag">
+                    独家杀组公式
+                </span>
+
+            </div>
+
+            <div class="reference-value">
+                --
+            </div>
+
+        </div>
+
+
+        <!-- 算法详情 -->
+
+        <div class="algorithm-card">
+
+            <div
+                class="algorithm-head"
+                id="algorithmHead"
+            >
+
+                <span>
+                    ♧ 独家算法计算详情
+                </span>
+
+                <span id="algorithmArrow">
+                    ﹀
+                </span>
+
+            </div>
+
+
+            <div
+                class="algorithm-content"
+                id="algorithmContent"
+            >
+
+                当前页面仅展示算法页面结构及历史数据。
+
+                <br>
+
+                不自动生成下一期投注结论。
+
+                <br>
+
+                数据仅供娱乐参考。
+
+            </div>
+
+        </div>
+
+
+        <!-- 特码参考 -->
+
+        <div class="pred-section-title four-title">
+
+            <div class="pred-section-title-left">
+                特码参考 · 四码
+            </div>
+
+        </div>
+
+
+        <div class="four-numbers">
+
+            <div class="four-number pink">
+                --
+            </div>
+
+            <div class="four-number green">
+                --
+            </div>
+
+            <div class="four-number pink">
+                --
+            </div>
+
+            <div class="four-number green">
+                --
+            </div>
+
+        </div>
+
+
+        <div class="pred-disclaimer">
+            仅供娱乐 · 数据展示页面
+        </div>
+
+
+        <button
+            class="pred-back"
+            id="predBack">
+
+            ← 返回濠少杀组
+
+        </button>
+
+    </div>
+
+</div>
+
+
+
+<!-- =========================================================
+     主页面
+========================================================= -->
+
+<div id="mainPage">
+
 <div class="container">
 
-    <!-- =========================
-         标题
-    ========================== -->
+    <!-- 标题 -->
 
     <div class="card"
          style="background:linear-gradient(135deg,#007AFF,#0A84FF);color:#fff;">
@@ -302,9 +923,7 @@ th,td{
     </div>
 
 
-    <!-- =========================
-         最新开奖
-    ========================== -->
+    <!-- 最新开奖 -->
 
     <div class="card">
 
@@ -366,9 +985,7 @@ th,td{
     </div>
 
 
-    <!-- =========================
-         区间选择
-    ========================== -->
+    <!-- 区间选择 -->
 
     <div class="card">
 
@@ -454,12 +1071,20 @@ th,td{
             🔄 刷新数据
         </button>
 
+
+        <!-- 🔮 新增预测按钮 -->
+
+        <button
+            class="predict-btn"
+            id="openPrediction"
+        >
+            🔮 预测
+        </button>
+
     </div>
 
 
-    <!-- =========================
-         历史回测
-    ========================== -->
+    <!-- 历史回测 -->
 
     <div class="card">
 
@@ -528,6 +1153,8 @@ th,td{
         仅供娱乐 · 数据自动同步
 
     </div>
+
+</div>
 
 </div>
 
@@ -1177,11 +1804,6 @@ function updateUI(){
         latest.type;
 
 
-    /*
-       页面继续保留杀组区域，
-       仅作为页面展示功能。
-    */
-
     var kill =
         calcKillGroup(
             latest,
@@ -1194,6 +1816,27 @@ function updateUI(){
 
 
     renderBacktest(asc);
+
+
+    /* 同步到预测页面 */
+
+    $("predPeriod").textContent =
+        latest.expect + "期";
+
+    $("predNum1").textContent =
+        latest.nums[0];
+
+    $("predNum2").textContent =
+        latest.nums[1];
+
+    $("predNum3").textContent =
+        latest.nums[2];
+
+    $("predResult").textContent =
+        "和值 " +
+        latest.sum +
+        " · 形态 " +
+        latest.type;
 
 }
 
@@ -1423,12 +2066,116 @@ function setRange(min,max){
 
 
 /* ============================================================
+   🔮 打开预测页面
+============================================================ */
+
+function openPredictionPage(){
+
+    $("mainPage").style.display =
+        "none";
+
+    $("predictionPage").style.display =
+        "block";
+
+    window.scrollTo(0,0);
+
+}
+
+
+
+/* ============================================================
+   🔙 返回主页面
+============================================================ */
+
+function closePredictionPage(){
+
+    $("predictionPage").style.display =
+        "none";
+
+    $("mainPage").style.display =
+        "block";
+
+    window.scrollTo(0,0);
+
+}
+
+
+
+/* ============================================================
+   🔮 预测页面初始化
+============================================================ */
+
+function initPredictionPage(){
+
+    $("openPrediction").onclick =
+        openPredictionPage;
+
+
+    $("predBack").onclick =
+        closePredictionPage;
+
+
+    $("predCloseTop").onclick =
+        closePredictionPage;
+
+
+    $("predRefresh").onclick =
+        function(){
+
+            fetchData();
+
+        };
+
+
+    $("algorithmHead").onclick =
+        function(){
+
+            var content =
+                $("algorithmContent");
+
+            var arrow =
+                $("algorithmArrow");
+
+
+            if(
+                content.style.display ===
+                "block"
+            ){
+
+                content.style.display =
+                    "none";
+
+                arrow.textContent =
+                    "﹀";
+
+            }else{
+
+                content.style.display =
+                    "block";
+
+                arrow.textContent =
+                    "︿";
+
+            }
+
+        };
+
+}
+
+
+
+/* ============================================================
    初始化
 ============================================================ */
 
 document.addEventListener(
     "DOMContentLoaded",
     function(){
+
+        /* 初始化预测页面 */
+
+        initPredictionPage();
+
 
         /* 恢复区间 */
 
@@ -1530,9 +2277,7 @@ document.addEventListener(
             try{
 
                 lotteryHistory =
-                    JSON.parse(
-                        cached
-                    );
+                    JSON.parse(cached);
 
 
                 if(
