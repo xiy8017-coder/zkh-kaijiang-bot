@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>禧少杀组 · 独家杀组算法</title>
+    <!-- 资源CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Tailwind全局主题配置 -->
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#EC4899',
+                        primaryDeep: '#BE185D',
+                        primarySoft: 'rgba(236, 72, 153, 0.15)',
+                        success: '#10B981',
+                        successSoft: 'rgba(16, 185, 129, 0.15)',
+                        danger: '#EF4444',
+                        dangerSoft: 'rgba(239, 68, 68, 0.15)',
+                        warning: '#F59E0B',
+                        warningSoft: 'rgba(245, 158, 11, 0.15)',
+                        neutral: {
+                            100: '#FDF2F8',
+                            200: '#FBCFE8',
+                            300: '#F9A8D4',
+                            400: '#F472B6',
+                            500: '#EC4899',
+                            600: '#DB2777',
+                            700: '#BE185D',
+                            800: '#9D174D',
+                            900: '#831843',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['-apple-system', 'SF Pro Display', 'Inter', 'system-ui', 'sans-serif'],
+                    },
+                    animation: {
+                        'float': 'float 3s ease-in-out infinite',
+                        'slide-in': 'slideIn 0.5s cubic-bezier(0.25, 1, 0.5, 1) forwards',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-6px)' },
+                        },
+                        slideIn: {
+                            '0%': { transform: 'translateY(10px)', opacity: '0' },
+                            '100%': { transform: 'translateY(0)', opacity: '1' },
+                        }
+                    },
+                    borderRadius: {
+                        'ios': '28px',
+                        'ios-sm': '20px',
+                        'ios-btn': '16px',
+                        'ios-full': '999px',
+                    }
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .backdrop-blur-ios {
+                backdrop-filter: blur(30px);
+                -webkit-backdrop-filter: blur(30px);
+            }
+            .text-balance { text-wrap: balance; }
+            .section-lead {
+                @apply relative pl-4 before:absolute before:left-0 before:top-1/2 before:-translate-y-1/2 before:w-1 before:h-5 before:rounded-full before:bg-primary;
+            }
+            .soft-shadow { box-shadow: 0 8px 24px rgba(236, 72, 153, 0.18); }
+            .soft-shadow-sm { box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); }
+            .hover-scale-ios {
+                transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            }
+            .hover-scale-ios:hover { transform: scale(1.03); }
+            .ball-glass {
+                box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15), inset 0 2px 8px rgba(255, 255, 255, 0.3);
+            }
+            .divider-ios { @apply w-full h-px bg-pink-200/60 my-6; }
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-b from-[#FFF5F9] to-[#FDF2F8] font-sans min-h-screen text-gray-800 antialiased">
+    <header class="fixed top-0 left-0 right-0 z-50 bg-white/70 backdrop-blur-ios border-b border-pink-200/50">
+        <div class="max-w-[480px] mx-auto w-full flex items-center justify-between px-4 h-16">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-ios-btn bg-primary flex items-center justify-center text-white">
+                    <i class="fa-solid fa-chart-line text-lg"></i>
+                </div>
+                <div>
+                    <h1 class="text-lg font-bold leading-tight text-gray-800">禧少杀组</h1>
+                    <p class="text-[10px] text-pink-500 font-medium leading-none">封禁三门 · 独家杀组</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-3">
+                <button id="refreshBtn" class="w-10 h-10 rounded-full bg-pink-100 border border-pink-200 flex items-center justify-center text-pink-500 hover-scale-ios">
+                    <i class="fa-solid fa-rotate-right"></i>
+                </button>
+                <button id="themeBtn" class="w-10 h-10 rounded-full bg-pink-100 border border-pink-200 flex items-center justify-center text-pink-500 hover-scale-ios">
+                    <i class="fa-solid fa-moon"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+    <main class="max-w-[480px] mx-auto w-full px-4 pt-20 pb-12">
+        <div class="grid grid-cols-2 gap-3 mb-8 animate-slide-in" style="animation-delay: 0.1s">
+            <div class="bg-pink-100/80 rounded-ios-full py-3 px-5 flex items-center justify-between hover-scale-ios border border-pink-200">
+                <span class="text-sm font-semibold text-pink-600">双组命中</span>
+                <span id="doubleHitRateDisplay" class="text-sm font-bold text-pink-700">--%</span>
+            </div>
+            <div class="bg-orange-100/80 rounded-ios-full py-3 px-5 flex items-center justify-between hover-scale-ios border border-orange-200">
+                <span class="text-sm font-semibold text-orange-500">杀组命中</span>
+                <span id="killHitRateDisplay" class="text-sm font-bold text-orange-600">--%</span>
+            </div>
+        </div>
+        <div class="mb-10 animate-slide-in" style="animation-delay: 0.2s">
+            <div class="flex items-center justify-between mb-4 px-1">
+                <h3 class="text-sm font-semibold text-pink-600">最新开奖 · <span id="latestPeriodDisplay">----期</span></h3>
+                <span class="text-xs font-medium text-pink-500" id="openTimeDisplay">--:--</span>
+            </div>
+            <div class="bg-white/60 backdrop-blur-ios rounded-ios-sm border border-pink-200 p-6 hover-scale-ios">
+                <div class="flex items-center justify-between gap-4">
+                    <div class="flex-1">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div id="ball1" class="w-16 h-16 rounded-full bg-gradient-to-br from-primary to-primaryDeep flex items-center justify-center text-white text-2xl font-bold ball-glass animate-float">--</div>
+                            <div id="ball2" class="w-16 h-16 rounded-full bg-gradient-to-br from-danger to-red-600 flex items-center justify-center text-white text-2xl font-bold ball-glass animate-float" style="animation-delay: 0.2s">--</div>
+                            <div id="ball3" class="w-16 h-16 rounded-full bg-gradient-to-br from-primary to-primaryDeep flex items-center justify-center text-white text-2xl font-bold ball-glass animate-float" style="animation-delay: 0.4s">--</div>
+                        </div>
+                        <div class="flex items-center gap-5">
+                            <p class="text-sm font-medium text-pink-600">和值 <strong id="latestSumValue" class="text-pink-700 text-lg font-bold">--</strong></p>
+                            <p class="text-sm font-medium text-pink-600">形态 <strong id="latestTypeValue" class="text-gray-800 text-lg font-bold">--</strong></p>
+                        </div>
+                    </div>
+                    <div class="flex flex-col items-center justify-center">
+                        <div class="relative w-24 h-24 mb-1">
+                            <svg width="96" height="96" viewBox="0 0 96 96" class="rotate-[-90deg]">
+                                <circle cx="48" cy="48" r="38" fill="none" stroke="#FBCFE8" stroke-width="6" />
+                                <circle id="progress-ring" cx="48" cy="48" r="38" fill="none" stroke="#EC4899" stroke-width="6" stroke-linecap="round" stroke-dasharray="238.76" stroke-dashoffset="60" />
+                            </svg>
+                            <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center">
+                                <span id="countdown-text" class="text-xl font-bold text-pink-700">--:--</span>
+                                <span class="text-[10px] text-pink-500 font-medium">下一期</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="mb-10 animate-slide-in" style="animation-delay: 0.3s">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-xl font-bold text-gray-800 section-lead">下期双组推荐</h2>
+                <span class="text-xs font-medium text-pink-500">封禁三门+独家杀组</span>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+                <div class="bg-gradient-to-br from-primary/20 to-primary/10 rounded-ios-sm border border-primary/30 p-6 hover-scale-ios soft-shadow">
+                    <span class="text-xs font-bold text-pink-600 uppercase tracking-wider">首选</span>
+                    <h1 id="doubleMain" class="text-[clamp(2.5rem,8vw,3.5rem)] font-black text-gray-800 leading-none my-3">--</h1>
+                    <span class="text-xs text-pink-500">核心推荐</span>
+                </div>
+                <div class="bg-pink-50 backdrop-blur-ios rounded-ios-sm border border-pink-200 p-6 hover-scale-ios soft-shadow-sm">
+                    <span class="text-xs font-semibold text-pink-500 uppercase tracking-wider">次选</span>
+                    <h2 id="doubleSecond" class="text-5xl font-bold text-gray-800 my-4">--</h2>
+                    <span class="text-xs font-medium text-pink-500"><span id="ruleTypeDisplay" class="font-bold text-pink-600">--</span> 规则</span>
+                </div>
+            </div>
+            <div class="mt-4 p-4 bg-red-50 rounded-ios-sm border border-red-200 flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <span class="text-sm font-semibold text-red-500">🚫 杀组参考</span>
+                    <span id="killSourceBadge" class="text-[10px] bg-primary text-white px-2 py-0.5 rounded-full font-bold" title="杀组来源">独家杀组公式</span>
+                    <span id="killTransBadge" class="hidden text-[10px] bg-warning text-yellow-900 px-2 py-0.5 rounded-full font-bold" title="杀组已转换">⚡ 转换</span>
+                </div>
+                <div class="flex items-center gap-3">
+                    <span id="killTypeDisplay" class="text-2xl font-black text-red-500">--</span>
+                </div>
+            </div>
+            <div class="mt-4 bg-pink-50 backdrop-blur-ios rounded-ios-sm border border-pink-200 overflow-hidden">
+                <div id="algoStepsHeader" class="flex items-center justify-between p-4 cursor-pointer">
+                    <span class="text-sm font-semibold text-pink-700"><i class="fa-solid fa-code-branch mr-2 text-primary"></i> 独家算法计算详情</span>
+                    <i id="algoStepsArrow" class="fa-solid fa-chevron-down text-pink-400 transition-transform"></i>
+                </div>
+                <div id="algoStepsContent" class="overflow-hidden transition-all duration-300" style="max-height: 0;">
+                    <pre id="algoStepsBody" class="p-4 text-xs text-pink-600 font-mono whitespace-pre-wrap border-t border-pink-200">等待数据加载...</pre>
+                </div>
+            </div>
+        </div>
+        <div class="mb-10 animate-slide-in" style="animation-delay: 0.4s">
+            <h3 class="text-lg font-bold text-gray-800 mb-4 section-lead">特码参考 · 四码</h3>
+            <div id="specialCodesContainer" class="flex items-center justify-between gap-2"></div>
+        </div>
+        <div class="divider-ios"></div>
+        <div class="mb-8 animate-slide-in" style="animation-delay: 0.5s">
+            <div class="flex items-center justify-between py-3 px-1">
+                <h3 class="text-lg font-bold text-gray-800 flex items-center gap-2">
+                    <i class="fa-solid fa-clipboard-list text-primary"></i>
+                    我的验证记录
+                </h3>
+                <button id="clearHistoryBtn" class="text-xs font-medium text-pink-500 hover:text-red-500 transition-colors">清空</button>
+            </div>
+            <div class="overflow-hidden rounded-ios-sm border border-pink-200 bg-white/60 backdrop-blur-ios">
+                <table class="w-full text-sm">
+                    <thead>
+                        <tr class="bg-pink-100 backdrop-blur-ios sticky top-0">
+                            <th class="py-3 px-2 text-left font-semibold text-pink-600">期号</th>
+                            <th class="py-3 px-2 text-left font-semibold text-pink-600">开奖结果</th>
+                            <th class="py-3 px-2 text-left font-semibold text-pink-600">杀组</th>
+                            <th class="py-3 px-2 text-left font-semibold text-pink-600">双组推荐</th>
+                            <th class="py-3 px-2 text-center font-semibold text-pink-600">杀中</th>
+                            <th class="py-3 px-2 text-center font-semibold text-pink-600">双中</th>
+                            <th class="py-3 px-2 text-center font-semibold text-pink-600">详情</th>
+                        </tr>
+                    </thead>
+                    <tbody id="historyBody">
+                        <tr><td colspan="7" class="py-8 text-center text-pink-400">暂无验证记录</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <footer class="text-center">
+            <p class="text-xs text-pink-500 font-medium">禧少杀组算法系统</p>
+            <p class="text-[10px] text-pink-400 mt-1">独家公式演算 · 记录保存于本地</p>
+        </footer>
+    </main>
+    <script>
+        const $ = id => document.getElementById(id);
+        const API_URL = 'https://super.pc28998.com/history/JND28';
+        const STORAGE_KEY = 'tianzhen_dujia_shazu_v1';
+        const PERIOD_INTERVAL = 210;
+        const AUTO_REFRESH_INTERVAL = 10000;
+        const RING_CIRCUMFERENCE = 2 * Math.PI * 38;
+        // 数值转形态映射表（0-27对应）
+        const NUM_TO_TYPE = [
+            '小双', '小单', '小双', '小单', '小双', '小单', '小双', '小单',
+            '小双', '小单', '小双', '小单', '小双', '小单', '大双', '大单',
+            '大双', '大单', '大双', '大单', '大双', '大单', '大双', '大单',
+            '大双', '大单', '大双', '大单'
+        ];
+        // 【新三门规则】完全按你要求重写
+        const THREE_DOORS = {
+            '小单': ['大单', '大双', '小单'],
+            '大双': ['大双', '小双', '小单'],
+            '小双': ['大单', '大双', '小双'],
+            '大单': ['大单', '小双', '小单']
+        };
+        // 杀组转换规则（杀组不在三门时启用）
+        const KILL_TRANS_MAP = {
+            '大单': '小双',
+            '大双': '小单',
+            '小单': '大双',
+            '小双': '大单'
+        };
+        // 月之眼分组（特码候选池）
+        const MOON_EYE_GROUPS = {
+            '月': [9, 12, 15, 18],
+            '之': [7, 10, 16, 19],
+            '眼': [8, 11, 17, 20]
+        };
+        // 和值转大小单双
+        function getTypeFromSum(sum) {
+            const size = sum < 14 ? '小' : '大';
+            const parity = sum % 2 === 0 ? '双' : '单';
+            return size + parity;
+        }
+        // 根据特征值S获取源分组
+        function getSourceGroups(S) {
+            let group = null;
+            for (let [key, nums] of Object.entries(MOON_EYE_GROUPS)) {
+                if (nums.includes(S)) { group = key; break; }
+            }
+            if (!group) {
+                let minDiff = Infinity, bestGroup = '月';
+                for (let [key, nums] of Object.entries(MOON_EYE_GROUPS)) {
+                    for (let num of nums) {
+                        let diff = Math.abs(num - S);
+                        if (diff < minDiff) { minDiff = diff; bestGroup = key; }
+                    }
+                }
+                group = bestGroup;
+            }
+            if (group === '月') return ['月', '之'];
+            if (group === '之') return ['之', '眼'];
+            return ['眼', '月'];
+        }
+        // 特码四码生成函数
+        function generateSpecialCodes(S, finalRecs) {
+            const sourceGroups = getSourceGroups(S);
+            let selected = new Set();
+            for (let rec of finalRecs) {
+                for (let groupName of sourceGroups) {
+                    for (let num of MOON_EYE_GROUPS[groupName]) {
+                        if (getTypeFromSum(num) === rec) selected.add(num);
+                    }
+                }
+            }
+            let specials = Array.from(selected).sort((a, b) => a - b).slice(0, 4);
+            if (specials.length < 4) {
+                const allNums = [...MOON_EYE_GROUPS['月'], ...MOON_EYE_GROUPS['之'], ...MOON_EYE_GROUPS['眼']];
+                for (let n of allNums) {
+                    if (!specials.includes(n)) {
+                        specials.push(n);
+                        if (specials.length >= 4) break;
+                    }
+                }
+            }
+            return specials;
+        }
+
+        // ========== 全新核心算法：完全替换为你提供的计算逻辑 ==========
+        function tianzhenAlgorithm(threePeriods) {
+            let log = '';
+            // 1. 提取三期开奖号码，分别计算三期原始和值
+            const p1 = threePeriods[0];
+            const p2 = threePeriods[1];
+            const p3 = threePeriods[2];
+            const sum1 = p1[0] + p1[1] + p1[2];
+            const sum2 = p2[0] + p2[1] + p2[2];
+            const sum3 = p3[0] + p3[1] + p3[2];
+            log += `【输入三期开奖】\n第1期号码${p1.join('+')} 和值=${sum1}\n第2期号码${p2.join('+')} 和值=${sum2}\n第3期号码${p3.join('+')} 和值=${sum3}\n\n`;
+
+            // 步骤1：三期和值转为带小数点小数（14→1.4、7→0.7）
+            const dec1 = sum1 / 10;
+            const dec2 = sum2 / 10;
+            const dec3 = sum3 / 10;
+            log += `【步骤1 和值转小数】\n${sum1} → ${dec1.toFixed(1)}\n${sum2} → ${dec2.toFixed(1)}\n${sum3} → ${dec3.toFixed(1)}\n`;
+
+            // 步骤2：三个小数相加 = 总和一
+            const sumOne = dec1 + dec2 + dec3;
+            log += `三个小数相加：${dec1.toFixed(1)} + ${dec2.toFixed(1)} + ${dec3.toFixed(1)} = ${sumOne.toFixed(2)} → 总和一\n`;
+
+            // 步骤3：三期原始和值总和
+            const rawSumTotal = sum1 + sum2 + sum3;
+            log += `三期原始和值相加：${sum1}+${sum2}+${sum3} = ${rawSumTotal} → 三期和总值\n`;
+
+            // 步骤4：总和一 - 三期和总值 = 总和二
+            const sumTwo = sumOne - rawSumTotal;
+            log += `【步骤4 求总和二】${sumOne.toFixed(2)} - ${rawSumTotal} = ${sumTwo.toFixed(4)}\n`;
+
+            // 固定除数 1.5*1.9*1.8 = 5.13
+            const DIV_NUM = 1.5 * 1.9 * 1.8;
+            log += `固定除数 = 1.5 × 1.9 × 1.8 = ${DIV_NUM}\n`;
+
+            // 步骤5：总和二 ÷ 5.13 = 结果一
+            const resOne = sumTwo / DIV_NUM;
+            log += `【步骤5 计算结果一】${sumTwo.toFixed(4)} ÷ ${DIV_NUM} = ${resOne.toFixed(12)}\n`;
+
+            // 步骤6：取小数点后三位，负数也只取小数部分，不足三位补0
+            let decimalStr = String(Math.abs(resOne)).split('.')[1] || '000';
+            // 截取前三位，不足补0
+            const threeBit = decimalStr.padEnd(3, '0').slice(0, 3);
+            const d1 = parseInt(threeBit[0]);
+            const d2 = parseInt(threeBit[1]);
+            const d3 = parseInt(threeBit[2]);
+            log += `【步骤6 截取小数后三位】\n绝对值小数段：${decimalStr}\n截取三位：${threeBit} → 数字${d1}、${d2}、${d3}\n`;
+
+            // 步骤7：三位数字相加得到最终数
+            const finalNum = d1 + d2 + d3;
+            log += `三位求和：${d1}+${d2}+${d3} = ${finalNum} → 最终数\n\n`;
+
+            // 步骤8：根据最终数判断基础形态 baseType
+            let baseType;
+            if (finalNum >= 10) {
+                // 大于等于10
+                baseType = finalNum % 2 === 1 ? '大单' : '大双';
+            } else {
+                // 小于10
+                baseType = finalNum % 2 === 1 ? '小单' : '小双';
+            }
+            log += `【步骤8 判断基础形态】最终数${finalNum} ${finalNum >=10 ? '≥10' : '<10'}、${finalNum%2===1?'单数':'双数'} → 基础形态：${baseType}\n\n`;
+
+            // ========== 第二步：对应三门（已按你新规则替换THREE_DOORS） ==========
+            const threeDoors = THREE_DOORS[baseType];
+            log += `【第二步 匹配三门规则】基础形态${baseType}对应三门：${threeDoors.join('、')}\n\n`;
+
+            // ========== 第三步 原有独家杀组公式不变（保留你原有杀组逻辑） ==========
+            log += `【第三步 独家杀组公式运算】第三期号码三位数 ÷10 ÷ 最新期号码三位数 ÷ 5π（取小数点后前三位求和）\n`;
+            const num3 = p3[0] * 100 + p3[1] * 10 + p3[2];
+            const num1 = p1[0] * 100 + p1[1] * 10 + p1[2];
+            log += `第三期(p3)号码：${p3.join('+')} → 拼接三位数 ${num3}\n`;
+            log += `最新期(p1)号码：${p1.join('+')} → 拼接三位数 ${num1}\n`;
+            const killVal = num3 / 10 / num1 / (5 * Math.PI);
+            log += `${num3} ÷ 10 ÷ ${num1} ÷ 5π = ${killVal.toFixed(12)}\n`;
+            // 取小数点后前三位求和得K
+            const killPiStr = String(Math.abs(killVal)).split('.')[1] || '000';
+            const k1 = parseInt(killPiStr[0]) || 0;
+            const k2 = parseInt(killPiStr[1]) || 0;
+            const k3 = parseInt(killPiStr[2]) || 0;
+            const K = k1 + k2 + k3;
+            log += `小数点后前三位：${k1}、${k2}、${k3}\n求和 K = ${k1}+${k2}+${k3} = ${K}\n`;
+            // K值映射杀组
+            const killType = NUM_TO_TYPE[Math.min(K, 27)];
+            log += `K值${K}对应原始杀组：${killType}\n\n`;
+
+            // ========== 第四步：杀组匹配与最终双组 ==========
+            log += `【第四步 杀组匹配】\n`;
+            let effectiveKill = killType;
+            let isTransformed = false;
+            if (!threeDoors.includes(killType)) {
+                effectiveKill = KILL_TRANS_MAP[killType] || killType;
+                isTransformed = true;
+                log += `原始杀组「${killType}」不在三门中，按规则转换：杀${killType} = 杀${effectiveKill}\n`;
+            } else {
+                log += `原始杀组「${killType}」在三门中，直接排除\n`;
+            }
+            let finalRecs = threeDoors.filter(t => t !== effectiveKill);
+            // 最终容错兜底
+            if (finalRecs.length < 2) finalRecs = threeDoors.slice(0, 2);
+            log += `最终双组推荐：${finalRecs.join('、')}\n\n`;
+
+            // ========== 第五步：特码四码 ==========
+            const specials = generateSpecialCodes(finalNum, finalRecs);
+            log += `【第五步 特码四码】月之眼分组筛选：${specials.join('、')}`;
+
+            return {
+                log,
+                baseType,
+                threeDoors,
+                killType,
+                effectiveKill,
+                isTransformed,
+                finalRecs,
+                S: finalNum, // 替换原S为新算法最终数
+                K,
+                specials: specials.slice(0, 4)
+            };
+        }
+
+        // ========== 全局状态 ==========
+        let lotteryHistory = [];
+        let latestData = null;
+        let predictHistory = [];
+        let countdownInterval = null;
+        let autoRefreshTimer = null;
+        let isRequesting = false;
+        function loadHistory() {
+            try {
+                const saved = localStorage.getItem(STORAGE_KEY);
+                if (saved) predictHistory = JSON.parse(saved);
+            } catch(e) {}
+            renderHistory();
+            updateHitRate();
+        }
+        function saveHistory() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(predictHistory));
+        }
+        function renderHistory() {
+            const container = $('historyBody');
+            if (!predictHistory.length) {
+                container.innerHTML = '<tr><td colspan="7" class="py-8 text-center text-pink-400">暂无验证记录</td></tr>';
+                return;
+            }
+            let html = '';
+            predictHistory.slice(0, 20).forEach(r => {
+                const killStatus = r.killHit ? '🀄️🈵' : (r.killHit === false ? '🍉🍉' : '--');
+                const doubleStatus = r.doubleHit ? '🀄️🈵' : (r.doubleHit === false ? '🍉🍉' : '--');
+                html += `
+                    <tr class="border-t border-pink-200">
+                        <td class="py-3 px-2 font-medium text-gray-700">${r.period}</td>
+                        <td class="py-3 px-2 text-gray-600">${r.openResult || '--'}</td>
+                        <td class="py-3 px-2 text-gray-600">${r.kill}</td>
+                        <td class="py-3 px-2 text-gray-600">${r.recommend.join(' / ')}</td>
+                        <td class="py-3 px-2 text-center">${killStatus}</td>
+                        <td class="py-3 px-2 text-center">${doubleStatus}</td>
+                        <td class="py-3 px-2 text-center text-pink-500 cursor-pointer" onclick="showLog('${r.period}')">查看</td>
+                    </tr>
+                `;
+            });
+            container.innerHTML = html;
+        }
+        function updateHitRate() {
+            const verified = predictHistory.filter(r => r.killHit !== undefined && r.doubleHit !== undefined);
+            if (!verified.length) {
+                $('doubleHitRateDisplay').textContent = '--%';
+                $('killHitRateDisplay').textContent = '--%';
+                return;
+            }
+            const killHits = verified.filter(r => r.killHit).length;
+            const doubleHits = verified.filter(r => r.doubleHit).length;
+            $('killHitRateDisplay').textContent = `${Math.round(killHits / verified.length * 100)}%`;
+            $('doubleHitRateDisplay').textContent = `${Math.round(doubleHits / verified.length * 100)}%`;
+        }
+        function savePrediction(record) {
+            const idx = predictHistory.findIndex(p => p.period === record.period);
+            if (idx !== -1) predictHistory[idx] = { ...predictHistory[idx], ...record };
+            else predictHistory.unshift(record);
+            if (predictHistory.length > 50) predictHistory.pop();
+            saveHistory();
+            renderHistory();
+            updateHitRate();
+        }
+        async function verifyHistory() {
+            if (!lotteryHistory.length) return;
+            let changed = false;
+            for (let r of predictHistory) {
+                if (r.killHit !== undefined) continue;
+                const open = lotteryHistory.find(d => d.expect === r.period);
+                if (open) {
+                    const sum = sumOfCode(open.opencode);
+                    const openType = getTypeFromSum(sum);
+                    r.openResult = open.opencode;
+                    r.killHit = openType !== r.kill;
+                    r.doubleHit = r.recommend.includes(openType);
+                    changed = true;
+                }
+            }
+            if (changed) {
+                saveHistory();
+                renderHistory();
+                updateHitRate();
+            }
+        }
+        function sumOfCode(opencode) {
+            return String(opencode).split(',').map(Number).reduce((a, b) => a + b, 0);
+        }
+        function runPrediction() {
+            if (!latestData || lotteryHistory.length < 3) {
+                alert('历史数据不足3期，请稍后再试');
+                return;
+            }
+            const threePeriods = lotteryHistory.slice(0,3).map(item => 
+                item.opencode.split(',').map(Number)
+            );
+            
+            const algoResult = tianzhenAlgorithm(threePeriods);
+            const { log, killType, finalRecs, specials, baseType, isTransformed } = algoResult;
+            
+            $('doubleMain').textContent = finalRecs[0];
+            $('doubleSecond').textContent = finalRecs[1];
+            $('killTypeDisplay').textContent = killType;
+            $('ruleTypeDisplay').textContent = baseType;
+            $('algoStepsBody').textContent = `=== 禧少杀组·全新自定义封禁三门算法 ===\n输入三期号码：${threePeriods.map(p=>p.join('+')).join(' / ')}\n\n${log}`;
+            
+            // 杀组转换标记
+            $('killTransBadge').classList.toggle('hidden', !isTransformed);
+            
+            renderSpecialCodes(specials);
+            const nextPeriod = String(Number(latestData.period) + 1);
+            savePrediction({
+                period: nextPeriod,
+                kill: killType,
+                recommend: finalRecs,
+                special: specials,
+                log: log,
+                openResult: null,
+                killHit: undefined,
+                doubleHit: undefined
+            });
+        }
+        function renderSpecialCodes(codes) {
+            const container = $('specialCodesContainer');
+            container.innerHTML = '';
+            codes.forEach((code, idx) => {
+                const ball = document.createElement('div');
+                ball.className = `w-14 h-14 rounded-full bg-gradient-to-br ${idx % 2 === 0 ? 'from-primary to-primaryDeep' : 'from-success to-emerald-600'} flex items-center justify-center text-white text-xl font-bold ball-glass animate-float hover-scale-ios`;
+                ball.style.animationDelay = `${idx * 0.15}s`;
+                ball.textContent = String(code).padStart(2, '0');
+                container.appendChild(ball);
+            });
+        }
+        async function fetchLotteryData(showTip = false) {
+            if (isRequesting) return false;
+            isRequesting = true;
+            try {
+                const res = await fetch(API_URL);
+                const json = await res.json();
+                if (json.code === 1 && Array.isArray(json.data) && json.data.length > 0) {
+                    lotteryHistory = json.data.slice(0, 30);
+                    const latest = lotteryHistory[0];
+                    const nums = latest.opencode.split(',').map(Number);
+                    latestData = {
+                        period: latest.expect,
+                        nums: nums,
+                        sum: nums.reduce((a, b) => a + b, 0),
+                        opencode: latest.opencode,
+                        opentime: latest.opentime
+                    };
+                    updateLatestUI();
+                    await verifyHistory();
+                    if (lotteryHistory.length >= 3) runPrediction();
+                    return true;
+                } else throw new Error();
+            } catch(e) {
+                if (showTip) alert('数据刷新失败，请检查网络');
+                return false;
+            } finally {
+                isRequesting = false;
+            }
+        }
+        function updateLatestUI() {
+            $('ball1').textContent = latestData.nums[0];
+            $('ball2').textContent = latestData.nums[1];
+            $('ball3').textContent = latestData.nums[2];
+            $('latestPeriodDisplay').textContent = latestData.period + '期';
+            $('latestSumValue').textContent = latestData.sum;
+            $('latestTypeValue').textContent = getTypeFromSum(latestData.sum);
+            
+            const openDate = new Date(latestData.opentime * 1000);
+            $('openTimeDisplay').textContent = `${openDate.getHours().toString().padStart(2,'0')}:${openDate.getMinutes().toString().padStart(2,'0')}`;
+            updateCountdown();
+        }
+        function updateCountdown() {
+            if (!latestData.opentime) return;
+            if (countdownInterval) clearInterval(countdownInterval);
+            
+            const nextOpen = (latestData.opentime + PERIOD_INTERVAL) * 1000;
+            const update = () => {
+                const diff = nextOpen - Date.now();
+                if (diff <= 0) {
+                    $('countdown-text').textContent = '00:00';
+                    $('progress-ring').style.strokeDashoffset = RING_CIRCUMFERENCE;
+                    fetchLotteryData();
+                    return;
+                }
+                const min = Math.floor(diff / 60000);
+                const sec = Math.floor((diff % 60000) / 1000);
+                $('countdown-text').textContent = `${min.toString().padStart(2,'0')}:${sec.toString().padStart(2,'0')}`;
+                const progress = diff / (PERIOD_INTERVAL * 1000);
+                $('progress-ring').style.strokeDashoffset = RING_CIRCUMFERENCE * (1 - progress);
+            };
+            update();
+            countdownInterval = setInterval(update, 1000);
+        }
+        function startAutoRefresh() {
+            autoRefreshTimer = setInterval(() => fetchLotteryData(), AUTO_REFRESH_INTERVAL);
+        }
+        // 事件绑定
+        const algoHeader = $('algoStepsHeader');
+        const algoContent = $('algoStepsContent');
+        const algoArrow = $('algoStepsArrow');
+        algoHeader?.addEventListener('click', ()=>{
+            if(algoContent.style.maxHeight === '0px'){
+                algoContent.style.maxHeight = '650px';
+                algoArrow.style.transform = 'rotate(180deg)'
+            }else{
+                algoContent.style.maxHeight = '0px';
+                algoArrow.style.transform = 'rotate(0deg)'
+            }
+        });
+        $('themeBtn')?.addEventListener('click',()=>{
+            document.body.classList.toggle('dark');
+            const icon = $('themeBtn').querySelector('i');
+            icon.className = document.body.classList.contains('dark') ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+        });
+        $('refreshBtn')?.addEventListener('click', () => fetchLotteryData(true));
+        $('clearHistoryBtn')?.addEventListener('click', () => {
+            if(confirm('确定清空所有验证记录吗？')){
+                predictHistory = [];
+                saveHistory();
+                renderHistory();
+                updateHitRate();
+            }
+        });
+        window.showLog = (period) => {
+            const record = predictHistory.find(r => r.period === period);
+            if(record) alert(`期号：${period}\n\n运算日志：\n${record.log}`);
+        };
+        // 初始化
+        loadHistory();
+        fetchLotteryData().then(startAutoRefresh);
+    </script>
+</body>
+</html>
