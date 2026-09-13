@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>濠少精准预测</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'Microsoft YaHei', 'PingFang SC', sans-serif;
+  background: #0b0f2a;
+  color: #e0e0e0;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 16px;
+}
+.card {
+  max-width: 420px;
+  width: 100%;
+  background: linear-gradient(145deg, #11163a, #0d122e);
+  border-radius: 24px;
+  padding: 20px 18px 24px;
+  border: 1px solid rgba(255,215,0,0.15);
+  box-shadow: 0 8px 40px rgba(0,0,0,0.7), inset 0 0 60px rgba(255,215,0,0.03);
+  position: relative;
+  overflow: hidden;
+}
+.card::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle at 30% 20%, rgba(255,215,0,0.04), transparent 60%);
+  pointer-events: none;
+}
+.header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+.title { font-size: 18px; font-weight: bold; background: linear-gradient(90deg,#ffd700,#ffb800); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 2px; }
+.title-sub { font-size: 11px; color: #8899bb; -webkit-text-fill-color: #8899bb; background: none; font-weight: normal; }
+.badge { background: rgba(255,215,0,0.12); border: 1px solid rgba(255,215,0,0.25); border-radius: 20px; padding: 4px 12px; font-size: 11px; color: #ffd700; }
+
+.live-box {
+  background: rgba(255,215,0,0.04);
+  border: 1px solid rgba(255,215,0,0.08);
+  border-radius: 14px;
+  padding: 12px 14px;
+  margin-bottom: 12px;
+}
+.live-box .top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.live-box .top .label { font-size: 13px; color: #8899bb; }
+.live-box .top .label .live {
+  display: inline-block;
+  width: 8px; height: 8px; border-radius: 50%;
+  background: #ff4444;
+  margin-right: 6px;
+  animation: pulse-dot 1.2s infinite;
+}
+@keyframes pulse-dot {
+  0%,100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.3; transform: scale(0.8); }
+}
+.live-box .top .issue { font-size: 14px; font-weight: bold; color: #ffd700; }
+.live-box .balls { display: flex; gap: 14px; justify-content: center; margin: 8px 0; }
+.live-box .ball {
+  width: 48px; height: 48px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px; font-weight: bold; color: #fff;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+}
+.live-box .ball.orange { background: linear-gradient(145deg, #ff9a44, #e67e22); }
+.live-box .ball.blue { background: linear-gradient(145deg, #4a9eff, #1a6fc4); }
+.live-box .ball.green { background: linear-gradient(145deg, #2ed573, #1a9c4a); }
+.live-box .ball.red { background: linear-gradient(145deg, #ff4757, #c0392b); }
+.live-box .ball.purple { background: linear-gradient(145deg, #a855f7, #7c3aed); }
+.live-box .sum-row { text-align: center; font-size: 14px; color: #aabbcc; margin-top: 6px; }
+.live-box .sum-row .big { font-size: 20px; font-weight: bold; color: #ffd700; }
+.live-box .sum-row .combo {
+  display: inline-block; padding: 2px 14px; border-radius: 20px;
+  font-size: 13px; font-weight: bold; margin-left: 8px;
+}
+.combo-大单 { background: rgba(255,71,87,0.2); color: #ff6b81; border: 1px solid #ff6b81; }
+.combo-大双 { background: rgba(30,144,255,0.2); color: #70a1ff; border: 1px solid #70a1ff; }
+.combo-小单 { background: rgba(46,213,115,0.2); color: #2ed573; border: 1px solid #2ed573; }
+.combo-小双 { background: rgba(255,165,2,0.2); color: #ffa502; border: 1px solid #ffa502; }
+
+.info-bar { display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: #8899bb; padding: 8px 0 10px; border-bottom: 1px solid rgba(255,255,255,0.05); margin-bottom: 12px; }
+.info-bar .highlight { color: #ffd700; }
+.info-bar .tag { background: rgba(255,215,0,0.1); padding: 2px 10px; border-radius: 12px; font-size: 11px; color: #ffd700; }
+.sum-display { text-align: center; padding: 10px 0 6px; }
+.sum-display .big { font-size: 48px; font-weight: 900; background: linear-gradient(180deg,#fff,#ffd700); -webkit-background-clip: text; -webkit-text-fill-color: transparent; line-height: 1; }
+.sum-display .sub { font-size: 14px; color: #ffd700; -webkit-text-fill-color: #ffd700; background: none; display: block; margin-top: 2px; letter-spacing: 6px; }
+.sum-display .issue { font-size: 13px; color: #8899bb; margin-top: 4px; }
+.sum-display .issue span { color: #aabbdd; }
+.balls { display: flex; justify-content: center; gap: 18px; margin: 14px 0 16px; }
+.ball { width: 56px; height: 56px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 26px; font-weight: bold; color: #fff; box-shadow: 0 4px 20px rgba(0,0,0,0.4); }
+.ball.orange { background: linear-gradient(145deg,#ff9a44,#e67e22); }
+.ball.blue { background: linear-gradient(145deg,#4a9eff,#1a6fc4); }
+.ball.green { background: linear-gradient(145deg,#2ed573,#1a9c4a); }
+.time-row { text-align: center; font-size: 13px; color: #667799; margin-bottom: 14px; }
+.time-row span { color: #88aacc; }
+.action-row { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 16px; }
+.btn { padding: 4px 14px; border-radius: 16px; border: none; font-size: 13px; font-weight: bold; cursor: pointer; background: rgba(255,255,255,0.06); color: #aabbcc; border: 1px solid rgba(255,255,255,0.08); transition: 0.2s; }
+.btn:hover { background: rgba(255,215,0,0.12); color: #ffd700; }
+.btn-primary { background: linear-gradient(135deg,#ffd700,#f0a500); color: #0b0f2a; border: none; }
+.result-grid { display: grid; grid-template-columns: 1fr 2fr; gap: 10px; margin-bottom: 16px; }
+.kill-box, .double-box { background: rgba(0,0,0,0.3); border-radius: 14px; padding: 12px 10px; text-align: center; border: 1px solid rgba(255,255,255,0.05); }
+.kill-box .label, .double-box .label { font-size: 12px; color: #8899bb; margin-bottom: 4px; }
+.kill-box .value { font-size: 22px; font-weight: bold; color: #ff6b81; }
+.double-box .value { font-size: 18px; font-weight: bold; color: #ffd700; }
+
+.moon-eye-section { margin-top: 12px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,0.05); }
+.moon-eye-section .label { font-size: 12px; color: #8899bb; text-align: center; margin-bottom: 6px; }
+.moon-eye-section .groups { display: flex; gap: 6px; justify-content: center; margin-bottom: 8px; }
+.moon-eye-section .groups .tag {
+  padding: 2px 10px; border-radius: 12px; font-size: 10px;
+  background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.06);
+  color: #8899bb;
+}
+.moon-eye-section .groups .tag.active {
+  border-color: #ffd700; color: #ffd700; background: rgba(255,215,0,0.08);
+}
+.special-row { display: flex; justify-content: center; gap: 14px; margin: 6px 0 10px; }
+.special-item { text-align: center; }
+.special-item .label { font-size: 10px; color: #667799; }
+.special-item .num { font-size: 22px; font-weight: bold; color: #ffd700; text-shadow: 0 0 20px rgba(255,215,0,0.15); }
+.special-item .num.main1 { color: #ff6b81; text-shadow: 0 0 30px rgba(255,71,87,0.2); }
+.special-item .num.main2 { color: #70a1ff; text-shadow: 0 0 30px rgba(30,144,255,0.2); }
+.special-item .type { font-size: 9px; color: #556688; }
+
+.footer-info { display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: #556688; padding-top: 12px; border-top: 1px solid rgba(255,255,255,0.04); margin-top: 6px; }
+.footer-info .highlight { color: #ffd700; }
+.footer-info .range { background: rgba(255,215,0,0.08); padding: 2px 10px; border-radius: 12px; color: #ffd700; }
+
+.status-bar { display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: #8899bb; padding: 6px 0 8px; border-bottom: 1px solid rgba(255,255,255,0.05); margin-bottom: 10px; }
+.status-bar .ok { color: #2ed573; }
+.status-bar .warn { color: #ffa502; }
+.status-bar .err { color: #ff6b81; }
+
+.log-box {
+  max-height: 80px; overflow-y: auto;
+  font-size: 11px; color: #556688;
+  background: rgba(0,0,0,0.2); border-radius: 8px; padding: 6px 10px;
+  margin-top: 6px; font-family: monospace;
+}
+.log-box .info { color: #70a1ff; }
+.log-box .success { color: #2ed573; }
+.log-box .warn { color: #ffa502; }
+.log-box .error { color: #ff6b81; }
+</style>
+</head>
+<body>
+
+<div class="card">
+  <div class="header">
+    <div><span class="title">濠少精准预测</span><span class="title-sub"> · 蓝色专属</span></div>
+    <div class="badge">禁止倒卖二改</div>
+  </div>
+
+  <div class="status-bar">
+    <span id="dataStatus">数据: 加载中...</span>
+    <span id="countdownInfo">倒计时: --:--</span>
+  </div>
+
+  <div class="live-box">
+    <div class="top">
+      <div class="label"><span class="live"></span> 最新开奖</div>
+      <div class="issue" id="liveIssue">---期</div>
+    </div>
+    <div class="balls" id="liveBalls">
+      <div class="ball orange">-</div>
+      <div class="ball blue">-</div>
+      <div class="ball green">-</div>
+    </div>
+    <div class="sum-row">
+      和值: <span class="big" id="liveSum">--</span>
+      <span class="combo" id="liveCombo">-</span>
+    </div>
+  </div>
+
+  <div class="info-bar">
+    <span>数据已更新 <span class="highlight" id="dataCount">-</span></span>
+    <span>当前杀组区间</span>
+    <span class="tag">0.250 - 0.450</span>
+  </div>
+
+  <div class="sum-display">
+    <div class="big" id="sum">-</div>
+    <div class="sub" id="type">-</div>
+    <div class="issue">期号 <span id="issue">-</span></div>
+  </div>
+
+  <div class="balls" id="balls">
+    <div class="ball orange">-</div>
+    <div class="ball blue">-</div>
+    <div class="ball green">-</div>
+  </div>
+
+  <div class="time-row">倒计时 <span id="countdown">--:--</span></div>
+
+  <div class="action-row">
+    <div><span style="font-size:13px;color:#8899bb;">本期</span> <span style="font-size:13px;color:#ffd700;">杀组 + 双组</span></div>
+    <button class="btn btn-primary" onclick="refreshData()">刷新</button>
+  </div>
+
+  <div class="result-grid">
+    <div class="kill-box">
+      <div class="label">🐟 杀组</div>
+      <div class="value" id="kill">-</div>
+    </div>
+    <div class="double-box">
+      <div class="label">⭐ 双组</div>
+      <div class="value" id="double">-</div>
+    </div>
+  </div>
+
+  <div class="moon-eye-section">
+    <div class="label">🌙 月之眼 · 特码精准抓码</div>
+    <div class="groups" id="moonGroups">
+      <span class="tag" id="tagMoon">月 [9,12,15,18]</span>
+      <span class="tag" id="tagEye">之 [7,10,16,19]</span>
+      <span class="tag" id="tagStar">眼 [8,11,17,20]</span>
+    </div>
+    <div class="special-row" id="specials">
+      <div class="special-item"><div class="num">-</div><div class="type">-</div></div>
+      <div class="special-item"><div class="num">-</div><div class="type">-</div></div>
+      <div class="special-item"><div class="num">-</div><div class="type">-</div></div>
+      <div class="special-item"><div class="num">-</div><div class="type">-</div></div>
+    </div>
+    <div style="text-align:center;font-size:10px;color:#667799;" id="moonInfo">特征值S: -</div>
+  </div>
+
+  <div class="footer-info">
+    <span>濠少精准预测 · <span class="highlight">追冷追热</span></span>
+    <span class="range">区间:0.250~0.450</span>
+  </div>
+
+  <div style="font-size:12px;color:#667799;margin-top:10px;margin-bottom:4px;">📝 运行日志</div>
+  <div class="log-box" id="logBox">
+    <div class="info">[启动] 濠少精准预测已加载...</div>
+  </div>
+</div>
+
+<script>
+'use strict';
+
+// ==================== 配置 ====================
+const CONFIG = {
+  api1: 'https://kj.pc28.im/api/kj.json?nbr=1000',
+  api2: 'https://pc28.help/api/kj.json?nbr=100',
+  pollInterval: 30000,
+  fetchTimeout: 8000
+};
+
+// ==================== 月之眼分组 ====================
+const MOON_EYE_GROUPS = {
+  '月': [9, 12, 15, 18],
+  '之': [7, 10, 16, 19],
+  '眼': [8, 11, 17, 20]
+};
+const GROUP_NAMES = { '月': '🌙月', '之': '👁之', '眼': '⭐眼' };
+
+function getTypeFromSum(sum) {
+  const size = sum < 14 ? '小' : '大';
+  const parity = sum % 2 === 0 ? '双' : '单';
+  return size + parity;
+}
+
+function getSourceGroups(S) {
+  let group = null;
+  for (let [key, nums] of Object.entries(MOON_EYE_GROUPS)) {
+    if (nums.includes(S)) { group = key; break; }
+  }
+  if (!group) {
+    let minDiff = Infinity, bestGroup = '月';
+    for (let [key, nums] of Object.entries(MOON_EYE_GROUPS)) {
+      for (let num of nums) {
+        let diff = Math.abs(num - S);
+        if (diff < minDiff) { minDiff = diff; bestGroup = key; }
+      }
+    }
+    group = bestGroup;
+  }
+  if (group === '月') return ['月', '之'];
+  if (group === '之') return ['之', '眼'];
+  return ['眼', '月'];
+}
+
+function generateSpecialCodes(S, finalRecs) {
+  const sourceGroups = getSourceGroups(S);
+  let selected = new Set();
+  for (let rec of finalRecs) {
+    for (let groupName of sourceGroups) {
+      for (let num of MOON_EYE_GROUPS[groupName]) {
+        if (getTypeFromSum(num) === rec) {
+          selected.add(num);
+        }
+      }
+    }
+  }
+  let specials = Array.from(selected).sort((a, b) => a - b).slice(0, 4);
+  if (specials.length < 4) {
+    const allNums = [...MOON_EYE_GROUPS['月'], ...MOON_EYE_GROUPS['之'], ...MOON_EYE_GROUPS['眼']];
+    for (let n of allNums) {
+      if (!specials.includes(n)) {
+        specials.push(n);
+        if (specials.length >= 4) break;
+      }
+    }
+  }
+  return specials;
+}
+
+// ==================== 映射表（1:1 保留原版） ====================
+const MAPPING = {
+  "大单": ["大单", "小双", "小单"],
+  "大双": ["大双", "小双", "小单"],
+  "小单": ["大单", "大双", "小单"],
+  "小双": ["大单", "大双", "小双"]
+};
+
+// ==================== 核心算法（1:1 原版未改） ====================
+function ruleMain(a, b, c) {
+  let x = a / 10, y = b / 10, z = c / 10;
+  let s1 = x + y + z;
+  let s2 = s1 - (a + b + c);
+  let r = s2 / 5.13;
+  let ds = (Math.abs(r) % 1).toFixed(10).slice(2, 5).padEnd(3, '0');
+  let d = ds.split('').reduce((t, v) => t + Number(v), 0);
+  if (d >= 10) return d % 2 ? "大单" : "大双";
+  return d % 2 ? "小单" : "小双";
+}
+
+function ruleSub(n1, n2) {
+  let r = (n1 - n2) / 7.21;
+  let ds = r.toFixed(10);
+  let f = +ds.split('.')[1][0];
+  let l = +ds.split('.')[1].slice(-1);
+  if (f > l) return f % 2 ? "大单" : "大双";
+  if (f < l) return f % 2 ? "小单" : "小双";
+  return "小双";
+}
+
+function getDigitSum(a, b, c) {
+  let x = a / 10, y = b / 10, z = c / 10;
+  let s1 = x + y + z;
+  let s2 = s1 - (a + b + c);
+  let r = s2 / 5.13;
+  let ds = (Math.abs(r) % 1).toFixed(10).slice(2, 5).padEnd(3, '0');
+  return ds.split('').reduce((t, v) => t + Number(v), 0);
+}
+
+function getType(n) {
+  return (n >= 14 ? "大" : "小") + (n % 2 ? "单" : "双");
+}
+
+// ==================== 数据加载 ====================
+let allData = [];
+let currentSource = '';
+
+async function fetchJSON(url) {
+  const ctrl = new AbortController();
+  const timer = setTimeout(() => ctrl.abort(), CONFIG.fetchTimeout);
+  try {
+    const r = await fetch(url, { signal: ctrl.signal, cache: 'no-cache' });
+    clearTimeout(timer);
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    return await r.json();
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+function normalizeData(j) {
+  const list = (j.data || []).map(function(d) {
+    const parts = d.number ? d.number.split('+').map(Number) : [0, 0, 0];
+    const sum = d.num != null ? Number(d.num) : parts.reduce(function(a, b) { return a + b; }, 0);
+    return {
+      nbr: d.nbr || d.nbr || '',
+      number: d.number || parts.join('+'),
+      parts: parts,
+      sum: sum,
+      combination: d.combination || getType(sum)
+    };
+  });
+  return list;
+}
+
+function generateDemoData() {
+  const arr = [];
+  const patterns = [
+    [6,4,8,18],[4,7,5,16],[3,8,6,17],[7,7,7,21],[2,1,1,4],
+    [7,4,5,16],[3,6,1,10],[4,5,9,18],[2,5,3,10],[6,1,2,9],
+    [2,4,0,6],[4,7,2,13],[7,4,9,20],[5,0,7,12],[6,2,3,11],
+    [1,5,8,14],[1,5,1,7],[1,4,7,12],[0,3,8,11],[0,1,7,8],
+    [6,3,0,9],[9,3,2,14],[2,1,9,12],[2,0,5,7],[5,8,9,22],
+    [7,9,2,18],[6,6,0,12],[6,3,1,10],[1,8,7,16],[7,9,2,18],
+    [3,5,1,9],[0,5,6,11],[4,0,6,10],[6,6,6,18],[0,1,7,8]
+  ];
+  for (let i = 0; i < 70; i++) {
+    const p = patterns[i % patterns.length];
+    arr.push({
+      nbr: 3469400 + i,
+      number: p[0] + '+' + p[1] + '+' + p[2],
+      parts: [p[0], p[1], p[2]],
+      sum: p[3],
+      combination: getType(p[3])
+    });
+  }
+  return arr;
+}
+
+async function tryFetchAll() {
+  log('开始加载数据...', 'info');
+
+  // 主接口1
+  try {
+    const j = await fetchJSON(CONFIG.api1);
+    if (j && j.data && j.data.length > 0) {
+      allData = normalizeData(j);
+      currentSource = 'api1';
+      const cd = j.countdown || '--:--';
+      document.getElementById('dataStatus').innerHTML =
+        '<span class="ok">✅ kj.pc28.im</span> (' + allData.length + '期)';
+      document.getElementById('countdownInfo').textContent = '倒计时: ' + cd;
+      log('✅ 主接口成功: ' + allData.length + '条 | 倒计时:' + cd, 'success');
+      render(j.countdown);
+      return;
+    }
+  } catch(e) {
+    log('⚠️ 主接口失败: ' + e.message, 'warn');
+  }
+
+  // 备用接口2
+  try {
+    const j = await fetchJSON(CONFIG.api2);
+    if (j && j.data && j.data.length > 0) {
+      allData = normalizeData(j);
+      currentSource = 'api2';
+      const cd = j.countdown || '--:--';
+      document.getElementById('dataStatus').innerHTML =
+        '<span class="warn">⚠️ pc28.help</span> (' + allData.length + '期)';
+      document.getElementById('countdownInfo').textContent = '倒计时: ' + cd;
+      log('✅ 备用接口成功: ' + allData.length + '条 | 倒计时:' + cd, 'success');
+      render(j.countdown);
+      return;
+    }
+  } catch(e) {
+    log('⚠️ 备用接口失败: ' + e.message, 'warn');
+  }
+
+  // 离线演示
+  allData = generateDemoData();
+  currentSource = 'demo';
+  document.getElementById('dataStatus').innerHTML =
+    '<span class="err">❌ 离线模式</span> (演示数据70期)';
+  log('📦 使用内置演示数据 70条', 'warn');
+  render(null);
+}
+
+async function loadData() {
+  await tryFetchAll();
+}
+
+function refreshData() {
+  log('🔄 手动刷新...', 'info');
+  loadData();
+}
+
+// ==================== 渲染 ====================
+function render(countdownStr) {
+  if (allData.length < 3) {
+    log('⚠️ 数据不足3条，无法预测', 'error');
+    return;
+  }
+
+  const cur = allData[0];
+  const a = cur.parts[0], b = cur.parts[1], c = cur.parts[2];
+  const sum = a + b + c;
+
+  // ===== 最新开奖 LIVE =====
+  document.getElementById('liveIssue').textContent = cur.nbr + '期';
+  const colors = ['orange', 'blue', 'green', 'red', 'purple'];
+  document.getElementById('liveBalls').innerHTML = cur.parts.map(function(n, i) {
+    return '<div class="ball ' + colors[i % colors.length] + '">' + n + '</div>';
+  }).join('');
+  document.getElementById('liveSum').textContent = sum;
+  const combo = cur.combination || getType(sum);
+  const comboEl = document.getElementById('liveCombo');
+  comboEl.textContent = combo;
+  comboEl.className = 'combo combo-' + combo;
+
+  // ===== 原有数据显示 =====
+  document.getElementById('dataCount').textContent = '(' + allData.length + '期)';
+  document.getElementById('sum').textContent = sum;
+  document.getElementById('type').textContent = combo;
+  document.getElementById('issue').textContent = cur.nbr;
+  document.getElementById('balls').innerHTML =
+    '<div class="ball orange">' + a + '</div>' +
+    '<div class="ball blue">' + b + '</div>' +
+    '<div class="ball green">' + c + '</div>';
+
+  // ===== 核心算法 =====
+  const r1 = ruleMain(sum, allData[1].sum, allData[2].sum);
+  const r2 = ruleSub(sum, allData[1].sum);
+
+  const doubleList = MAPPING[r1] || [];
+  const allTypes = ['大单', '大双', '小单', '小双'];
+  const killList = allTypes.filter(function(t) { return !doubleList.includes(t); });
+  const kill = killList[0] || '大单';
+
+  const inter = doubleList.slice(0, 2);
+
+  document.getElementById('kill').textContent = kill;
+  document.getElementById('double').innerHTML = inter.join(' <small>·</small> ') || '-';
+
+  // ===== 月之眼特码 =====
+  const S = getDigitSum(sum, allData[1].sum, allData[2].sum);
+  const groups = getSourceGroups(S);
+  document.getElementById('tagMoon').className = 'tag' + (groups.includes('月') ? ' active' : '');
+  document.getElementById('tagEye').className = 'tag' + (groups.includes('之') ? ' active' : '');
+  document.getElementById('tagStar').className = 'tag' + (groups.includes('眼') ? ' active' : '');
+  document.getElementById('moonInfo').textContent =
+    '特征值S: ' + S + ' | 匹配分组: ' + groups.map(g => GROUP_NAMES[g]).join(' + ');
+
+  const specials = generateSpecialCodes(S, inter);
+  document.getElementById('specials').innerHTML = specials.map(function(v, i) {
+    let cls = 'num';
+    if (i === 0) cls += ' main1';
+    else if (i === 1) cls += ' main2';
+    return '<div class="special-item"><div class="' + cls + '">' + v + '</div><div class="type">' + getTypeFromSum(v) + '</div></div>';
+  }).join('');
+
+  log('✅ 预测完成 | 杀:' + kill + ' 双组:' + inter.join('+') + ' S=' + S + ' 特码:' + specials.join(','), 'success');
+
+  // ===== 倒计时 =====
+  if (countdownStr) {
+    startTimerFromCountdown(countdownStr);
+  } else {
+    startTimer(210);
+  }
+}
+
+// ==================== 倒计时 ====================
+let timerId = null;
+
+function startTimerFromCountdown(cdStr) {
+  const parts = cdStr.split(':');
+  let totalSec = 0;
+  if (parts.length === 2) {
+    totalSec = parseInt(parts[0]) * 60 + parseInt(parts[1]);
+  } else {
+    totalSec = 210;
+  }
+  startTimer(totalSec);
+}
+
+function startTimer(totalSec) {
+  if (timerId) clearInterval(timerId);
+  let remain = totalSec;
+
+  function tick() {
+    const m = String(Math.floor(remain / 60)).padStart(2, '0');
+    const s = String(remain % 60).padStart(2, '0');
+    const txt = m + ':' + s;
+    document.getElementById('countdown').textContent = txt;
+    document.getElementById('countdownInfo').textContent = '倒计时: ' + txt;
+    if (remain <= 0) {
+      clearInterval(timerId);
+      log('⏰ 倒计时归零，刷新数据...', 'info');
+      loadData();
+      return;
+    }
+    remain--;
+  }
+  tick();
+  timerId = setInterval(tick, 1000);
+}
+
+// ==================== 日志 ====================
+function log(msg, type) {
+  type = type || 'info';
+  const box = document.getElementById('logBox');
+  const time = new Date().toLocaleTimeString();
+  const div = document.createElement('div');
+  div.className = type;
+  div.textContent = '[' + time + '] ' + msg;
+  box.appendChild(div);
+  box.scrollTop = box.scrollHeight;
+  while (box.children.length > 50) box.removeChild(box.firstChild);
+}
+
+// ==================== 启动 ====================
+loadData();
+setInterval(loadData, CONFIG.pollInterval);
+</script>
+</body>
+</html>
