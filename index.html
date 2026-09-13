@@ -32,8 +32,6 @@ button{
   -webkit-tap-highlight-color:transparent;
 }
 
-/* 樱花 */
-
 .sakura{
   position:fixed;
   top:-40px;
@@ -52,8 +50,6 @@ button{
   }
 }
 
-/* 主体 */
-
 .app{
   position:relative;
   z-index:2;
@@ -62,8 +58,6 @@ button{
   margin:auto;
   padding-bottom:100px;
 }
-
-/* 顶部 */
 
 .header{
   min-height:72px;
@@ -122,8 +116,6 @@ button{
   flex:none;
 }
 
-/* 页面 */
-
 .content{
   padding:18px 15px;
 }
@@ -144,8 +136,6 @@ h1:after{
   margin-top:10px;
 }
 
-/* 卡片 */
-
 .card{
   background:rgba(255,255,255,.86);
   border:1px solid rgba(205,150,175,.32);
@@ -155,8 +145,6 @@ h1:after{
   backdrop-filter:blur(16px);
   overflow:hidden;
 }
-
-/* 倒计时 */
 
 .countdown{
   padding:18px;
@@ -203,8 +191,6 @@ h1:after{
   border-radius:10px;
   transition:width .3s;
 }
-
-/* 开奖结果 */
 
 .result{
   padding:17px;
@@ -259,8 +245,6 @@ h1:after{
   font-weight:900;
 }
 
-/* 标签 */
-
 .tabs{
   display:flex;
   gap:9px;
@@ -284,8 +268,6 @@ h1:after{
   color:white;
   border-color:#c63772;
 }
-
-/* 表格 */
 
 .table-wrap{
   overflow-x:auto;
@@ -352,8 +334,6 @@ td{
   color:#3e8050;
 }
 
-/* 杀组 */
-
 .kill-card{
   padding:18px;
 }
@@ -415,8 +395,6 @@ td{
   color:#b63769;
 }
 
-/* AI */
-
 .ai{
   padding:18px;
 }
@@ -435,8 +413,6 @@ td{
   line-height:1.8;
   font-size:14px;
 }
-
-/* 底部 */
 
 .bottom{
   position:fixed;
@@ -481,13 +457,9 @@ td{
   padding:12px;
 }
 
-/* 深色 */
-
 .dark-mode{
   filter:brightness(.78);
 }
-
-/* 手机 */
 
 @media(max-width:600px){
 
@@ -568,13 +540,9 @@ td{
 
 </header>
 
-
 <main class="content">
 
 <h1>人工智能</h1>
-
-
-<!-- 倒计时 -->
 
 <section class="card countdown">
 
@@ -616,9 +584,6 @@ td{
 
 </section>
 
-
-<!-- 最新开奖 -->
-
 <section class="card result">
 
   <div class="result-head">
@@ -637,23 +602,16 @@ td{
 
   </div>
 
-
   <div class="result-numbers">
 
     <div class="num" id="n1">-</div>
-
     <div class="num" id="n2">-</div>
-
     <div class="num" id="n3">-</div>
-
     <div class="total" id="sum">-</div>
 
   </div>
 
 </section>
-
-
-<!-- 数据 -->
 
 <section class="card">
 
@@ -678,7 +636,6 @@ td{
     </button>
 
   </div>
-
 
   <div class="table-wrap">
 
@@ -712,9 +669,6 @@ td{
 
 </section>
 
-
-<!-- 杀组 -->
-
 <section
   class="card kill-card"
   id="killSection">
@@ -741,7 +695,6 @@ td{
 
   </div>
 
-
   <div class="kill-history">
 
     <div class="kill-history-row">
@@ -756,7 +709,6 @@ td{
 
     </div>
 
-
     <div class="kill-history-row">
 
       <span>
@@ -768,7 +720,6 @@ td{
       </b>
 
     </div>
-
 
     <div class="kill-history-row">
 
@@ -786,9 +737,6 @@ td{
 
 </section>
 
-
-<!-- AI历史统计 -->
-
 <section class="card ai">
 
   <div class="ai-title">
@@ -803,7 +751,6 @@ td{
 
 </section>
 
-
 <div class="footer">
   小濠预测 · 实时开奖数据 · 仅供娱乐
 </div>
@@ -811,9 +758,6 @@ td{
 </main>
 
 </div>
-
-
-<!-- 底部导航 -->
 
 <nav class="bottom">
 
@@ -826,7 +770,6 @@ td{
 
   </div>
 
-
   <div
     class="nav"
     data-nav="hall">
@@ -836,7 +779,6 @@ td{
 
   </div>
 
-
   <div
     class="nav"
     data-nav="kill">
@@ -845,7 +787,6 @@ td{
     飞投
 
   </div>
-
 
   <div
     class="nav"
@@ -857,7 +798,6 @@ td{
   </div>
 
 </nav>
-
 
 <script>
 
@@ -894,12 +834,15 @@ for(let i=0;i<12;i++){
 
 
 /* =========================
-   数据变量
+   数据
 ========================= */
 
 let draws = [];
 
 let countdownSeconds = 0;
+
+/* 新增：真正的倒计时结束时间 */
+let countdownEndAt = null;
 
 let nextIssueNumber = "--";
 
@@ -957,7 +900,6 @@ function findArray(obj){
 
 /* =========================
    期号
-   YU28 官方字段：nbr
 ========================= */
 
 function issueOf(x){
@@ -1002,8 +944,6 @@ function timeOf(x){
 
 /* =========================
    号码
-   YU28 官方字段：
-   number = 4+8+2=14
 ========================= */
 
 function numbersOf(x){
@@ -1162,15 +1102,18 @@ function shapeOf(nums){
 
 
 /* =========================
-   倒计时
-   YU28 官方：
-   countdown = MM:SS
+   找倒计时
 ========================= */
 
 function findCountdown(obj){
 
   if(!obj || typeof obj!=="object")
     return null;
+
+  /*
+    YU28官方接口：
+    countdown = "02:40"
+  */
 
   const keys = [
     "countdown",
@@ -1230,7 +1173,7 @@ function findCountdown(obj){
 
 
 /* =========================
-   下一期期号
+   下一期
 ========================= */
 
 function calculateNextIssue(){
@@ -1255,7 +1198,7 @@ function calculateNextIssue(){
 
 
 /* =========================
-   计算下一期开奖时间
+   下一期开奖时间
 ========================= */
 
 function calculateNextTime(){
@@ -1386,31 +1329,68 @@ async function loadData(){
     draws =
       list.slice(0,57);
 
-    /* 倒计时 */
+
+    /* =====================
+       倒计时修复
+       不再每5秒强制重置
+    ===================== */
 
     const cd =
       findCountdown(json);
 
     if(cd!==null){
 
+      const serverSeconds =
+        Math.max(
+          0,
+          Math.floor(Number(cd))
+        );
+
+      const newEndAt =
+        Date.now() +
+        serverSeconds * 1000;
+
+      /*
+        第一次同步：
+        建立倒计时结束时间。
+
+        后续同步：
+        如果服务器倒计时和本地
+        相差超过10秒，才重新校准。
+      */
+
+      if(
+        countdownEndAt === null ||
+        Math.abs(
+          newEndAt - countdownEndAt
+        ) > 10000
+      ){
+
+        countdownEndAt =
+          newEndAt;
+      }
+
       countdownSeconds =
         Math.max(
           0,
-          Math.floor(
-            Number(cd)
+          Math.ceil(
+            (countdownEndAt-Date.now())/1000
           )
         );
     }
+
 
     /* 下一期 */
 
     nextIssueNumber =
       calculateNextIssue();
 
+
     /* 下一期开奖时间 */
 
     nextOpenTime =
       calculateNextTime();
+
 
     updatePage();
 
@@ -1450,51 +1430,54 @@ function updatePage(){
   const sum =
     sumOf(first);
 
-  /* 当前期 */
 
   document.getElementById(
     "currentIssue"
   ).innerText =
     "第"+issue+"期";
 
+
   document.getElementById(
     "currentTime"
   ).innerText =
     timeOf(first) || "--";
+
 
   document.getElementById(
     "n1"
   ).innerText =
     nums[0];
 
+
   document.getElementById(
     "n2"
   ).innerText =
     nums[1];
+
 
   document.getElementById(
     "n3"
   ).innerText =
     nums[2];
 
+
   document.getElementById(
     "sum"
   ).innerText =
     sum > 0 ? sum : "-";
 
-  /* 下一期 */
 
   document.getElementById(
     "nextIssue"
   ).innerText =
     "第 "+nextIssueNumber+" 期";
 
-  /* 杀组 */
 
   document.getElementById(
     "killLatest"
   ).innerText =
     "第 "+issue+" 期";
+
 
   document.getElementById(
     "killStatus"
@@ -1502,7 +1485,6 @@ function updatePage(){
     "第 "+nextIssueNumber+
     " 期 · 等待开奖";
 
-  /* 下一期开奖时间 */
 
   if(nextOpenTime){
 
@@ -1519,6 +1501,7 @@ function updatePage(){
     ).innerText =
       "等待开奖";
   }
+
 
   renderTable();
 
@@ -1741,10 +1724,12 @@ function renderCountdown(){
     String(s).padStart(2,"0")+
     "秒";
 
+
   const progress =
     document.getElementById(
       "progress"
     );
+
 
   const percent =
     Math.min(
@@ -1755,6 +1740,7 @@ function renderCountdown(){
         sec/210*100
       )
     );
+
 
   progress.style.width =
     percent+"%";
@@ -1768,9 +1754,20 @@ function renderCountdown(){
 setInterval(
   ()=>{
 
-    if(countdownSeconds>0){
+    /*
+      使用真实结束时间计算，
+      不再简单 countdownSeconds--
+    */
 
-      countdownSeconds--;
+    if(countdownEndAt !== null){
+
+      countdownSeconds =
+        Math.max(
+          0,
+          Math.ceil(
+            (countdownEndAt-Date.now())/1000
+          )
+        );
 
       renderCountdown();
 
@@ -1794,10 +1791,15 @@ setInterval(
 
 
 /* =========================
-   每5秒同步
+   第一次加载
 ========================= */
 
 loadData();
+
+
+/* =========================
+   每5秒同步
+========================= */
 
 setInterval(
   loadData,
@@ -1832,6 +1834,7 @@ document
       const type =
         tab.dataset.tab;
 
+
       if(type==="57"){
 
         document
@@ -1842,7 +1845,14 @@ document
           behavior:"smooth",
           block:"center"
         });
+
       }
+
+
+      /*
+        杀组按钮：
+        直接跳到“可能不会来”
+      */
 
       if(type==="kill"){
 
@@ -1854,6 +1864,7 @@ document
           behavior:"smooth",
           block:"center"
         });
+
       }
 
     }
@@ -1929,6 +1940,7 @@ const navs =
     ".nav"
   );
 
+
 navs.forEach(
   (nav,index)=>{
 
@@ -1946,6 +1958,7 @@ navs.forEach(
           "active"
         );
 
+
         if(index===0){
 
           window.scrollTo({
@@ -1954,6 +1967,7 @@ navs.forEach(
           });
 
         }
+
 
         if(index===1){
 
@@ -1967,6 +1981,7 @@ navs.forEach(
 
         }
 
+
         if(index===2){
 
           document
@@ -1978,6 +1993,7 @@ navs.forEach(
           });
 
         }
+
 
         if(index===3){
 
