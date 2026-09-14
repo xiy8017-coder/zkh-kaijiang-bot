@@ -21,10 +21,7 @@
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body {
             font-family: -apple-system, 'PingFang SC', 'Helvetica Neue', sans-serif;
-            background:
-                radial-gradient(circle at 12% 8%, rgba(255,183,77,0.35), transparent 42%),
-                radial-gradient(circle at 88% 18%, rgba(255,213,160,0.40), transparent 40%),
-                linear-gradient(180deg, #fff6ec 0%, #ffe8cc 55%, #ffd9a0 100%);
+            background: #ffffff;
             background-attachment: fixed;
             min-height: 100vh; padding: 14px 12px 30px; color: var(--text);
             -webkit-font-smoothing: antialiased;
@@ -33,10 +30,32 @@
 
         /* ===== 顶部品牌头 ===== */
         .brand { text-align: center; padding: 6px 0 14px; }
-        .brand .logo { font-size: 34px; line-height: 1; filter: drop-shadow(0 3px 6px rgba(224,118,0,0.35)); }
+        .brand .logo { font-size: 11px; line-height: 1.4; color: #888; filter: none; }
         .brand h1 { font-size: 19px; font-weight: 800; color: var(--orange-dark); margin-top: 6px;
             letter-spacing: 0.5px; }
         .brand .sub { font-size: 10px; color: var(--text-soft); margin-top: 3px; opacity: 0.85; }
+
+        /* ===== 雪花效果 ===== */
+        .snow-layer {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 9999;
+        }
+        .snowflake {
+            position: absolute;
+            top: -24px;
+            color: #dcecff;
+            text-shadow: 0 1px 3px rgba(120,160,200,0.25);
+            user-select: none;
+            animation: snowFall linear forwards;
+        }
+        @keyframes snowFall {
+            0% { transform: translate3d(0,-24px,0) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.9; }
+            100% { transform: translate3d(var(--drift), 110vh, 0) rotate(360deg); opacity: 0.75; }
+        }
 
         /* ===== 卡片 ===== */
         .card {
@@ -183,9 +202,10 @@
     </style>
 </head>
 <body>
+<div class="snow-layer" id="snowLayer"></div>
 <div class="container">
     <div class="brand">
-        <div class="logo">🍊</div>
+        <div class="logo">濠少出品必是精品，禁止二改</div>
         <h1>濠少无敌种子预测</h1>
         <div class="sub">v4.0 · 数据同步 PC28 实时 · 仅供娱乐</div>
     </div>
@@ -231,7 +251,7 @@
     <div class="card">
         <div class="card-title"><span class="ico">🔮</span> 下期预测 <span class="badge" id="nextPeriodBadge">--</span></div>
         <div class="predict-box" id="predictBox">
-            <div class="empty-tip">请先选择种子 🍊</div>
+            <div class="empty-tip">请先选择种子</div>
         </div>
     </div>
 
@@ -244,7 +264,7 @@
             </table>
         </div>
     </div>
-    <div class="footer">🍊 濠少无敌种子预测 · 仅供娱乐</div>
+    
 </div>
 
 <script>
@@ -635,7 +655,7 @@ function getTrend(hist,n){const c={'大单':0,'大双':0,'小单':0,'小双':0};
 
 function renderPredict() {
     if (!currentSeed || !history || history.length<2) {
-        predictBox.innerHTML='<div class="empty-tip">请先选择种子 🍊（点击🔍扫描）</div>';
+        predictBox.innerHTML='<div class="empty-tip">请先选择种子（点击🔍扫描）</div>';
         return;
     }
     const last=history[0];
@@ -647,7 +667,7 @@ function renderPredict() {
     const isAi=(aiActiveSeed===currentSeed);
     const isLocked=lockState.active&&lockState.lockedSeed===currentSeed;
     let html=`<div class="predict-head">
-        <span class="ph-l">🍊 ${nextExpect}期</span>
+        <span class="ph-l">${nextExpect}期</span>
         <span class="ph-r">${isAi?'🤖 AI推荐 · ':''}${isLocked?'🔒 锁定中':''}</span>
     </div>`;
     if (viewMode==='three') {
@@ -673,13 +693,13 @@ function renderPredict() {
         <span><i class="dot-rec"></i>推荐</span>
         <span><i class="dot-win"></i>命中</span>
     </div>`;
-    html+=`<div class="trend">🍊 近10期走势：${getTrend(history,10)}</div>`;
+    html+=`<div class="trend">近10期走势：${getTrend(history,10)}</div>`;
     predictBox.innerHTML=html;
 }
 
 function renderBacktest() {
     if (!currentSeed || !history || history.length<2) {
-        backtestBody.innerHTML='<tr class="placeholder-row"><td colspan="5">请先选择种子 🍊</td></tr>';
+        backtestBody.innerHTML='<tr class="placeholder-row"><td colspan="5">请先选择种子</td></tr>';
         backtestBadge.textContent='--'; return;
     }
     const max=Math.min(30, history.length-1);
@@ -774,6 +794,28 @@ modeBtn.addEventListener('click', ()=>{
     renderAll();
 });
 $('refreshDataBtn').addEventListener('click', ()=>{ loadHistory(); });
+
+// ===== 雪花效果 =====
+(function startSnow() {
+    const layer = document.getElementById('snowLayer');
+    if (!layer) return;
+    function addSnowflake() {
+        const el = document.createElement('span');
+        el.className = 'snowflake';
+        el.textContent = Math.random() > 0.35 ? '❄' : '❅';
+        const size = 9 + Math.random() * 13;
+        const duration = 7 + Math.random() * 8;
+        const drift = (Math.random() * 160 - 80).toFixed(0) + 'px';
+        el.style.left = (Math.random() * 100).toFixed(2) + 'vw';
+        el.style.fontSize = size.toFixed(1) + 'px';
+        el.style.animationDuration = duration.toFixed(1) + 's';
+        el.style.setProperty('--drift', drift);
+        layer.appendChild(el);
+        setTimeout(() => el.remove(), (duration + 1) * 1000);
+    }
+    for (let i = 0; i < 18; i++) setTimeout(addSnowflake, i * 260);
+    setInterval(addSnowflake, 420);
+})();
 
 // ===== 初始化 =====
 async function init() {
