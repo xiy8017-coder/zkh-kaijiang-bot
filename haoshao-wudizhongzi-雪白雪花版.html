@@ -3,26 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>濠少无敌种子预测</title>
+    <title>橘子无敌种子预测 v4.0 🍊</title>
     <style>
         /* ===== 🍊 橘子主题色板 ===== */
         :root {
-            --orange: #ff8c00;        /* 主橘 */
-            --orange-deep: #e07600;   /* 深橘 */
-            --orange-dark: #c25e00;   /* 暗橘 */
-            --orange-light: #ffe0b2;  /* 浅橘 */
-            --orange-pale: #fff3e0;  /* 极浅橘 */
-            --leaf: #4caf50;         /* 橘叶绿 */
-            --text: #5a3500;         /* 主文字 */
-            --text-soft: #8a5a1e;    /* 次要文字 */
-            --kill: #ef4444;         /* 杀组红 */
-            --win: #10b981;          /* 命中绿 */
+            --orange: #ff8c00;
+            --orange-deep: #e07600;
+            --orange-dark: #c25e00;
+            --orange-light: #ffe0b2;
+            --orange-pale: #fff3e0;
+            --leaf: #4caf50;
+            --text: #5a3500;
+            --text-soft: #8a5a1e;
+            --kill: #ef4444;
+            --win: #10b981;
         }
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body {
             font-family: -apple-system, 'PingFang SC', 'Helvetica Neue', sans-serif;
-            background:
-                linear-gradient(180deg, #ffffff 0%, #ffffff 100%);
+            background: #ffffff;
             background-attachment: fixed;
             min-height: 100vh; padding: 14px 12px 30px; color: var(--text);
             -webkit-font-smoothing: antialiased;
@@ -31,10 +30,32 @@
 
         /* ===== 顶部品牌头 ===== */
         .brand { text-align: center; padding: 6px 0 14px; }
-        .brand .logo { font-size: 11px; line-height: 1.4; filter: none; color: #888; font-weight: 500; }
+        .brand .logo { font-size: 11px; line-height: 1.4; color: #888; filter: none; }
         .brand h1 { font-size: 19px; font-weight: 800; color: var(--orange-dark); margin-top: 6px;
             letter-spacing: 0.5px; }
         .brand .sub { font-size: 10px; color: var(--text-soft); margin-top: 3px; opacity: 0.85; }
+
+        /* ===== 雪花效果 ===== */
+        .snow-layer {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 9999;
+        }
+        .snowflake {
+            position: absolute;
+            top: -24px;
+            color: #dcecff;
+            text-shadow: 0 1px 3px rgba(120,160,200,0.25);
+            user-select: none;
+            animation: snowFall linear forwards;
+        }
+        @keyframes snowFall {
+            0% { transform: translate3d(0,-24px,0) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.9; }
+            100% { transform: translate3d(var(--drift), 110vh, 0) rotate(360deg); opacity: 0.75; }
+        }
 
         /* ===== 卡片 ===== */
         .card {
@@ -178,34 +199,10 @@
         .card:nth-child(3) { animation-delay: 0.16s; }
         .card:nth-child(4) { animation-delay: 0.24s; }
         @keyframes rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
-    
-        /* ===== 雪花效果 ===== */
-        .snow-layer {
-            position: fixed;
-            inset: 0;
-            pointer-events: none;
-            overflow: hidden;
-            z-index: 9999;
-        }
-        .snowflake {
-            position: absolute;
-            top: -24px;
-            color: #dcecff;
-            text-shadow: 0 1px 3px rgba(120,160,200,0.25);
-            user-select: none;
-            animation: snowFall linear forwards;
-        }
-        @keyframes snowFall {
-            0% { transform: translate3d(0,-24px,0) rotate(0deg); opacity: 0; }
-            10% { opacity: 0.9; }
-            100% { transform: translate3d(var(--drift), 110vh, 0) rotate(360deg); opacity: 0.75; }
-        }
-
     </style>
 </head>
 <body>
 <div class="snow-layer" id="snowLayer"></div>
-
 <div class="container">
     <div class="brand">
         <div class="logo">濠少出品必是精品，禁止二改</div>
@@ -267,7 +264,7 @@
             </table>
         </div>
     </div>
-    <div class="footer">🍊 濠少无敌种子预测 · 仅供娱乐</div>
+    <div class="footer">🍊 橘子牛逼预测系统 · 仅供娱乐</div>
 </div>
 
 <script>
@@ -435,6 +432,7 @@ const BUILTIN_DATA = [
 
 // ===== 算法 =====
 function getType(sum) { return (sum < 14 ? '小' : '大') + (sum % 2 === 0 ? '双' : '单'); }
+
 function mulberry32(seed) {
     let a = seed | 0;
     return function() {
@@ -444,17 +442,38 @@ function mulberry32(seed) {
         return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
     };
 }
-function splitSum(n) { return n.toString().replace('.','').split('').reduce((a,b)=>a+parseInt(b),0); }
+
+function splitSum(n) {
+    return n.toString().replace('.','').split('').reduce((a,b)=>a+parseInt(b),0);
+}
+
 const SEQUENCES = [
     [0,3,9,12,15,18,21,24,27],
     [1,4,7,10,13,16,19,22,25],
     [2,5,8,11,14,17,20,23,26]
 ];
-function isSameSeq(a,b){const ia=SEQUENCES.findIndex(s=>s.includes(a));const ib=SEQUENCES.findIndex(s=>s.includes(b));return ia!==-1&&ia===ib;}
+
+function isSameSeq(a,b){
+    const ia=SEQUENCES.findIndex(s=>s.includes(a));
+    const ib=SEQUENCES.findIndex(s=>s.includes(b));
+    return ia!==-1&&ia===ib;
+}
+
 const RULES = {
-    same: {'小双':['小双','大双','大单'],'小单':['小单','大单','大双'],'大双':['大双','小双','小单'],'大单':['大单','小双','小双']},
-    diff: {'小双':['小双','小单','大单'],'小单':['小单','小双','大双'],'大双':['大双','大单','小单'],'大单':['大单','大双','小双']}
+    same: {
+        '小双':['小双','大双','大单'],
+        '小单':['小单','大单','大双'],
+        '大双':['大双','小双','小单'],
+        '大单':['大单','小双','小双']
+    },
+    diff: {
+        '小双':['小双','小单','大单'],
+        '小单':['小单','小双','大双'],
+        '大双':['大双','大单','小单'],
+        '大单':['大单','大双','小双']
+    }
 };
+
 function getRawGroups(seed, prevItem) {
     const rng = mulberry32(seed + parseInt(prevItem.expect));
     const rand = Number(rng().toFixed(8));
@@ -466,36 +485,56 @@ function getRawGroups(seed, prevItem) {
     const same = isSameSeq(randSum, prevItem.sum);
     return same ? [...RULES.same[type]] : [...RULES.diff[type]];
 }
+
 function calcAccuracy(seed, history, len) {
     const n = Math.min(len || 30, history.length - 1);
     if (n < 1) return 0;
     let hit = 0;
+
     for (let i = 0; i < n; i++) {
-        const real = history[i]; const prev = history[i+1];
+        const real = history[i];
+        const prev = history[i+1];
         const groups = getRawGroups(seed, prev);
         if (real.sum === 13 || real.sum === 14 || groups.includes(real.type)) hit++;
     }
+
     return (hit / n) * 100;
 }
+
 function getOptimalKill(seed, history, len) {
     const n = Math.min(len || 30, history.length - 1);
     if (n < 3) return 0;
+
     let bestHits = -1, bestIdx = 0;
+
     for (let killIdx = 0; killIdx < 3; killIdx++) {
         let hits = 0;
+
         for (let i = 0; i < n; i++) {
-            const real = history[i]; const prev = history[i+1];
+            const real = history[i];
+            const prev = history[i+1];
             const groups = getRawGroups(seed, prev);
             const doubles = groups.filter((_,idx)=>idx!==killIdx);
+
             if (real.sum === 13 || real.sum === 14 || doubles.includes(real.type)) hits++;
         }
-        if (hits > bestHits) { bestHits = hits; bestIdx = killIdx; }
+
+        if (hits > bestHits) {
+            bestHits = hits;
+            bestIdx = killIdx;
+        }
     }
+
     return bestIdx;
 }
+
 const SPECIAL_CODES = {
-    '小单':[9,11,7,5],'小双':[8,12,10,6],'大单':[15,17,19,21],'大双':[18,16,20,22]
+    '小单':[9,11,7,5],
+    '小双':[8,12,10,6],
+    '大单':[15,17,19,21],
+    '大双':[18,16,20,22]
 };
+
 function getSpecialCodes(type, expect) {
     const pool = SPECIAL_CODES[type] || SPECIAL_CODES['小单'];
     const idx = (parseInt(expect)||0) % 4;
@@ -513,333 +552,892 @@ let aiActiveSeed = null;
 let countdownTimer = null;
 
 const $ = id => document.getElementById(id);
-const seedSelector=$('seedSelector'), lockBtn=$('lockBtn'), aiBtn=$('aiBtn'), scanBtn=$('scanBtn'), modeBtn=$('modeBtn');
-const hitRateDisplay=$('hitRateDisplay'), lockHint=$('lockHint'), aiReason=$('aiReason'), predictBox=$('predictBox');
-const backtestBody=$('backtestBody'), backtestBadge=$('backtestBadge'), livePeriod=$('livePeriod'), liveSum=$('liveSum');
-const ball1=$('ball1'), ball2=$('ball2'), ball3=$('ball3'), apiBadge=$('apiBadge'), apiStatus=$('apiStatus');
-const nextPeriodBadge=$('nextPeriodBadge'), dataSourceEl=$('dataSource'), countdownEl=$('countdown'), currentSeedTag=$('currentSeedTag');
+
+const seedSelector=$('seedSelector');
+const lockBtn=$('lockBtn');
+const aiBtn=$('aiBtn');
+const scanBtn=$('scanBtn');
+const modeBtn=$('modeBtn');
+
+const hitRateDisplay=$('hitRateDisplay');
+const lockHint=$('lockHint');
+const aiReason=$('aiReason');
+const predictBox=$('predictBox');
+
+const backtestBody=$('backtestBody');
+const backtestBadge=$('backtestBadge');
+const livePeriod=$('livePeriod');
+const liveSum=$('liveSum');
+
+const ball1=$('ball1');
+const ball2=$('ball2');
+const ball3=$('ball3');
+const apiBadge=$('apiBadge');
+const apiStatus=$('apiStatus');
+
+const nextPeriodBadge=$('nextPeriodBadge');
+const dataSourceEl=$('dataSource');
+const countdownEl=$('countdown');
+const currentSeedTag=$('currentSeedTag');
 
 // ===== 数据加载 =====
 function parseItem(item) {
     let nums, sum, type;
+
     if (item.nums && Array.isArray(item.nums)) nums = item.nums;
     else if (item.number) nums = item.number.split('+').map(Number);
     else if (item.parts && Array.isArray(item.parts)) nums = item.parts;
     else return null;
+
     if (nums.some(isNaN)) return null;
-    sum = (item.sum != null) ? parseInt(item.sum) : (nums[0]+nums[1]+nums[2]);
+
+    sum = (item.sum != null)
+        ? parseInt(item.sum)
+        : (nums[0]+nums[1]+nums[2]);
+
     type = item.type || item.combination || getType(sum);
-    return { expect: item.nbr || item.expect || item.issue, opencode: item.number || nums.join('+'), nums, sum, type };
+
+    return {
+        expect: item.nbr || item.expect || item.issue,
+        opencode: item.number || nums.join('+'),
+        nums,
+        sum,
+        type
+    };
 }
 
 async function fetchFromAPI(url) {
     const res = await fetch(url);
+
     if (!res.ok) throw new Error('HTTP '+res.status);
+
     const json = await res.json();
-    if (!json.data || !Array.isArray(json.data) || json.data.length === 0) throw new Error('数据为空');
+
+    if (!json.data || !Array.isArray(json.data) || json.data.length === 0)
+        throw new Error('数据为空');
+
     return json.data.map(parseItem).filter(Boolean);
 }
 
 function useBuiltin() {
     history = BUILTIN_DATA.map(parseItem).filter(Boolean);
+
     history.sort((a,b)=>parseInt(b.expect)-parseInt(a.expect));
-    // 去重
-    const seen=new Set(); history = history.filter(h=>!seen.has(h.expect)&&seen.add(h.expect));
+
+    const seen=new Set();
+    history = history.filter(h=>!seen.has(h.expect)&&seen.add(h.expect));
 }
 
+// ===== 在线数据 =====
 async function loadHistory() {
     apiBadge.textContent = '⏳ 加载中...';
     apiStatus.innerHTML = '📡 请求数据中...';
+
     let ok = false;
+
     for (const url of [API_PRIMARY, API_BACKUP]) {
         try {
             const data = await fetchFromAPI(url);
+
             if (data && data.length > 0) {
                 history = data;
+
                 history.sort((a,b)=>parseInt(b.expect)-parseInt(a.expect));
-                const seen=new Set(); history=history.filter(h=>!seen.has(h.expect)&&seen.add(h.expect));
-                const src = url===API_PRIMARY ? '主用接口 (kj.pc28.im)' : '备用接口 (pc28.help)';
+
+                const seen=new Set();
+                history=history.filter(h=>!seen.has(h.expect)&&seen.add(h.expect));
+
+                const src = url===API_PRIMARY
+                    ? '主用接口 (kj.pc28.im)'
+                    : '备用接口 (pc28.help)';
+
                 dataSourceEl.textContent = '📊 '+src;
                 apiBadge.textContent = '✅ 在线';
                 apiStatus.innerHTML = '📡 '+src+'：<span class="ok">✔ 正常</span>';
-                ok = true; break;
+
+                ok = true;
+                break;
             }
-        } catch(e) { console.warn('接口失败', url, e); }
+        } catch(e) {
+            console.warn('接口失败', url, e);
+        }
     }
+
     if (!ok) {
         useBuiltin();
-        dataSourceEl.textContent = '📊 离线模式（内置 '+history.length+' 期数据）';
+
+        dataSourceEl.textContent =
+            '📊 离线模式（内置 '+history.length+' 期数据）';
+
         apiBadge.textContent = '📴 离线';
-        apiStatus.innerHTML = '📡 主用/备用：<span class="fail">✘ 失败</span> → 使用内置数据';
+
+        apiStatus.innerHTML =
+            '📡 主用/备用：<span class="fail">✘ 失败</span> → 使用内置数据';
     }
+
     dataSourceEl.textContent += ' · 最新期: '+history[0].expect;
+
     updateLive();
-    if (!currentSeed && topSeeds.length>0) selectSeed(topSeeds[0].seed);
-    else { scanSeeds(); updateSelector(); renderAll(); }
+
+    if (!currentSeed && topSeeds.length>0)
+        selectSeed(topSeeds[0].seed);
+    else {
+        scanSeeds();
+        updateSelector();
+        renderAll();
+    }
 }
 
 // ===== 倒计时 =====
 function startCountdown() {
     if (countdownTimer) clearInterval(countdownTimer);
+
     let seconds = 210;
+
     const tick = () => {
         if (seconds <= 0) {
             countdownEl.textContent = '🔄 即将开奖，刷新中...';
+
             clearInterval(countdownTimer);
-            setTimeout(async()=>{ await loadHistory(); startCountdown(); }, 2000);
+
+            setTimeout(async()=>{
+                await loadHistory();
+                startCountdown();
+            }, 2000);
+
             return;
         }
-        const m=Math.floor(seconds/60), s=seconds%60;
-        countdownEl.textContent = `⏳ 下一期倒计时：${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+
+        const m=Math.floor(seconds/60);
+        const s=seconds%60;
+
+        countdownEl.textContent =
+            `⏳ 下一期倒计时：${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+
         seconds--;
     };
-    tick(); countdownTimer = setInterval(tick, 1000);
+
+    tick();
+    countdownTimer = setInterval(tick, 1000);
 }
 
 // ===== 实时开奖 =====
 function updateLive() {
     if (!history || history.length===0) return;
+
     const latest = history[0];
+
     livePeriod.textContent = latest.expect+'期';
-    liveSum.textContent = `和值：${latest.sum} (${latest.type})`;
-    ball1.textContent = latest.nums[0]; ball2.textContent = latest.nums[1]; ball3.textContent = latest.nums[2];
-    nextPeriodBadge.textContent = (parseInt(latest.expect)+1)+'期';
+
+    liveSum.textContent =
+        `和值：${latest.sum} (${latest.type})`;
+
+    ball1.textContent = latest.nums[0];
+    ball2.textContent = latest.nums[1];
+    ball3.textContent = latest.nums[2];
+
+    nextPeriodBadge.textContent =
+        (parseInt(latest.expect)+1)+'期';
 }
 
 // ===== 种子扫描 =====
 function scanSeeds() {
     if (!history || history.length<5) return;
-    scannedSeeds=[]; topSeeds=[];
+
+    scannedSeeds=[];
+    topSeeds=[];
+
     for (let seed=1000; seed<=50000; seed++) {
         const acc = calcAccuracy(seed, history, 30);
-        if (acc >= 85) { topSeeds.push({seed,acc}); if (acc===100) scannedSeeds.push(seed); }
+
+        if (acc >= 85) {
+            topSeeds.push({seed,acc});
+
+            if (acc===100)
+                scannedSeeds.push(seed);
+        }
     }
+
     topSeeds.sort((a,b)=>b.acc-a.acc);
-    if (topSeeds.length>50) topSeeds=topSeeds.slice(0,50);
-    console.log('[扫描] 100%:',scannedSeeds.length,'≥85%:',topSeeds.length);
+
+    if (topSeeds.length>50)
+        topSeeds=topSeeds.slice(0,50);
+
+    console.log(
+        '[扫描] 100%:',
+        scannedSeeds.length,
+        '≥85%:',
+        topSeeds.length
+    );
 }
 
 function updateSelector() {
     const currentVal = seedSelector.value;
+
     seedSelector.innerHTML = '';
+
     if (topSeeds.length>0) {
         topSeeds.forEach((item,idx)=>{
             const opt=document.createElement('option');
+
             opt.value=item.seed;
-            opt.textContent = `${item.acc===100?'⭐':'●'} #${idx+1} ${item.seed} (${item.acc.toFixed(1)}%)`;
-            if (item.acc===100) { opt.style.color='#e07600'; opt.style.fontWeight='700'; }
+
+            opt.textContent =
+                `${item.acc===100?'⭐':'●'} #${idx+1} ${item.seed} (${item.acc.toFixed(1)}%)`;
+
+            if (item.acc===100) {
+                opt.style.color='#e07600';
+                opt.style.fontWeight='700';
+            }
+
             seedSelector.appendChild(opt);
         });
     } else {
-        const opt=document.createElement('option'); opt.value=''; opt.textContent='-- 无可用种子，请扫描 --';
+        const opt=document.createElement('option');
+
+        opt.value='';
+        opt.textContent='-- 无可用种子，请扫描 --';
+
         seedSelector.appendChild(opt);
     }
-    if (currentVal && Array.from(seedSelector.options).some(o=>o.value==currentVal)) seedSelector.value=currentVal;
+
+    if (
+        currentVal &&
+        Array.from(seedSelector.options).some(o=>o.value==currentVal)
+    )
+        seedSelector.value=currentVal;
 }
 
 // ===== 种子选择 =====
 function selectSeed(seed) {
-    if (lockState.active && lockState.lockedSeed!==seed) { alert('锁定期间不能切换种子！'); return false; }
-    currentSeed=seed; seedSelector.value=seed; seedSelector.classList.remove('ai-highlight');
-    aiActiveSeed=null; aiReason.classList.remove('show'); aiReason.textContent='';
+    if (
+        lockState.active &&
+        lockState.lockedSeed!==seed
+    ) {
+        alert('锁定期间不能切换种子！');
+        return false;
+    }
+
+    currentSeed=seed;
+    seedSelector.value=seed;
+    seedSelector.classList.remove('ai-highlight');
+
+    aiActiveSeed=null;
+    aiReason.classList.remove('show');
+    aiReason.textContent='';
+
     currentSeedTag.textContent='种子 '+seed;
-    renderAll(); return true;
+
+    renderAll();
+
+    return true;
 }
+
 function selectSeedWithAI(seed, reason) {
-    if (lockState.active && lockState.lockedSeed!==seed) { alert('锁定期间不能切换种子！'); return false; }
-    currentSeed=seed; aiActiveSeed=seed; seedSelector.value=seed; seedSelector.classList.add('ai-highlight');
+    if (
+        lockState.active &&
+        lockState.lockedSeed!==seed
+    ) {
+        alert('锁定期间不能切换种子！');
+        return false;
+    }
+
+    currentSeed=seed;
+    aiActiveSeed=seed;
+
+    seedSelector.value=seed;
+    seedSelector.classList.add('ai-highlight');
+
     currentSeedTag.textContent='🤖 '+seed;
-    if (reason) { aiReason.textContent='🤖 '+reason; aiReason.classList.add('show'); }
-    renderAll(); return true;
+
+    if (reason) {
+        aiReason.textContent='🤖 '+reason;
+        aiReason.classList.add('show');
+    }
+
+    renderAll();
+
+    return true;
 }
 
 // ===== 渲染 =====
-function getTrend(hist,n){const c={'大单':0,'大双':0,'小单':0,'小双':0};for(let i=0;i<Math.min(n,hist.length);i++)c[hist[i].type]=(c[hist[i].type]||0)+1;return Object.entries(c).filter(([,x])=>x>0).map(([t,x])=>`${t}${x}`).join(' | ')||'数据不足';}
+function getTrend(hist,n){
+    const c={
+        '大单':0,
+        '大双':0,
+        '小单':0,
+        '小双':0
+    };
+
+    for(
+        let i=0;
+        i<Math.min(n,hist.length);
+        i++
+    )
+        c[hist[i].type]=(c[hist[i].type]||0)+1;
+
+    return Object.entries(c)
+        .filter(([,x])=>x>0)
+        .map(([t,x])=>`${t}${x}`)
+        .join(' | ')||'数据不足';
+}
 
 function renderPredict() {
-    if (!currentSeed || !history || history.length<2) {
-        predictBox.innerHTML='<div class="empty-tip">请先选择种子 🍊（点击🔍扫描）</div>';
+    if (
+        !currentSeed ||
+        !history ||
+        history.length<2
+    ) {
+        predictBox.innerHTML =
+            '<div class="empty-tip">请先选择种子 🍊（点击🔍扫描）</div>';
+
         return;
     }
+
     const last=history[0];
-    const groups=getRawGroups(currentSeed, last);
-    const killIdx=getOptimalKill(currentSeed, history, 30);
+
+    const groups=getRawGroups(
+        currentSeed,
+        last
+    );
+
+    const killIdx=getOptimalKill(
+        currentSeed,
+        history,
+        30
+    );
+
     const kill=groups[killIdx];
-    const doubles=groups.filter((_,i)=>i!==killIdx);
-    const nextExpect=(parseInt(last.expect)+1).toString();
-    const isAi=(aiActiveSeed===currentSeed);
-    const isLocked=lockState.active&&lockState.lockedSeed===currentSeed;
+
+    const doubles=groups.filter(
+        (_,i)=>i!==killIdx
+    );
+
+    const nextExpect=
+        (parseInt(last.expect)+1).toString();
+
+    const isAi=
+        (aiActiveSeed===currentSeed);
+
+    const isLocked=
+        lockState.active &&
+        lockState.lockedSeed===currentSeed;
+
     let html=`<div class="predict-head">
         <span class="ph-l">🍊 ${nextExpect}期</span>
         <span class="ph-r">${isAi?'🤖 AI推荐 · ':''}${isLocked?'🔒 锁定中':''}</span>
     </div>`;
+
     if (viewMode==='three') {
         html+=`<div class="predict-row">
-            <div class="predict-item"><div class="label">三组①</div><div class="value">${groups[0]}</div></div>
-            <div class="predict-item"><div class="label">三组②</div><div class="value">${groups[1]}</div></div>
-            <div class="predict-item"><div class="label">三组③</div><div class="value">${groups[2]}</div></div>
+            <div class="predict-item">
+                <div class="label">三组①</div>
+                <div class="value">${groups[0]}</div>
+            </div>
+
+            <div class="predict-item">
+                <div class="label">三组②</div>
+                <div class="value">${groups[1]}</div>
+            </div>
+
+            <div class="predict-item">
+                <div class="label">三组③</div>
+                <div class="value">${groups[2]}</div>
+            </div>
         </div>`;
     } else {
-        const sp1=getSpecialCodes(doubles[0],nextExpect), sp2=getSpecialCodes(doubles[1],nextExpect);
+        const sp1=getSpecialCodes(
+            doubles[0],
+            nextExpect
+        );
+
+        const sp2=getSpecialCodes(
+            doubles[1],
+            nextExpect
+        );
+
         html+=`<div class="predict-row">
-            <div class="predict-item kill"><div class="label">杀组</div><div class="value">${kill}</div></div>
-            <div class="predict-item gold"><div class="label">推荐一</div><div class="value">${doubles[0]}</div></div>
-            <div class="predict-item gold"><div class="label">推荐二</div><div class="value">${doubles[1]}</div></div>
+            <div class="predict-item kill">
+                <div class="label">杀组</div>
+                <div class="value">${kill}</div>
+            </div>
+
+            <div class="predict-item gold">
+                <div class="label">推荐一</div>
+                <div class="value">${doubles[0]}</div>
+            </div>
+
+            <div class="predict-item gold">
+                <div class="label">推荐二</div>
+                <div class="value">${doubles[1]}</div>
+            </div>
         </div>
+
         <div class="special-row">
-            <span class="tag tag-gold">🎯 特码 ${sp1.join(', ')}</span>
-            <span class="tag tag-gold">🎯 特码 ${sp2.join(', ')}</span>
+            <span class="tag tag-gold">
+                🎯 特码 ${sp1.join(', ')}
+            </span>
+
+            <span class="tag tag-gold">
+                🎯 特码 ${sp2.join(', ')}
+            </span>
         </div>`;
     }
+
     html+=`<div class="legend">
         <span><i class="dot-kill"></i>杀组</span>
         <span><i class="dot-rec"></i>推荐</span>
         <span><i class="dot-win"></i>命中</span>
     </div>`;
-    html+=`<div class="trend">🍊 近10期走势：${getTrend(history,10)}</div>`;
+
+    html+=`<div class="trend">
+        🍊 近10期走势：${getTrend(history,10)}
+    </div>`;
+
     predictBox.innerHTML=html;
 }
 
 function renderBacktest() {
-    if (!currentSeed || !history || history.length<2) {
-        backtestBody.innerHTML='<tr class="placeholder-row"><td colspan="5">请先选择种子 🍊</td></tr>';
-        backtestBadge.textContent='--'; return;
+    if (
+        !currentSeed ||
+        !history ||
+        history.length<2
+    ) {
+        backtestBody.innerHTML =
+            '<tr class="placeholder-row"><td colspan="5">请先选择种子 🍊</td></tr>';
+
+        backtestBadge.textContent='--';
+
+        return;
     }
-    const max=Math.min(30, history.length-1);
-    const killIdx=getOptimalKill(currentSeed, history, 30);
-    let hitCount=0, rows='';
-    for (let i=0;i<max;i++) {
-        const real=history[i], prev=history[i+1];
-        const groups=getRawGroups(currentSeed, prev);
+
+    const max=Math.min(
+        30,
+        history.length-1
+    );
+
+    const killIdx=getOptimalKill(
+        currentSeed,
+        history,
+        30
+    );
+
+    let hitCount=0;
+    let rows='';
+
+    for (
+        let i=0;
+        i<max;
+        i++
+    ) {
+        const real=history[i];
+        const prev=history[i+1];
+
+        const groups=getRawGroups(
+            currentSeed,
+            prev
+        );
+
         const kill=groups[killIdx];
-        const doubles=groups.filter((_,idx)=>idx!==killIdx);
-        let predictHtml, isHit;
+
+        const doubles=groups.filter(
+            (_,idx)=>idx!==killIdx
+        );
+
+        let predictHtml;
+        let isHit;
+
         if (viewMode==='three') {
-            predictHtml=`<span class="tag tag-blue">${groups[0]}</span><span class="tag tag-gold">${groups[1]}</span><span class="tag tag-gold">${groups[2]}</span>`;
-            isHit=(real.sum===13||real.sum===14||groups.includes(real.type));
+            predictHtml=
+                `<span class="tag tag-blue">${groups[0]}</span>
+                <span class="tag tag-gold">${groups[1]}</span>
+                <span class="tag tag-gold">${groups[2]}</span>`;
+
+            isHit=
+                (
+                    real.sum===13 ||
+                    real.sum===14 ||
+                    groups.includes(real.type)
+                );
         } else {
-            predictHtml=`<span class="tag tag-kill">杀${kill}</span><span class="tag tag-blue">${doubles[0]}</span><span class="tag tag-blue">${doubles[1]}</span>`;
-            isHit=(real.sum===13||real.sum===14)?true:doubles.includes(real.type);
+            predictHtml=
+                `<span class="tag tag-kill">杀${kill}</span>
+                <span class="tag tag-blue">${doubles[0]}</span>
+                <span class="tag tag-blue">${doubles[1]}</span>`;
+
+            isHit=
+                (
+                    real.sum===13 ||
+                    real.sum===14
+                )
+                ? true
+                : doubles.includes(real.type);
         }
-        if (isHit) hitCount++;
-        const prevStr=`${prev.nums.join('+')}=${prev.sum}`, realStr=`${real.nums.join('+')}=${real.sum}`;
-        rows+=`<tr class="${isHit?'win-row':''}"><td>${real.expect}</td><td>${prevStr}</td><td>${predictHtml}</td><td>${realStr}</td><td class="${isHit?'win':''}">${isHit?'✅':'❌'}</td></tr>`;
+
+        if (isHit)
+            hitCount++;
+
+        const prevStr=
+            `${prev.nums.join('+')}=${prev.sum}`;
+
+        const realStr=
+            `${real.nums.join('+')}=${real.sum}`;
+
+        rows+=`
+            <tr class="${isHit?'win-row':''}">
+                <td>${real.expect}</td>
+                <td>${prevStr}</td>
+                <td>${predictHtml}</td>
+                <td>${realStr}</td>
+                <td class="${isHit?'win':''}">
+                    ${isHit?'✅':'❌'}
+                </td>
+            </tr>`;
     }
-    const acc=max?((hitCount/max)*100).toFixed(2):0;
-    backtestBadge.textContent = (viewMode==='three'?'三组':'双组')+' '+acc+'%';
+
+    const acc=
+        max
+        ? ((hitCount/max)*100).toFixed(2)
+        : 0;
+
+    backtestBadge.textContent =
+        (viewMode==='three'?'三组':'双组')
+        +' '+acc+'%';
+
     backtestBody.innerHTML=rows;
 }
 
-function renderAll() { renderPredict(); renderBacktest(); updateStatus(); }
+function renderAll() {
+    renderPredict();
+    renderBacktest();
+    updateStatus();
+}
 
 function updateStatus() {
     if (currentSeed) {
-        const acc=calcAccuracy(currentSeed, history, 30);
-        hitRateDisplay.textContent=`命中率：${acc.toFixed(1)}%`;
-        lockHint.textContent = (lockState.active&&lockState.lockedSeed===currentSeed) ? `🔒 锁定中 (剩${lockState.remaining}期)` : '未锁定';
-    } else { hitRateDisplay.textContent='命中率：--'; lockHint.textContent='未锁定'; }
-    if (lockState.active) { lockBtn.textContent=`🔒 锁定中(${lockState.remaining}期)`; lockBtn.classList.add('locked'); lockBtn.disabled=true; seedSelector.disabled=true; }
-    else { lockBtn.textContent='🔒 锁定'; lockBtn.classList.remove('locked'); lockBtn.disabled=false; seedSelector.disabled=false; }
+        const acc=calcAccuracy(
+            currentSeed,
+            history,
+            30
+        );
+
+        hitRateDisplay.textContent=
+            `命中率：${acc.toFixed(1)}%`;
+
+        lockHint.textContent =
+            (
+                lockState.active &&
+                lockState.lockedSeed===currentSeed
+            )
+            ? `🔒 锁定中 (剩${lockState.remaining}期)`
+            : '未锁定';
+    } else {
+        hitRateDisplay.textContent='命中率：--';
+        lockHint.textContent='未锁定';
+    }
+
+    if (lockState.active) {
+        lockBtn.textContent=
+            `🔒 锁定中(${lockState.remaining}期)`;
+
+        lockBtn.classList.add('locked');
+        lockBtn.disabled=true;
+        seedSelector.disabled=true;
+    } else {
+        lockBtn.textContent='🔒 锁定';
+        lockBtn.classList.remove('locked');
+        lockBtn.disabled=false;
+        seedSelector.disabled=false;
+    }
 }
 
 // ===== 锁定 / AI / 扫描 / 模式 =====
 function getThirdSeed() {
-    if (scannedSeeds.length>=3) return scannedSeeds[2];
-    if (topSeeds.length>=3) return topSeeds[2].seed;
-    if (topSeeds.length>0) return topSeeds[0].seed;
+    if (scannedSeeds.length>=3)
+        return scannedSeeds[2];
+
+    if (topSeeds.length>=3)
+        return topSeeds[2].seed;
+
+    if (topSeeds.length>0)
+        return topSeeds[0].seed;
+
     return null;
 }
+
 function lockSeed() {
     if (lockState.active) return;
+
     const third=getThirdSeed();
-    if (!third) { alert('没有足够种子可供锁定，请先🔍扫描'); return; }
-    lockState={active:true, lockedSeed:third, remaining:5};
-    selectSeed(third); updateStatus();
+
+    if (!third) {
+        alert('没有足够种子可供锁定，请先🔍扫描');
+        return;
+    }
+
+    lockState={
+        active:true,
+        lockedSeed:third,
+        remaining:5
+    };
+
+    selectSeed(third);
+    updateStatus();
+
     const t=setInterval(()=>{
-        if (!lockState.active) { clearInterval(t); return; }
+        if (!lockState.active) {
+            clearInterval(t);
+            return;
+        }
+
         lockState.remaining--;
-        if (lockState.remaining<=0) { lockState={active:false,lockedSeed:null,remaining:0}; updateStatus(); clearInterval(t); alert('锁定结束，可重新选择种子'); }
-        else { updateStatus(); }
+
+        if (lockState.remaining<=0) {
+            lockState={
+                active:false,
+                lockedSeed:null,
+                remaining:0
+            };
+
+            updateStatus();
+            clearInterval(t);
+
+            alert('锁定结束，可重新选择种子');
+        } else {
+            updateStatus();
+        }
     }, 3000);
 }
+
 function aiRecommend() {
-    if (lockState.active) { alert('锁定期间无法使用AI推荐'); return; }
-    aiBtn.disabled=true; aiBtn.textContent='⏳ 分析中';
+    if (lockState.active) {
+        alert('锁定期间无法使用AI推荐');
+        return;
+    }
+
+    aiBtn.disabled=true;
+    aiBtn.textContent='⏳ 分析中';
+
     let progress=0;
+
     const interval=setInterval(()=>{
-        progress+=Math.random()*10+5; if (progress>100) progress=100;
-        aiReason.innerHTML=`🤖 AI分析中 ${Math.floor(progress)}% <span class="progress-bar"><span class="progress-fill" style="width:${Math.floor(progress)}%"></span></span>`;
+        progress+=Math.random()*10+5;
+
+        if (progress>100)
+            progress=100;
+
+        aiReason.innerHTML=
+            `🤖 AI分析中 ${Math.floor(progress)}%
+            <span class="progress-bar">
+                <span class="progress-fill"
+                style="width:${Math.floor(progress)}%"></span>
+            </span>`;
+
         aiReason.classList.add('show');
-        if (progress>=100) { clearInterval(interval); finishAI(); }
+
+        if (progress>=100) {
+            clearInterval(interval);
+            finishAI();
+        }
     }, 150);
+
     const finishAI=()=>{
-        let candidates = scannedSeeds.length>0 ? scannedSeeds : topSeeds.map(s=>s.seed);
-        if (candidates.length===0) { aiReason.innerHTML='🤖 未找到可用种子，请先扫描'; aiBtn.disabled=false; aiBtn.textContent='🤖 AI推荐'; return; }
-        const idx=Math.min(4, candidates.length-1);
+        let candidates =
+            scannedSeeds.length>0
+            ? scannedSeeds
+            : topSeeds.map(s=>s.seed);
+
+        if (candidates.length===0) {
+            aiReason.innerHTML=
+                '🤖 未找到可用种子，请先扫描';
+
+            aiBtn.disabled=false;
+            aiBtn.textContent='🤖 AI推荐';
+
+            return;
+        }
+
+        const idx=
+            Math.min(
+                4,
+                candidates.length-1
+            );
+
         const chosen=candidates[idx];
-        const acc=calcAccuracy(chosen, history, 30);
-        selectSeedWithAI(chosen, `智能推荐 #${idx+1} 种子: ${chosen} (命中率 ${acc.toFixed(1)}%)`);
-        aiBtn.disabled=false; aiBtn.textContent='🤖 AI推荐';
+
+        const acc=calcAccuracy(
+            chosen,
+            history,
+            30
+        );
+
+        selectSeedWithAI(
+            chosen,
+            `智能推荐 #${idx+1} 种子: ${chosen} (命中率 ${acc.toFixed(1)}%)`
+        );
+
+        aiBtn.disabled=false;
+        aiBtn.textContent='🤖 AI推荐';
     };
 }
 
 // ===== 事件绑定 =====
 seedSelector.addEventListener('change', ()=>{
-    if (lockState.active) { alert('锁定期间不能切换种子！'); seedSelector.value=lockState.lockedSeed; return; }
-    if (seedSelector.value) selectSeed(parseInt(seedSelector.value));
-});
-lockBtn.addEventListener('click', lockSeed);
-aiBtn.addEventListener('click', aiRecommend);
-scanBtn.addEventListener('click', ()=>{ scanSeeds(); updateSelector(); if (!currentSeed && topSeeds.length>0) selectSeed(topSeeds[0].seed); else renderAll(); });
-modeBtn.addEventListener('click', ()=>{
-    viewMode = viewMode==='three' ? 'double' : 'three';
-    modeBtn.textContent = viewMode==='three' ? '📊 双组' : '📊 三组';
-    renderAll();
-});
-$('refreshDataBtn').addEventListener('click', ()=>{ loadHistory(); });
+    if (lockState.active) {
+        alert('锁定期间不能切换种子！');
+        seedSelector.value=lockState.lockedSeed;
+        return;
+    }
 
-// ===== 初始化 =====
-async function init() {
-    useBuiltin();       // 先用内置数据，保证离线即显示
-    updateLive();
-    scanSeeds();
-    updateSelector();
-    if (topSeeds.length>0) selectSeed(topSeeds[0].seed); else renderAll();
-    startCountdown();
-    loadHistory();      // 后台尝试联网更新
-    setInterval(()=>{ loadHistory(); }, 60000);  // 60秒轮询
-}
-init();
+    if (seedSelector.value)
+        selectSeed(parseInt(seedSelector.value));
+});
 
-// ===== 落雪效果 =====
+lockBtn.addEventListener(
+    'click',
+    lockSeed
+);
+
+aiBtn.addEventListener(
+    'click',
+    aiRecommend
+);
+
+scanBtn.addEventListener(
+    'click',
+    ()=>{
+        scanSeeds();
+        updateSelector();
+
+        if (
+            !currentSeed &&
+            topSeeds.length>0
+        )
+            selectSeed(topSeeds[0].seed);
+        else
+            renderAll();
+    }
+);
+
+modeBtn.addEventListener(
+    'click',
+    ()=>{
+        viewMode =
+            viewMode==='three'
+            ? 'double'
+            : 'three';
+
+        modeBtn.textContent =
+            viewMode==='three'
+            ? '📊 双组'
+            : '📊 三组';
+
+        renderAll();
+    }
+);
+
+$('refreshDataBtn').addEventListener(
+    'click',
+    ()=>{
+        loadHistory();
+    }
+);
+
+// ===== 雪花效果 =====
 (function startSnow() {
-    const layer = document.getElementById('snowLayer');
+    const layer =
+        document.getElementById('snowLayer');
+
     if (!layer) return;
 
     function addSnowflake() {
-        const el = document.createElement('span');
-        el.className = 'snowflake';
-        el.textContent = Math.random() > 0.35 ? '❄' : '❅';
+        const el=
+            document.createElement('span');
 
-        const size = 9 + Math.random() * 13;
-        const duration = 7 + Math.random() * 8;
-        const drift = (Math.random() * 160 - 80).toFixed(0) + 'px';
+        el.className='snowflake';
 
-        el.style.left = (Math.random() * 100).toFixed(2) + 'vw';
-        el.style.fontSize = size.toFixed(1) + 'px';
-        el.style.animationDuration = duration.toFixed(1) + 's';
-        el.style.setProperty('--drift', drift);
+        el.textContent =
+            Math.random()>0.35
+            ? '❄'
+            : '❅';
+
+        const size=
+            9 + Math.random() * 13;
+
+        const duration=
+            7 + Math.random() * 8;
+
+        const drift=
+            (Math.random()*160-80).toFixed(0)
+            + 'px';
+
+        el.style.left=
+            (Math.random()*100).toFixed(2)
+            + 'vw';
+
+        el.style.fontSize=
+            size.toFixed(1)+'px';
+
+        el.style.animationDuration=
+            duration.toFixed(1)+'s';
+
+        el.style.setProperty(
+            '--drift',
+            drift
+        );
 
         layer.appendChild(el);
-        setTimeout(() => el.remove(), (duration + 1) * 1000);
+
+        setTimeout(
+            ()=>el.remove(),
+            (duration+1)*1000
+        );
     }
 
-    for (let i = 0; i < 18; i++) {
-        setTimeout(addSnowflake, i * 260);
-    }
-    setInterval(addSnowflake, 420);
+    for (
+        let i=0;
+        i<18;
+        i++
+    )
+        setTimeout(
+            addSnowflake,
+            i*260
+        );
+
+    setInterval(
+        addSnowflake,
+        420
+    );
 })();
 
+// ===== 初始化 =====
+async function init() {
+    useBuiltin();
+
+    updateLive();
+
+    scanSeeds();
+
+    updateSelector();
+
+    if (topSeeds.length>0)
+        selectSeed(topSeeds[0].seed);
+    else
+        renderAll();
+
+    startCountdown();
+
+    loadHistory();
+
+    setInterval(
+        ()=>{
+            loadHistory();
+        },
+        60000
+    );
+}
+
+init();
 </script>
 </body>
 </html>
