@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>橘子无敌种子预测 v4.0 🍊</title>
+    <style>
+        /* ===== 🍊 橘子主题色板 ===== */
+        :root {
+            --orange: #ff8c00;        /* 主橘 */
+            --orange-deep: #e07600;   /* 深橘 */
+            --orange-dark: #c25e00;   /* 暗橘 */
+            --orange-light: #ffe0b2;  /* 浅橘 */
+            --orange-pale: #fff3e0;  /* 极浅橘 */
+            --leaf: #4caf50;         /* 橘叶绿 */
+            --text: #5a3500;         /* 主文字 */
+            --text-soft: #8a5a1e;    /* 次要文字 */
+            --kill: #ef4444;         /* 杀组红 */
+            --win: #10b981;          /* 命中绿 */
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body {
+            font-family: -apple-system, 'PingFang SC', 'Helvetica Neue', sans-serif;
+            background: #ffffff;
+            background-attachment: fixed;
+            min-height: 100vh; padding: 14px 12px 30px; color: var(--text);
+            -webkit-font-smoothing: antialiased;
+        }
+        .container { max-width: 460px; margin: 0 auto; }
+
+        /* ===== 顶部品牌头 ===== */
+        .brand { text-align: center; padding: 6px 0 14px; }
+        .brand .logo { font-size: 11px; line-height: 1.4; color: #888; filter: none; }
+        .brand h1 { font-size: 19px; font-weight: 800; color: var(--orange-dark); margin-top: 6px;
+            letter-spacing: 0.5px; }
+        .brand .sub { font-size: 10px; color: var(--text-soft); margin-top: 3px; opacity: 0.85; }
+
+        /* ===== 雪花效果 ===== */
+        .snow-layer {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 9999;
+        }
+        .snowflake {
+            position: absolute;
+            top: -24px;
+            color: #dcecff;
+            text-shadow: 0 1px 3px rgba(120,160,200,0.25);
+            user-select: none;
+            animation: snowFall linear forwards;
+        }
+        @keyframes snowFall {
+            0% { transform: translate3d(0,-24px,0) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.9; }
+            100% { transform: translate3d(var(--drift), 110vh, 0) rotate(360deg); opacity: 0.75; }
+        }
+
+        /* ===== 卡片 ===== */
+        .card {
+            background: rgba(255,255,255,0.82);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 22px; padding: 16px;
+            margin-bottom: 12px;
+            border: 1px solid rgba(255,224,178,0.9);
+            box-shadow: 0 8px 28px rgba(224,118,0,0.12), 0 2px 6px rgba(224,118,0,0.06);
+            transition: transform 0.2s ease;
+        }
+        .card-title { font-size: 13.5px; font-weight: 800; color: var(--orange-dark); margin-bottom: 12px;
+            display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }
+        .card-title .ico { font-size: 15px; }
+        .badge { font-size: 9px; background: rgba(255,140,0,0.14); color: var(--orange-deep);
+            padding: 3px 10px; border-radius: 20px; font-weight: 700; margin-left: auto; }
+
+        /* ===== 实时开奖 ===== */
+        .live-info { display: flex; justify-content: space-between; align-items: center;
+            background: linear-gradient(135deg, #fff3e0, #ffe8cc);
+            border-radius: 16px; padding: 12px 14px; border: 1px solid var(--orange-light);
+            font-size: 12px; flex-wrap: wrap; gap: 6px; }
+        .live-info .period { font-weight: 800; color: var(--orange-deep); font-size: 13px;
+            letter-spacing: 0.3px; }
+        .live-info .balls { display: flex; gap: 8px; }
+        .live-info .ball { width: 38px; height: 38px;
+            background: radial-gradient(circle at 35% 30%, #ffb74d, #ff8c00);
+            border: 2px solid var(--orange-deep);
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font-size: 16px; font-weight: 800; color: #fff;
+            box-shadow: inset 0 -2px 5px rgba(0,0,0,0.14), 0 3px 6px rgba(224,118,0,0.28); }
+        .live-info .sum { font-weight: 700; color: var(--text-soft); font-size: 12px; }
+        .meta { display: flex; flex-direction: column; gap: 5px; margin-top: 12px;
+            padding-top: 12px; border-top: 1px dashed rgba(224,118,0,0.25); }
+        .meta .row { display: flex; justify-content: space-between; align-items: center;
+            font-size: 10px; color: var(--text-soft); }
+        .meta .row .dot { display: inline-flex; align-items: center; gap: 5px; }
+        .api-status .ok { color: var(--win); font-weight: 700; }
+        .api-status .fail { color: var(--kill); font-weight: 700; }
+        .countdown { font-weight: 700; color: var(--orange-deep); }
+
+        /* ===== 种子系统 ===== */
+        .seed-display { display: flex; gap: 8px; align-items: center; }
+        .seed-display select { flex: 1; min-width: 0; padding: 10px 12px; border-radius: 13px;
+            border: 2px solid var(--orange); background: var(--orange-pale); font-size: 13px; font-weight: 700;
+            color: var(--text); outline: none; cursor: pointer; }
+        .seed-display select:disabled { opacity: 0.55; background: var(--orange-light); }
+        .seed-display select.ai-highlight { border-color: var(--leaf); background: #e8f5e9; color: var(--leaf);
+            box-shadow: 0 0 0 3px rgba(76,175,80,0.18); }
+        .btn { padding: 10px 16px; border-radius: 13px; border: none; font-size: 11px; font-weight: 700;
+            cursor: pointer; transition: 0.15s; white-space: nowrap; touch-action: manipulation;
+            display: inline-flex; align-items: center; justify-content: center; gap: 4px; }
+        .btn:active { transform: scale(0.94); }
+        .btn-outline { background: transparent; border: 1.5px solid var(--orange); color: var(--orange-deep); }
+        .btn-outline:active { background: var(--orange-pale); }
+        .btn-ai { background: linear-gradient(135deg, var(--leaf), #66bb6a); color: #fff;
+            box-shadow: 0 4px 14px rgba(76,175,80,0.35); flex: 1; }
+        .btn-ai:disabled { opacity: 0.5; cursor: not-allowed; }
+        .btn-lock { background: linear-gradient(135deg, #ff8c00, #ffa726); color: #fff;
+            box-shadow: 0 4px 14px rgba(255,140,0,0.32); flex: 1; }
+        .btn-lock.locked { background: var(--orange-dark); opacity: 0.85; cursor: not-allowed; }
+        .btn-sm { padding: 8px 12px; font-size: 10.5px; flex: none; }
+        .action-row { display: flex; gap: 8px; margin-top: 10px; }
+        .status-bar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
+            font-size: 11.5px; color: var(--text-soft); padding: 12px 0 2px; }
+        .hit-rate { font-weight: 800; color: var(--orange-deep); font-size: 14px; }
+        .lock-hint { font-size: 10px; color: var(--orange-deep); background: var(--orange-pale);
+            padding: 4px 10px; border-radius: 20px; border: 1px solid var(--orange); font-weight: 600; }
+        .seed-tag { font-size: 10px; background: linear-gradient(135deg, #ff8c00, #ffa726); color: #fff;
+            padding: 3px 11px; border-radius: 20px; font-weight: 700; }
+        .ai-reason { background: #e8f5e9; border: 1px solid var(--leaf); border-radius: 12px; padding: 10px 14px;
+            font-size: 11.5px; color: #2e7d32; font-weight: 600; display: none; margin-top: 10px; text-align: center; }
+        .ai-reason.show { display: block; animation: fadeSlide 0.3s ease; }
+        @keyframes fadeSlide { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* ===== 预测区 ===== */
+        .predict-box { background: var(--orange-pale); border-radius: 16px; padding: 14px; margin-top: 4px;
+            border: 1px solid var(--orange-light); }
+        .predict-head { display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 12px; }
+        .predict-head .ph-l { font-size: 12px; font-weight: 700; color: var(--orange-deep); }
+        .predict-head .ph-r { font-size: 10px; color: var(--text-soft); }
+        .predict-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 9px; }
+        .predict-item { background: #fff; border-radius: 14px; padding: 12px 4px;
+            text-align: center; border: 2px solid var(--orange); position: relative; overflow: hidden; }
+        .predict-item::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+            background: linear-gradient(90deg, var(--orange, #ff8c00), #ffa726); }
+        .predict-item .label { font-size: 8.5px; color: var(--text-soft); }
+        .predict-item .value { font-size: 19px; font-weight: 800; color: var(--orange-deep); margin-top: 4px; }
+        .predict-item.kill { border-color: var(--kill); background: #fef2f2; }
+        .predict-item.kill::before { background: var(--kill); }
+        .predict-item.kill .value { color: var(--kill); }
+        .predict-item.gold { border-color: var(--orange); background: #fff6ec; }
+        .predict-item.gold .value { color: var(--orange-deep); }
+        .legend { display: flex; justify-content: center; gap: 14px; margin-top: 12px;
+            font-size: 10px; color: var(--text-soft); }
+        .legend span { display: inline-flex; align-items: center; gap: 4px; }
+        .legend i { width: 9px; height: 9px; border-radius: 3px; display: inline-block; }
+        .legend .dot-kill { background: var(--kill); }
+        .legend .dot-rec { background: var(--orange); }
+        .legend .dot-win { background: var(--win); }
+        .special-row { display: flex; gap: 8px; margin-top: 10px; font-size: 10.5px;
+            justify-content: center; flex-wrap: wrap; }
+
+        /* ===== 回测表 ===== */
+        .backtest-table { width: 100%; font-size: 10px; border-collapse: separate; border-spacing: 0 3px; margin-top: 4px; }
+        .backtest-table th { background: var(--orange-pale); padding: 7px 4px; color: var(--orange-deep);
+            font-size: 9px; font-weight: 800; }
+        .backtest-table th:first-child { border-radius: 8px 0 0 8px; }
+        .backtest-table th:last-child { border-radius: 0 8px 8px 0; }
+        .backtest-table td { padding: 6px 4px; text-align: center; font-size: 10px; background: rgba(255,243,224,0.5); }
+        .backtest-table tr td:first-child { border-radius: 8px 0 0 8px; font-weight: 700; color: var(--text-soft); }
+        .backtest-table tr td:last-child { border-radius: 0 8px 8px 0; }
+        .backtest-table .win { color: var(--win); font-weight: 700; }
+        .backtest-table tr.win-row td { background: rgba(232,245,233,0.7); }
+        .trend { font-size: 10px; color: var(--text-soft); margin-top: 12px; text-align: center;
+            padding-top: 10px; border-top: 1px dashed rgba(224,118,0,0.25); }
+        .empty-tip { color: var(--text-soft); font-size: 13px; text-align: center; padding: 18px 8px;
+            background: rgba(255,255,255,0.6); border-radius: 12px; border: 1px dashed var(--orange); }
+        .placeholder-row td { color: #b0864f !important; padding: 18px !important; }
+        .loading-dot::after { content: '...'; animation: dots 1.4s steps(4, end) infinite; }
+        @keyframes dots { 0%,20%{content:'.';} 40%{content:'..';} 60%,100%{content:'...';} }
+        .tag { display: inline-block; padding: 1px 5px; border-radius: 4px; font-weight: 700; font-size: 9px; margin: 0 1px; }
+        .tag-blue { background: var(--orange-pale); border: 1px solid var(--orange); color: var(--orange-deep); }
+        .tag-gold { background: #fff6ec; border: 1px solid var(--orange); color: var(--orange-deep); }
+        .tag-kill { background: #fef2f2; border: 1px solid var(--kill); color: var(--kill); }
+        .progress-bar { display: inline-block; width: 90px; height: 7px; background: var(--orange-light);
+            border-radius: 20px; overflow: hidden; vertical-align: middle; }
+        .progress-fill { height: 100%; background: linear-gradient(90deg, var(--leaf), #66bb6a); border-radius: 20px; transition: width 0.1s; }
+
+        .footer { text-align: center; font-size: 9px; color: var(--orange-deep); padding: 16px 0 4px; opacity: 0.6; letter-spacing: 0.3px; }
+        .refresh-btn { font-size: 9px; color: var(--text-soft); background: transparent; border: 1px solid var(--orange);
+            border-radius: 20px; padding: 4px 12px; cursor: pointer; }
+        .refresh-btn:active { background: var(--orange-pale); }
+
+        /* ===== 入场动画 ===== */
+        .card { animation: rise 0.5s ease both; }
+        .card:nth-child(1) { animation-delay: 0.00s; }
+        .card:nth-child(2) { animation-delay: 0.08s; }
+        .card:nth-child(3) { animation-delay: 0.16s; }
+        .card:nth-child(4) { animation-delay: 0.24s; }
+        @keyframes rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+<div class="snow-layer" id="snowLayer"></div>
+<div class="container">
+    <div class="brand">
+        <div class="logo">濠少出品必是精品，禁止二改</div>
+        <h1>濠少无敌种子预测</h1>
+        <div class="sub">v4.0 · 数据同步 PC28 实时 · 仅供娱乐</div>
+    </div>
+
+    <div class="card">
+        <div class="card-title"><span class="ico">📡</span> 实时开奖 <span class="badge" id="apiBadge">加载中...</span>
+            <button class="refresh-btn" id="refreshDataBtn">🔄 刷新</button>
+        </div>
+        <div class="live-info" id="liveInfo">
+            <span class="period" id="livePeriod">----期</span>
+            <div class="balls">
+                <span class="ball" id="ball1">-</span>
+                <span class="ball" id="ball2">-</span>
+                <span class="ball" id="ball3">-</span>
+            </div>
+            <span class="sum" id="liveSum">和值：--</span>
+        </div>
+        <div class="api-status" id="apiStatus">📡 接口：<span class="ok">等待加载...</span></div>
+        <div class="meta">
+            <div class="row"><span class="dot">📊 <span id="dataSource">数据来源：内置数据</span></span></div>
+            <div class="row"><span class="dot">⏳ 下一期倒计时</span><span class="countdown" id="countdown">计算中...</span></div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-title"><span class="ico">🎯</span> 种子系统 <span class="seed-tag" id="currentSeedTag">未选择</span></div>
+        <div class="seed-display">
+            <select id="seedSelector"><option value="">-- 加载种子 --</option></select>
+        </div>
+        <div class="action-row">
+            <button class="btn btn-lock" id="lockBtn">🔒 锁定</button>
+            <button class="btn btn-ai" id="aiBtn">🤖 AI推荐</button>
+        </div>
+        <div class="status-bar">
+            <span class="hit-rate" id="hitRateDisplay">命中率：--</span>
+            <span class="lock-hint" id="lockHint">未锁定</span>
+            <button class="btn btn-outline btn-sm" id="scanBtn">🔍 扫描</button>
+            <button class="btn btn-outline btn-sm" id="modeBtn">📊 双组</button>
+        </div>
+        <div class="ai-reason" id="aiReason"></div>
+    </div>
+
+    <div class="card">
+        <div class="card-title"><span class="ico">🔮</span> 下期预测 <span class="badge" id="nextPeriodBadge">--</span></div>
+        <div class="predict-box" id="predictBox">
+            <div class="empty-tip">请先选择种子 🍊</div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-title"><span class="ico">📜</span> 近30期回测 <span class="badge" id="backtestBadge">--</span></div>
+        <div style="overflow-x:auto; padding: 0 2px;">
+            <table class="backtest-table">
+                <thead><tr><th>期号</th><th>上期</th><th>预测</th><th>实际</th><th>结果</th></tr></thead>
+                <tbody id="backtestBody"><tr class="placeholder-row"><td colspan="5">加载数据中<span class="loading-dot"></span></td></tr></tbody>
+            </table>
+        </div>
+    </div>
+    <div class="footer">🍊 橘子牛逼预测系统 · 仅供娱乐</div>
+</div>
+
+<script>
+const API_PRIMARY = 'https://kj.pc28.im/api/kj.json?nbr=1000';
+const API_BACKUP = 'https://pc28.help/api/kj.json?nbr=100';
+
+// ===== 内置备用数据（真实数据，离线可用）=====
+const BUILTIN_DATA = [
+{"nbr":"3475527","number":"0+3+1","sum":4,"combination":"小双"},
+{"nbr":"3475526","number":"9+9+9","sum":27,"combination":"大单"},
+{"nbr":"3475525","number":"1+0+7","sum":8,"combination":"小双"},
+{"nbr":"3475524","number":"0+2+5","sum":7,"combination":"小单"},
+{"nbr":"3475523","number":"0+4+0","sum":4,"combination":"小双"},
+{"nbr":"3475522","number":"5+9+7","sum":21,"combination":"大单"},
+{"nbr":"3475521","number":"4+2+5","sum":11,"combination":"小单"},
+{"nbr":"3475520","number":"8+0+0","sum":8,"combination":"小双"},
+{"nbr":"3475519","number":"3+8+4","sum":15,"combination":"大单"},
+{"nbr":"3475518","number":"1+1+0","sum":2,"combination":"小双"},
+{"nbr":"3475517","number":"9+5+5","sum":19,"combination":"大单"},
+{"nbr":"3475516","number":"1+3+5","sum":9,"combination":"小单"},
+{"nbr":"3475515","number":"4+1+0","sum":5,"combination":"小单"},
+{"nbr":"3475514","number":"0+1+4","sum":5,"combination":"小单"},
+{"nbr":"3475513","number":"1+6+0","sum":7,"combination":"小单"},
+{"nbr":"3475512","number":"6+1+0","sum":7,"combination":"小单"},
+{"nbr":"3475511","number":"2+5+1","sum":8,"combination":"小双"},
+{"nbr":"3475510","number":"0+0+7","sum":7,"combination":"小单"},
+{"nbr":"3475509","number":"6+9+6","sum":21,"combination":"大单"},
+{"nbr":"3475508","number":"0+3+9","sum":12,"combination":"小双"},
+{"nbr":"3475507","number":"3+4+0","sum":7,"combination":"小单"},
+{"nbr":"3475506","number":"0+8+2","sum":10,"combination":"小双"},
+{"nbr":"3475505","number":"8+4+2","sum":14,"combination":"大双"},
+{"nbr":"3475504","number":"8+8+3","sum":19,"combination":"大单"},
+{"nbr":"3475503","number":"8+0+2","sum":10,"combination":"小双"},
+{"nbr":"3475502","number":"7+6+1","sum":14,"combination":"大双"},
+{"nbr":"3475501","number":"9+4+1","sum":14,"combination":"大双"},
+{"nbr":"3475500","number":"2+3+8","sum":13,"combination":"小单"},
+{"nbr":"3475499","number":"1+3+3","sum":7,"combination":"小单"},
+{"nbr":"3475498","number":"8+9+7","sum":24,"combination":"大双"},
+{"nbr":"3475497","number":"4+9+6","sum":19,"combination":"大单"},
+{"nbr":"3475496","number":"8+0+7","sum":15,"combination":"大单"},
+{"nbr":"3475495","number":"7+2+8","sum":17,"combination":"大单"},
+{"nbr":"3475494","number":"8+0+0","sum":8,"combination":"小双"},
+{"nbr":"3475493","number":"3+9+3","sum":15,"combination":"大单"},
+{"nbr":"3475492","number":"6+2+2","sum":10,"combination":"小双"},
+{"nbr":"3475491","number":"7+0+2","sum":9,"combination":"小单"},
+{"nbr":"3475490","number":"2+0+1","sum":3,"combination":"小单"},
+{"nbr":"3475489","number":"5+2+6","sum":13,"combination":"小单"},
+{"nbr":"3475488","number":"1+9+9","sum":19,"combination":"大单"},
+{"nbr":"3475487","number":"3+9+4","sum":16,"combination":"大双"},
+{"nbr":"3475486","number":"3+3+1","sum":7,"combination":"小单"},
+{"nbr":"3475485","number":"8+3+9","sum":20,"combination":"大双"},
+{"nbr":"3475484","number":"6+6+4","sum":16,"combination":"大双"},
+{"nbr":"3475483","number":"8+4+1","sum":13,"combination":"小单"},
+{"nbr":"3475482","number":"4+1+3","sum":8,"combination":"小双"},
+{"nbr":"3475481","number":"4+5+3","sum":12,"combination":"小双"},
+{"nbr":"3475480","number":"3+3+7","sum":13,"combination":"小单"},
+{"nbr":"3475479","number":"5+4+7","sum":16,"combination":"大双"},
+{"nbr":"3475478","number":"0+3+8","sum":11,"combination":"小单"},
+{"nbr":"3475477","number":"9+9+5","sum":23,"combination":"大单"},
+{"nbr":"3475476","number":"3+4+2","sum":9,"combination":"小单"},
+{"nbr":"3475475","number":"4+0+1","sum":5,"combination":"小单"},
+{"nbr":"3475474","number":"3+6+8","sum":17,"combination":"大单"},
+{"nbr":"3475473","number":"7+4+7","sum":18,"combination":"大双"},
+{"nbr":"3475472","number":"1+1+9","sum":11,"combination":"小单"},
+{"nbr":"3475471","number":"0+0+8","sum":8,"combination":"小双"},
+{"nbr":"3475470","number":"8+7+2","sum":17,"combination":"大单"},
+{"nbr":"3475469","number":"5+4+5","sum":14,"combination":"大双"},
+{"nbr":"3475468","number":"6+3+5","sum":14,"combination":"大双"},
+{"nbr":"3475467","number":"7+4+1","sum":12,"combination":"小双"},
+{"nbr":"3475466","number":"5+5+9","sum":19,"combination":"大单"},
+{"nbr":"3475465","number":"1+2+1","sum":4,"combination":"小双"},
+{"nbr":"3475464","number":"9+6+7","sum":22,"combination":"大双"},
+{"nbr":"3475463","number":"9+4+6","sum":19,"combination":"大单"},
+{"nbr":"3475462","number":"6+5+3","sum":14,"combination":"大双"},
+{"nbr":"3475461","number":"0+1+8","sum":9,"combination":"小单"},
+{"nbr":"3475460","number":"3+9+3","sum":15,"combination":"大单"},
+{"nbr":"3475086","number":"6+0+8","sum":14,"combination":"大双"},
+{"nbr":"3475085","number":"2+3+2","sum":7,"combination":"小单"},
+{"nbr":"3475084","number":"0+5+8","sum":13,"combination":"小单"},
+{"nbr":"3475083","number":"6+3+0","sum":9,"combination":"小单"},
+{"nbr":"3475082","number":"4+8+7","sum":19,"combination":"大单"},
+{"nbr":"3475081","number":"1+4+8","sum":13,"combination":"小单"},
+{"nbr":"3475080","number":"9+5+9","sum":23,"combination":"大单"},
+{"nbr":"3475079","number":"6+5+8","sum":19,"combination":"大单"},
+{"nbr":"3475078","number":"2+7+6","sum":15,"combination":"大单"},
+{"nbr":"3475077","number":"0+2+9","sum":11,"combination":"小单"},
+{"nbr":"3475076","number":"2+4+7","sum":13,"combination":"小单"},
+{"nbr":"3475075","number":"7+1+0","sum":8,"combination":"小双"},
+{"nbr":"3475074","number":"9+0+7","sum":16,"combination":"大双"},
+{"nbr":"3475073","number":"3+5+5","sum":13,"combination":"小单"},
+{"nbr":"3475072","number":"4+0+5","sum":9,"combination":"小单"},
+{"nbr":"3475071","number":"4+7+0","sum":11,"combination":"小单"},
+{"nbr":"3475070","number":"7+9+1","sum":17,"combination":"大单"},
+{"nbr":"3475069","number":"7+6+6","sum":19,"combination":"大单"},
+{"nbr":"3475068","number":"8+8+7","sum":23,"combination":"大单"},
+{"nbr":"3475067","number":"4+3+1","sum":8,"combination":"小双"},
+{"nbr":"3475066","number":"1+0+5","sum":6,"combination":"小双"},
+{"nbr":"3475065","number":"3+8+1","sum":12,"combination":"小双"},
+{"nbr":"3475064","number":"9+8+0","sum":17,"combination":"大单"},
+{"nbr":"3475063","number":"2+9+9","sum":20,"combination":"大双"},
+{"nbr":"3475062","number":"3+9+9","sum":21,"combination":"大单"},
+{"nbr":"3475061","number":"3+5+3","sum":11,"combination":"小单"},
+{"nbr":"3475060","number":"8+8+4","sum":20,"combination":"大双"},
+{"nbr":"3475059","number":"7+3+7","sum":17,"combination":"大单"},
+{"nbr":"3475058","number":"1+2+2","sum":5,"combination":"小单"},
+{"nbr":"3475057","number":"5+3+3","sum":11,"combination":"小单"},
+{"nbr":"3475056","number":"0+3+2","sum":5,"combination":"小单"},
+{"nbr":"3475055","number":"1+4+8","sum":13,"combination":"小单"},
+{"nbr":"3475054","number":"6+8+5","sum":19,"combination":"大单"},
+{"nbr":"3475053","number":"3+1+5","sum":9,"combination":"小单"},
+{"nbr":"3475052","number":"1+8+6","sum":15,"combination":"大单"},
+{"nbr":"3475051","number":"0+6+6","sum":12,"combination":"小双"},
+{"nbr":"3475050","number":"5+3+6","sum":14,"combination":"大双"},
+{"nbr":"3475049","number":"9+5+1","sum":15,"combination":"大单"},
+{"nbr":"3475048","number":"5+0+5","sum":10,"combination":"小双"},
+{"nbr":"3475047","number":"4+5+0","sum":9,"combination":"小单"},
+{"nbr":"3475046","number":"4+7+3","sum":14,"combination":"大双"},
+{"nbr":"3475045","number":"0+8+7","sum":15,"combination":"大单"},
+{"nbr":"3475044","number":"3+4+5","sum":12,"combination":"小双"},
+{"nbr":"3475043","number":"1+5+9","sum":15,"combination":"大单"},
+{"nbr":"3475042","number":"0+2+7","sum":9,"combination":"小单"},
+{"nbr":"3475041","number":"6+3+6","sum":15,"combination":"大单"},
+{"nbr":"3475040","number":"1+7+5","sum":13,"combination":"小单"},
+{"nbr":"3475039","number":"4+7+1","sum":12,"combination":"小双"},
+{"nbr":"3475038","number":"0+8+8","sum":16,"combination":"大双"},
+{"nbr":"3475037","number":"0+0+1","sum":1,"combination":"小单"},
+{"nbr":"3475036","number":"1+4+4","sum":9,"combination":"小单"},
+{"nbr":"3475035","number":"1+0+7","sum":8,"combination":"小双"},
+{"nbr":"3475034","number":"3+0+4","sum":7,"combination":"小单"},
+{"nbr":"3475033","number":"3+0+7","sum":10,"combination":"小双"},
+{"nbr":"3475032","number":"4+5+1","sum":10,"combination":"小双"},
+{"nbr":"3475031","number":"3+3+7","sum":13,"combination":"小单"},
+{"nbr":"3475030","number":"9+5+1","sum":15,"combination":"大单"},
+{"nbr":"3475029","number":"7+2+7","sum":16,"combination":"大双"},
+{"nbr":"3475028","number":"7+4+1","sum":12,"combination":"小双"},
+{"nbr":"3475027","number":"3+9+3","sum":15,"combination":"大单"},
+{"nbr":"3475026","number":"4+7+7","sum":18,"combination":"大双"},
+{"nbr":"3475025","number":"6+4+0","sum":10,"combination":"小双"},
+{"nbr":"3475024","number":"0+5+9","sum":14,"combination":"大双"},
+{"nbr":"3475023","number":"3+6+6","sum":15,"combination":"大单"},
+{"nbr":"3475022","number":"8+8+9","sum":25,"combination":"大单"},
+{"nbr":"3475021","number":"8+5+2","sum":15,"combination":"大单"},
+{"nbr":"3475020","number":"4+6+5","sum":15,"combination":"大单"},
+{"nbr":"3475019","number":"3+9+9","sum":21,"combination":"大单"},
+{"nbr":"3475018","number":"3+7+8","sum":18,"combination":"大双"},
+{"nbr":"3475017","number":"5+0+9","sum":14,"combination":"大双"},
+{"nbr":"3475016","number":"7+3+2","sum":12,"combination":"小双"},
+{"nbr":"3475015","number":"4+3+0","sum":7,"combination":"小单"},
+{"nbr":"3475014","number":"7+9+7","sum":23,"combination":"大单"},
+{"nbr":"3475013","number":"4+8+5","sum":17,"combination":"大单"},
+{"nbr":"3475012","number":"5+1+7","sum":13,"combination":"小单"},
+{"nbr":"3475011","number":"6+8+4","sum":18,"combination":"大双"},
+{"nbr":"3475010","number":"5+7+5","sum":17,"combination":"大单"},
+{"nbr":"3475009","number":"1+4+0","sum":5,"combination":"小单"},
+{"nbr":"3475008","number":"8+8+0","sum":16,"combination":"大双"},
+{"nbr":"3475007","number":"0+3+0","sum":3,"combination":"小单"},
+{"nbr":"3475006","number":"3+6+9","sum":18,"combination":"大双"},
+{"nbr":"3475005","number":"8+9+6","sum":23,"combination":"大单"},
+{"nbr":"3475004","number":"5+8+7","sum":20,"combination":"大双"},
+{"nbr":"3475003","number":"4+4+3","sum":11,"combination":"小单"},
+{"nbr":"3475002","number":"2+6+7","sum":15,"combination":"大单"},
+{"nbr":"3475001","number":"8+2+6","sum":16,"combination":"大双"},
+{"nbr":"3475000","number":"4+9+4","sum":17,"combination":"大单"}
+];
+
+// ===== 算法 =====
+function getType(sum) { return (sum < 14 ? '小' : '大') + (sum % 2 === 0 ? '双' : '单'); }
+function mulberry32(seed) {
+    let a = seed | 0;
+    return function() {
+        a = (a + 0x6D2B79F5) | 0;
+        let t = Math.imul(a ^ (a >>> 15), a | 1);
+        t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+        return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+}
+function splitSum(n) { return n.toString().replace('.','').split('').reduce((a,b)=>a+parseInt(b),0); }
+const SEQUENCES = [
+    [0,3,9,12,15,18,21,24,27],
+    [1,4,7,10,13,16,19,22,25],
+    [2,5,8,11,14,17,20,23,26]
+];
+function isSameSeq(a,b){const ia=SEQUENCES.findIndex(s=>s.includes(a));const ib=SEQUENCES.findIndex(s=>s.includes(b));return ia!==-1&&ia===ib;}
+const RULES = {
+    same: {'小双':['小双','大双','大单'],'小单':['小单','大单','大双'],'大双':['大双','小双','小单'],'大单':['大单','小双','小双']},
+    diff: {'小双':['小双','小单','大单'],'小单':['小单','小双','大双'],'大双':['大双','大单','小单'],'大单':['大单','大双','小双']}
+};
+function getRawGroups(seed, prevItem) {
+    const rng = mulberry32(seed + parseInt(prevItem.expect));
+    const rand = Number(rng().toFixed(8));
+    const prod = rand * prevItem.sum;
+    const finalSum = splitSum(prod.toFixed(3));
+    const type = getType(finalSum);
+    const randStr = rand.toFixed(8).split('.')[1].slice(0,3);
+    const randSum = splitSum(randStr);
+    const same = isSameSeq(randSum, prevItem.sum);
+    return same ? [...RULES.same[type]] : [...RULES.diff[type]];
+}
+function calcAccuracy(seed, history, len) {
+    const n = Math.min(len || 30, history.length - 1);
+    if (n < 1) return 0;
+    let hit = 0;
+    for (let i = 0; i < n; i++) {
+        const real = history[i]; const prev = history[i+1];
+        const groups = getRawGroups(seed, prev);
+        if (real.sum === 13 || real.sum === 14 || groups.includes(real.type)) hit++;
+    }
+    return (hit / n) * 100;
+}
+function getOptimalKill(seed, history, len) {
+    const n = Math.min(len || 30, history.length - 1);
+    if (n < 3) return 0;
+    let bestHits = -1, bestIdx = 0;
+    for (let killIdx = 0; killIdx < 3; killIdx++) {
+        let hits = 0;
+        for (let i = 0; i < n; i++) {
+            const real = history[i]; const prev = history[i+1];
+            const groups = getRawGroups(seed, prev);
+            const doubles = groups.filter((_,idx)=>idx!==killIdx);
+            if (real.sum === 13 || real.sum === 14 || doubles.includes(real.type)) hits++;
+        }
+        if (hits > bestHits) { bestHits = hits; bestIdx = killIdx; }
+    }
+    return bestIdx;
+}
+const SPECIAL_CODES = {
+    '小单':[9,11,7,5],'小双':[8,12,10,6],'大单':[15,17,19,21],'大双':[18,16,20,22]
+};
+function getSpecialCodes(type, expect) {
+    const pool = SPECIAL_CODES[type] || SPECIAL_CODES['小单'];
+    const idx = (parseInt(expect)||0) % 4;
+    return [pool[idx%4], pool[(idx+1)%4]];
+}
+
+// ===== 全局状态 =====
+let history = [];
+let currentSeed = null;
+let scannedSeeds = [];
+let topSeeds = [];
+let viewMode = 'three';
+let lockState = { active:false, lockedSeed:null, remaining:0 };
+let aiActiveSeed = null;
+let countdownTimer = null;
+
+const $ = id => document.getElementById(id);
+const seedSelector=$('seedSelector'), lockBtn=$('lockBtn'), aiBtn=$('aiBtn'), scanBtn=$('scanBtn'), modeBtn=$('modeBtn');
+const hitRateDisplay=$('hitRateDisplay'), lockHint=$('lockHint'), aiReason=$('aiReason'), predictBox=$('predictBox');
+const backtestBody=$('backtestBody'), backtestBadge=$('backtestBadge'), livePeriod=$('livePeriod'), liveSum=$('liveSum');
+const ball1=$('ball1'), ball2=$('ball2'), ball3=$('ball3'), apiBadge=$('apiBadge'), apiStatus=$('apiStatus');
+const nextPeriodBadge=$('nextPeriodBadge'), dataSourceEl=$('dataSource'), countdownEl=$('countdown'), currentSeedTag=$('currentSeedTag');
+
+// ===== 数据加载 =====
+function parseItem(item) {
+    let nums, sum, type;
+    if (item.nums && Array.isArray(item.nums)) nums = item.nums;
+    else if (item.number) nums = item.number.split('+').map(Number);
+    else if (item.parts && Array.isArray(item.parts)) nums = item.parts;
+    else return null;
+    if (nums.some(isNaN)) return null;
+    sum = (item.sum != null) ? parseInt(item.sum) : (nums[0]+nums[1]+nums[2]);
+    type = item.type || item.combination || getType(sum);
+    return { expect: item.nbr || item.expect || item.issue, opencode: item.number || nums.join('+'), nums, sum, type };
+}
+
+async function fetchFromAPI(url) {
+    const res = await fetch(url);
+    if (!res.ok) throw new Error('HTTP '+res.status);
+    const json = await res.json();
+    if (!json.data || !Array.isArray(json.data) || json.data.length === 0) throw new Error('数据为空');
+    return json.data.map(parseItem).filter(Boolean);
+}
+
+function useBuiltin() {
+    history = BUILTIN_DATA.map(parseItem).filter(Boolean);
+    history.sort((a,b)=>parseInt(b.expect)-parseInt(a.expect));
+    // 去重
+    const seen=new Set(); history = history.filter(h=>!seen.has(h.expect)&&seen.add(h.expect));
+}
+
+async function loadHistory() {
+    apiBadge.textContent = '⏳ 加载中...';
+    apiStatus.innerHTML = '📡 请求数据中...';
+    let ok = false;
+    for (const url of [API_PRIMARY, API_BACKUP]) {
+        try {
+            const data = await fetchFromAPI(url);
+            if (data && data.length > 0) {
+                history = data;
+                history.sort((a,b)=>parseInt(b.expect)-parseInt(a.expect));
+                const seen=new Set(); history=history.filter(h=>!seen.has(h.expect)&&seen.add(h.expect));
+                const src = url===API_PRIMARY ? '主用接口 (kj.pc28.im)' : '备用接口 (pc28.help)';
+                dataSourceEl.textContent = '📊 '+src;
+                apiBadge.textContent = '✅ 在线';
+                apiStatus.innerHTML = '📡 '+src+'：<span class="ok">✔ 正常</span>';
+                ok = true; break;
+            }
+        } catch(e) { console.warn('接口失败', url, e); }
+    }
+    if (!ok) {
+        useBuiltin();
+        dataSourceEl.textContent = '📊 离线模式（内置 '+history.length+' 期数据）';
+        apiBadge.textContent = '📴 离线';
+        apiStatus.innerHTML = '📡 主用/备用：<span class="fail">✘ 失败</span> → 使用内置数据';
+    }
+    dataSourceEl.textContent += ' · 最新期: '+history[0].expect;
+    updateLive();
+    if (!currentSeed && topSeeds.length>0) selectSeed(topSeeds[0].seed);
+    else { scanSeeds(); updateSelector(); renderAll(); }
+}
+
+// ===== 倒计时 =====
+function startCountdown() {
+    if (countdownTimer) clearInterval(countdownTimer);
+    let seconds = 210;
+    const tick = () => {
+        if (seconds <= 0) {
+            countdownEl.textContent = '🔄 即将开奖，刷新中...';
+            clearInterval(countdownTimer);
+            setTimeout(async()=>{ await loadHistory(); startCountdown(); }, 2000);
+            return;
+        }
+        const m=Math.floor(seconds/60), s=seconds%60;
+        countdownEl.textContent = `⏳ 下一期倒计时：${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+        seconds--;
+    };
+    tick(); countdownTimer = setInterval(tick, 1000);
+}
+
+// ===== 实时开奖 =====
+function updateLive() {
+    if (!history || history.length===0) return;
+    const latest = history[0];
+    livePeriod.textContent = latest.expect+'期';
+    liveSum.textContent = `和值：${latest.sum} (${latest.type})`;
+    ball1.textContent = latest.nums[0]; ball2.textContent = latest.nums[1]; ball3.textContent = latest.nums[2];
+    nextPeriodBadge.textContent = (parseInt(latest.expect)+1)+'期';
+}
+
+// ===== 种子扫描 =====
+function scanSeeds() {
+    if (!history || history.length<5) return;
+    scannedSeeds=[]; topSeeds=[];
+    for (let seed=1000; seed<=50000; seed++) {
+        const acc = calcAccuracy(seed, history, 30);
+        if (acc >= 85) { topSeeds.push({seed,acc}); if (acc===100) scannedSeeds.push(seed); }
+    }
+    topSeeds.sort((a,b)=>b.acc-a.acc);
+    if (topSeeds.length>50) topSeeds=topSeeds.slice(0,50);
+    console.log('[扫描] 100%:',scannedSeeds.length,'≥85%:',topSeeds.length);
+}
+
+function updateSelector() {
+    const currentVal = seedSelector.value;
+    seedSelector.innerHTML = '';
+    if (topSeeds.length>0) {
+        topSeeds.forEach((item,idx)=>{
+            const opt=document.createElement('option');
+            opt.value=item.seed;
+            opt.textContent = `${item.acc===100?'⭐':'●'} #${idx+1} ${item.seed} (${item.acc.toFixed(1)}%)`;
+            if (item.acc===100) { opt.style.color='#e07600'; opt.style.fontWeight='700'; }
+            seedSelector.appendChild(opt);
+        });
+    } else {
+        const opt=document.createElement('option'); opt.value=''; opt.textContent='-- 无可用种子，请扫描 --';
+        seedSelector.appendChild(opt);
+    }
+    if (currentVal && Array.from(seedSelector.options).some(o=>o.value==currentVal)) seedSelector.value=currentVal;
+}
+
+// ===== 种子选择 =====
+function selectSeed(seed) {
+    if (lockState.active && lockState.lockedSeed!==seed) { alert('锁定期间不能切换种子！'); return false; }
+    currentSeed=seed; seedSelector.value=seed; seedSelector.classList.remove('ai-highlight');
+    aiActiveSeed=null; aiReason.classList.remove('show'); aiReason.textContent='';
+    currentSeedTag.textContent='种子 '+seed;
+    renderAll(); return true;
+}
+function selectSeedWithAI(seed, reason) {
+    if (lockState.active && lockState.lockedSeed!==seed) { alert('锁定期间不能切换种子！'); return false; }
+    currentSeed=seed; aiActiveSeed=seed; seedSelector.value=seed; seedSelector.classList.add('ai-highlight');
+    currentSeedTag.textContent='🤖 '+seed;
+    if (reason) { aiReason.textContent='🤖 '+reason; aiReason.classList.add('show'); }
+    renderAll(); return true;
+}
+
+// ===== 渲染 =====
+function getTrend(hist,n){const c={'大单':0,'大双':0,'小单':0,'小双':0};for(let i=0;i<Math.min(n,hist.length);i++)c[hist[i].type]=(c[hist[i].type]||0)+1;return Object.entries(c).filter(([,x])=>x>0).map(([t,x])=>`${t}${x}`).join(' | ')||'数据不足';}
+
+function renderPredict() {
+    if (!currentSeed || !history || history.length<2) {
+        predictBox.innerHTML='<div class="empty-tip">请先选择种子 🍊（点击🔍扫描）</div>';
+        return;
+    }
+    const last=history[0];
+    const groups=getRawGroups(currentSeed, last);
+    const killIdx=getOptimalKill(currentSeed, history, 30);
+    const kill=groups[killIdx];
+    const doubles=groups.filter((_,i)=>i!==killIdx);
+    const nextExpect=(parseInt(last.expect)+1).toString();
+    const isAi=(aiActiveSeed===currentSeed);
+    const isLocked=lockState.active&&lockState.lockedSeed===currentSeed;
+    let html=`<div class="predict-head">
+        <span class="ph-l">🍊 ${nextExpect}期</span>
+        <span class="ph-r">${isAi?'🤖 AI推荐 · ':''}${isLocked?'🔒 锁定中':''}</span>
+    </div>`;
+    if (viewMode==='three') {
+        html+=`<div class="predict-row">
+            <div class="predict-item"><div class="label">三组①</div><div class="value">${groups[0]}</div></div>
+            <div class="predict-item"><div class="label">三组②</div><div class="value">${groups[1]}</div></div>
+            <div class="predict-item"><div class="label">三组③</div><div class="value">${groups[2]}</div></div>
+        </div>`;
+    } else {
+        const sp1=getSpecialCodes(doubles[0],nextExpect), sp2=getSpecialCodes(doubles[1],nextExpect);
+        html+=`<div class="predict-row">
+            <div class="predict-item kill"><div class="label">杀组</div><div class="value">${kill}</div></div>
+            <div class="predict-item gold"><div class="label">推荐一</div><div class="value">${doubles[0]}</div></div>
+            <div class="predict-item gold"><div class="label">推荐二</div><div class="value">${doubles[1]}</div></div>
+        </div>
+        <div class="special-row">
+            <span class="tag tag-gold">🎯 特码 ${sp1.join(', ')}</span>
+            <span class="tag tag-gold">🎯 特码 ${sp2.join(', ')}</span>
+        </div>`;
+    }
+    html+=`<div class="legend">
+        <span><i class="dot-kill"></i>杀组</span>
+        <span><i class="dot-rec"></i>推荐</span>
+        <span><i class="dot-win"></i>命中</span>
+    </div>`;
+    html+=`<div class="trend">🍊 近10期走势：${getTrend(history,10)}</div>`;
+    predictBox.innerHTML=html;
+}
+
+function renderBacktest() {
+    if (!currentSeed || !history || history.length<2) {
+        backtestBody.innerHTML='<tr class="placeholder-row"><td colspan="5">请先选择种子 🍊</td></tr>';
+        backtestBadge.textContent='--'; return;
+    }
+    const max=Math.min(30, history.length-1);
+    const killIdx=getOptimalKill(currentSeed, history, 30);
+    let hitCount=0, rows='';
+    for (let i=0;i<max;i++) {
+        const real=history[i], prev=history[i+1];
+        const groups=getRawGroups(currentSeed, prev);
+        const kill=groups[killIdx];
+        const doubles=groups.filter((_,idx)=>idx!==killIdx);
+        let predictHtml, isHit;
+        if (viewMode==='three') {
+            predictHtml=`<span class="tag tag-blue">${groups[0]}</span><span class="tag tag-gold">${groups[1]}</span><span class="tag tag-gold">${groups[2]}</span>`;
+            isHit=(real.sum===13||real.sum===14||groups.includes(real.type));
+        } else {
+            predictHtml=`<span class="tag tag-kill">杀${kill}</span><span class="tag tag-blue">${doubles[0]}</span><span class="tag tag-blue">${doubles[1]}</span>`;
+            isHit=(real.sum===13||real.sum===14)?true:doubles.includes(real.type);
+        }
+        if (isHit) hitCount++;
+        const prevStr=`${prev.nums.join('+')}=${prev.sum}`, realStr=`${real.nums.join('+')}=${real.sum}`;
+        rows+=`<tr class="${isHit?'win-row':''}"><td>${real.expect}</td><td>${prevStr}</td><td>${predictHtml}</td><td>${realStr}</td><td class="${isHit?'win':''}">${isHit?'✅':'❌'}</td></tr>`;
+    }
+    const acc=max?((hitCount/max)*100).toFixed(2):0;
+    backtestBadge.textContent = (viewMode==='three'?'三组':'双组')+' '+acc+'%';
+    backtestBody.innerHTML=rows;
+}
+
+function renderAll() { renderPredict(); renderBacktest(); updateStatus(); }
+
+function updateStatus() {
+    if (currentSeed) {
+        const acc=calcAccuracy(currentSeed, history, 30);
+        hitRateDisplay.textContent=`命中率：${acc.toFixed(1)}%`;
+        lockHint.textContent = (lockState.active&&lockState.lockedSeed===currentSeed) ? `🔒 锁定中 (剩${lockState.remaining}期)` : '未锁定';
+    } else { hitRateDisplay.textContent='命中率：--'; lockHint.textContent='未锁定'; }
+    if (lockState.active) { lockBtn.textContent=`🔒 锁定中(${lockState.remaining}期)`; lockBtn.classList.add('locked'); lockBtn.disabled=true; seedSelector.disabled=true; }
+    else { lockBtn.textContent='🔒 锁定'; lockBtn.classList.remove('locked'); lockBtn.disabled=false; seedSelector.disabled=false; }
+}
+
+// ===== 锁定 / AI / 扫描 / 模式 =====
+function getThirdSeed() {
+    if (scannedSeeds.length>=3) return scannedSeeds[2];
+    if (topSeeds.length>=3) return topSeeds[2].seed;
+    if (topSeeds.length>0) return topSeeds[0].seed;
+    return null;
+}
+function lockSeed() {
+    if (lockState.active) return;
+    const third=getThirdSeed();
+    if (!third) { alert('没有足够种子可供锁定，请先🔍扫描'); return; }
+    lockState={active:true, lockedSeed:third, remaining:5};
+    selectSeed(third); updateStatus();
+    const t=setInterval(()=>{
+        if (!lockState.active) { clearInterval(t); return; }
+        lockState.remaining--;
+        if (lockState.remaining<=0) { lockState={active:false,lockedSeed:null,remaining:0}; updateStatus(); clearInterval(t); alert('锁定结束，可重新选择种子'); }
+        else { updateStatus(); }
+    }, 3000);
+}
+function aiRecommend() {
+    if (lockState.active) { alert('锁定期间无法使用AI推荐'); return; }
+    aiBtn.disabled=true; aiBtn.textContent='⏳ 分析中';
+    let progress=0;
+    const interval=setInterval(()=>{
+        progress+=Math.random()*10+5; if (progress>100) progress=100;
+        aiReason.innerHTML=`🤖 AI分析中 ${Math.floor(progress)}% <span class="progress-bar"><span class="progress-fill" style="width:${Math.floor(progress)}%"></span></span>`;
+        aiReason.classList.add('show');
+        if (progress>=100) { clearInterval(interval); finishAI(); }
+    }, 150);
+    const finishAI=()=>{
+        let candidates = scannedSeeds.length>0 ? scannedSeeds : topSeeds.map(s=>s.seed);
+        if (candidates.length===0) { aiReason.innerHTML='🤖 未找到可用种子，请先扫描'; aiBtn.disabled=false; aiBtn.textContent='🤖 AI推荐'; return; }
+        const idx=Math.min(4, candidates.length-1);
+        const chosen=candidates[idx];
+        const acc=calcAccuracy(chosen, history, 30);
+        selectSeedWithAI(chosen, `智能推荐 #${idx+1} 种子: ${chosen} (命中率 ${acc.toFixed(1)}%)`);
+        aiBtn.disabled=false; aiBtn.textContent='🤖 AI推荐';
+    };
+}
+
+// ===== 事件绑定 =====
+seedSelector.addEventListener('change', ()=>{
+    if (lockState.active) { alert('锁定期间不能切换种子！'); seedSelector.value=lockState.lockedSeed; return; }
+    if (seedSelector.value) selectSeed(parseInt(seedSelector.value));
+});
+lockBtn.addEventListener('click', lockSeed);
+aiBtn.addEventListener('click', aiRecommend);
+scanBtn.addEventListener('click', ()=>{ scanSeeds(); updateSelector(); if (!currentSeed && topSeeds.length>0) selectSeed(topSeeds[0].seed); else renderAll(); });
+modeBtn.addEventListener('click', ()=>{
+    viewMode = viewMode==='three' ? 'double' : 'three';
+    modeBtn.textContent = viewMode==='three' ? '📊 双组' : '📊 三组';
+    renderAll();
+});
+$('refreshDataBtn').addEventListener('click', ()=>{ loadHistory(); });
+
+// ===== 雪花效果 =====
+(function startSnow() {
+    const layer = document.getElementById('snowLayer');
+    if (!layer) return;
+    function addSnowflake() {
+        const el = document.createElement('span');
+        el.className = 'snowflake';
+        el.textContent = Math.random() > 0.35 ? '❄' : '❅';
+        const size = 9 + Math.random() * 13;
+        const duration = 7 + Math.random() * 8;
+        const drift = (Math.random() * 160 - 80).toFixed(0) + 'px';
+        el.style.left = (Math.random() * 100).toFixed(2) + 'vw';
+        el.style.fontSize = size.toFixed(1) + 'px';
+        el.style.animationDuration = duration.toFixed(1) + 's';
+        el.style.setProperty('--drift', drift);
+        layer.appendChild(el);
+        setTimeout(() => el.remove(), (duration + 1) * 1000);
+    }
+    for (let i = 0; i < 18; i++) setTimeout(addSnowflake, i * 260);
+    setInterval(addSnowflake, 420);
+})();
+
+// ===== 初始化 =====
+async function init() {
+    useBuiltin();       // 先用内置数据，保证离线即显示
+    updateLive();
+    scanSeeds();
+    updateSelector();
+    if (topSeeds.length>0) selectSeed(topSeeds[0].seed); else renderAll();
+    startCountdown();
+    loadHistory();      // 后台尝试联网更新
+    setInterval(()=>{ loadHistory(); }, 60000);  // 60秒轮询
+}
+init();
+</script>
+</body>
+</html>
